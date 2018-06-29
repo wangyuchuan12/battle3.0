@@ -1,7 +1,10 @@
 package com.battle.api;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitUser;
+import com.battle.executer.BattleRoomFactory;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleWaitService;
 import com.battle.service.BattleWaitUserService;
@@ -35,6 +39,12 @@ public class BattleWaitApi {
 	
 	@Autowired
 	private BattleWaitService battleWaitService;
+	
+	@Autowired
+	private BattleRoomFactory battleRoomFactory;
+	
+	@Autowired
+	private ScheduledExecutorService scheduledExecutorService;
 	
 	
 	@RequestMapping(value="waitUsers")
@@ -113,7 +123,7 @@ public class BattleWaitApi {
 		
 		battleWaitSocketService.waitPublish(battleWaitUser);
 		
-		BattleWait battleWait = battleWaitService.findOne(waitId);
+		final BattleWait battleWait = battleWaitService.findOne(waitId);
 		Integer num = battleWait.getNum();
 		if(num==null){
 			num = 0;
@@ -129,6 +139,23 @@ public class BattleWaitApi {
 			/*****
 			 * 这里需要处理
 			 */
+			
+			
+			scheduledExecutorService.schedule(new Runnable() {
+				
+				@Override
+				public void run() {
+					List<String> userIds = new ArrayList<>();
+					List<BattleWaitUser> battleWaitUsers = battleWaitUserService.findAllByWaitIdAndStatus(battleWait.getId(), BattleWaitUser.READY_STATUS);
+					for(BattleWaitUser battleWaitUser2:battleWaitUsers){
+						userIds.add(battleWaitUser2.getUserId());
+					}
+					battleRoomFactory.init(battleWait.getBattleId(),battleWait.getPeriodId(),userIds);
+					
+				}
+			}, 4, TimeUnit.SECONDS);
+			
+
 		}
 		
 		ResultVo resultVo = new ResultVo();
