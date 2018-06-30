@@ -10,13 +10,21 @@ public class MessageVo {
 	
 	
 	public final static String SHOW_SUBJECTS = "showSubjects";
+	
+	public final static String SHOW_SUBJECT_STATUS = "showSubjectStatus";
 	public final static String PUBLISH_SHOW_QUESTION = "publishShowQuestion";
 	public final static String PUBLISH_DO_ANSWER = "publishDoAnswer";
+	public final static String PUBLISH_REST = "publishRest";
 	public final static String PUBLISH_ROOM_END = "publishRoomEnd";
 	public final static String PUBLISH_ROOM_START = "publishRoomStart";
 	public final static String PUBLISH_MEMBER_STATUS = "publishMemberStatus";
 	public final static String PUBLISH_DO_SELECT_SUBJECT = "publishDoSelectSubject";
 	public final static String WAIT_STATUS_CODE = "wait_status_code";
+	public final static String SHOW_ANSWER_PLAYERS = "showAnswerPlayers";
+	
+	public final static String PUBLISH_REWARD = "publish_reward";
+	
+	public final static String PUBLISH_DIE = "publish_die";
 	
 	//调用编号
 	private String code;

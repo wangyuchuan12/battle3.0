@@ -12,7 +12,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author xiaojf 2017/3/2 9:55.
@@ -45,37 +44,8 @@ public class SocketHandler extends TextWebSocketHandler {
     	
     	Map<String, Object> attributes = session.getAttributes();
     	final Object token = attributes.get("token");
-    	final Object userId = attributes.get("userId");
     	
-    	webSocketManager.remove(token.toString());
-    	
-    	Thread timerTask = new Thread() {
-			
-			@Override
-			public void run() {
-				
-				System.out.println("...............尊贵和荣耀");
-				logger.debug("put session delay 1000 run");
-				webSocketManager.put(token.toString(),session);
-				
-				OnlineListener onlineListener = new OnlineListener();
-				factory.autowireBean(onlineListener);
-				onlineListener.onLine(userId.toString());
-
-				try{
-					
-				}catch(Exception e){
-					logger.error("{}",e);
-				}
-			}
-		};
-		
-		executorService.schedule(timerTask, 100,TimeUnit.MILLISECONDS);
-    	
-		/*
-    	sessionMap.put(token.toString(),session);
-		onlineListener.onLine(userId.toString());
-    	*/
+    	webSocketManager.onLine(token.toString(), session);
 		SocketHandler.super.afterConnectionEstablished(session);
     	
     }
@@ -86,26 +56,10 @@ public class SocketHandler extends TextWebSocketHandler {
 
     	Map<String, Object> attributes = session.getAttributes();
     	Object token = attributes.get("token");
-    	final Object userId = attributes.get("userId");
-    	
-    	TimerTask timerTask = new TimerTask() {
-			
-			@Override
-			public void run() {
-				OnlineListener onlineListener = new OnlineListener();
-				
-				factory.autowireBean(onlineListener);
-				System.out.println("...............尊贵和荣耀2");
-				onlineListener.downLine(userId.toString());
-			}
-		};
-		
-		executorService.schedule(timerTask,90,TimeUnit.MILLISECONDS);
-    	
 		/*
     	onlineListener.downLine(userId.toString());
 		*/
-		webSocketManager.remove(token.toString());
+		webSocketManager.downLine(token.toString());
         super.afterConnectionClosed(session, status);
     }
 
@@ -137,9 +91,16 @@ public class SocketHandler extends TextWebSocketHandler {
             	boolean isOpen = webSocketManager.isOpen(acceptor);
             	if(isOpen){
 	                WebSocketSession session = webSocketManager.get(acceptor);
+	             
 	                if (session != null) {
 	                    for (String msg : msgList) {
-	                        session.sendMessage(new TextMessage(msg.getBytes()));
+	                    	try{
+	                    		 System.out.println("..........sendMessage:"+msg);
+	                    		session.sendMessage(new TextMessage(msg.getBytes()));
+	                    	}catch(Exception e){
+	                    		e.printStackTrace();
+	                    		logger.error("信息发生错误 {}",e);
+	                    	}
 	                    }
 	                }
             	}else{

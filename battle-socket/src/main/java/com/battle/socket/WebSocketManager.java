@@ -1,43 +1,57 @@
 package com.battle.socket;
 
-import java.util.Map;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
-
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
+import com.battle.socket.service.UserStatusManager;
+import com.wyc.common.service.WxUserInfoService;
+import com.wyc.common.wx.domain.UserInfo;
 
 @Service
 public class WebSocketManager {
-	private final Map<String,WebSocketSession> sessionMap = new ConcurrentHashMap<String, WebSocketSession>();
+	
+	@Autowired
+	private UserStatusManager userStatusManager;
+	
+	@Autowired
+	private WxUserInfoService userInfoService;
+	
+	final static Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
 	
 	public boolean isOpen(String token){
-		WebSocketSession webSocketSession = sessionMap.get(token);
+		WebSocketSession webSocketSession = userStatusManager.getWebSocketSession(token);
 		if(webSocketSession==null){
+			logger.debug("webSocketSession is null");
 			return false;
 		}
 		
-		return webSocketSession.isOpen();
+		logger.debug("webSocketSession is not null,weSocketSession:"+webSocketSession.getId());
+		boolean b = webSocketSession.isOpen();
+		if(!b){
+			userStatusManager.downLine(token);
+		}
+		return b;
 	}
 	
-	public void put(String token,WebSocketSession webSocketSession){
+	public void onLine(String token,WebSocketSession webSocketSession){
+		userStatusManager.downLine(token);
+		UserInfo userInfo = userInfoService.findByToken(token);
+		userStatusManager.onLine(userInfo, webSocketSession);
 		
+		logger.debug("onLine,webSocketSession:"+webSocketSession.getId());
 		
-		System.out.println("............put socket");
-		sessionMap.put(token, webSocketSession);
+		logger.debug("webSocketSession.isOpen:"+webSocketSession.isOpen());
 	}
 	
 	public WebSocketSession get(String token){
-		
-		System.out.println("............get socket");
-		return sessionMap.get(token);
+		WebSocketSession webSocketSession = userStatusManager.getWebSocketSession(token);
+		return webSocketSession;
 	}
 	
-	public void remove(String token){
-		
-		
-		System.out.println("............remove socket");
-		sessionMap.remove(token);
+	public void downLine(String token){
+		userStatusManager.downLine(token);
 	}
 	
 }

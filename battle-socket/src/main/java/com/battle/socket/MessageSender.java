@@ -25,6 +25,8 @@ private WxUserInfoService wxUserInfoService;
 	
 public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 	
+	
+		
 		List<String> tokens = new ArrayList<>();
 		
 		List<String> excludeUserIds = messageVo.getExcludeUserIds();
@@ -32,6 +34,7 @@ public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 		if(messageVo.getType()==MessageVo.USERS_TYPE){
 			List<String> userIds = messageVo.getUserIds();
 			for(String userId:userIds){
+				System.out.println("........sendMesssage:"+userId);
 				UserStatus userStatus = userStatusService.findOneByUserId(userId);
 				if(userStatus==null){
 					

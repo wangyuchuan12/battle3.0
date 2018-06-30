@@ -1,67 +1,90 @@
 package com.battle.executer;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+
+import com.battle.executer.imp.EventHandleImp;
+
 public abstract class BattleRoomFactory {
 	
-	public class FactoryData{
-		private BattleRoomDataManager battleRoomDataManager;
-		private BattleRoomExecuter battleRoomExecuter;
-		private BattleRoomPublish battleRoomPublish;
-		private BattleRoomQuestionExecuter battleRoomQuestionExecuter;
-		public BattleRoomDataManager getBattleRoomDataManager() {
-			return battleRoomDataManager;
-		}
-		public void setBattleRoomDataManager(BattleRoomDataManager battleRoomDataManager) {
-			this.battleRoomDataManager = battleRoomDataManager;
-		}
-		public BattleRoomExecuter getBattleRoomExecuter() {
-			return battleRoomExecuter;
-		}
-		public void setBattleRoomExecuter(BattleRoomExecuter battleRoomExecuter) {
-			this.battleRoomExecuter = battleRoomExecuter;
-		}
-		public BattleRoomPublish getBattleRoomPublish() {
-			return battleRoomPublish;
-		}
-		public void setBattleRoomPublish(BattleRoomPublish battleRoomPublish) {
-			this.battleRoomPublish = battleRoomPublish;
-		}
-		public BattleRoomQuestionExecuter getBattleRoomQuestionExecuter() {
-			return battleRoomQuestionExecuter;
-		}
-		public void setBattleRoomQuestionExecuter(BattleRoomQuestionExecuter battleRoomQuestionExecuter) {
-			this.battleRoomQuestionExecuter = battleRoomQuestionExecuter;
-		}
-		
-	}
+	@Autowired
+    public AutowireCapableBeanFactory factory;
 	
-	public FactoryData init(){
-		BattleRoomDataManager battleRoomDataManager = createBattleRoomDataManager();
+	
+	public ExecuterStore init(String battleId,String periodId,List<String> userIds){
+		final BattleRoomDataManager battleRoomDataManager = createBattleRoomDataManager();
+		factory.autowireBean(battleRoomDataManager);
+		final BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
+		factory.autowireBean(battleRoomExecuter);
+		final BattleRoomPublish battleRoomPublish = createBattleRoomPublish();
+		factory.autowireBean(battleRoomPublish);
+		final BattleRoomQuestionExecuter battleRoomQuestionExecuter = createBattleRoomQuestionExecuter();	
+		factory.autowireBean(battleRoomQuestionExecuter);
+		final BattleRoomStageExecuter battleRoomStageExecuter = createBatteRoomStageExecuter();
+		factory.autowireBean(battleRoomStageExecuter);
 		
-		BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
+		battleRoomDataManager.init(battleId, periodId, userIds);
 		
-		BattleRoomPublish battleRoomPublish = createBattleRoomPublish();
 		
-		BattleRoomQuestionExecuter battleRoomQuestionExecuter = createBattleRoomQuestionExecuter();
 		
-		battleRoomExecuter.init(battleRoomDataManager, battleRoomPublish, battleRoomQuestionExecuter);
+		ExecuterStore executerStore = new ExecuterStore() {
+			
+			@Override
+			public BattleRoomStageExecuter getBattleRoomStageExecuter() {
+				// TODO Auto-generated method stub
+				return battleRoomStageExecuter;
+			}
+			
+			@Override
+			public BattleRoomPublish getBattleRoomPublish() {
+				// TODO Auto-generated method stub
+				return battleRoomPublish;
+			}
+			
+			@Override
+			public BattleRoomExecuter getBattleRoomExecuter() {
+				// TODO Auto-generated method stub
+				return battleRoomExecuter;
+			}
+			
+			@Override
+			public BattleRoomQuestionExecuter getBattleQuestionExecuter() {
+				// TODO Auto-generated method stub
+				return battleRoomQuestionExecuter;
+			}
+
+			@Override
+			public BattleRoomDataManager getBattleRoomDataManager() {
+				// TODO Auto-generated method stub
+				return battleRoomDataManager;
+			}
+		};
 		
-		battleRoomPublish.init(battleRoomDataManager);
 		
-		FactoryData factoryData = new FactoryData();
-		factoryData.battleRoomDataManager = battleRoomDataManager;
-		factoryData.battleRoomExecuter = battleRoomExecuter;
-		factoryData.battleRoomPublish = battleRoomPublish;
-		factoryData.battleRoomQuestionExecuter = battleRoomQuestionExecuter;
+		EventHandle eventHandle = new EventHandleImp();
+		eventHandle.init(executerStore);
 		
-		return factoryData;
+		factory.autowireBean(eventHandle);
+		battleRoomPublish.init(executerStore);
+		
+		battleRoomStageExecuter.init(executerStore);
+		
+		battleRoomExecuter.init(battleRoomDataManager.getEventManager(),executerStore);
+		
+		battleRoomQuestionExecuter.init(executerStore);
+		return executerStore;
 		
 	}
 
-	public  abstract BattleRoomExecuter createBatteRoomExecuter();
+	protected  abstract BattleRoomExecuter createBatteRoomExecuter();
 	
-	public  abstract BattleRoomDataManager createBattleRoomDataManager();
+	protected  abstract BattleRoomDataManager createBattleRoomDataManager();
 	
-	public  abstract BattleRoomPublish createBattleRoomPublish();
+	protected  abstract BattleRoomPublish createBattleRoomPublish();
 	
-	public  abstract BattleRoomQuestionExecuter createBattleRoomQuestionExecuter();
+	protected  abstract BattleRoomQuestionExecuter createBattleRoomQuestionExecuter();
+	
+	protected abstract BattleRoomStageExecuter createBatteRoomStageExecuter();
 }
