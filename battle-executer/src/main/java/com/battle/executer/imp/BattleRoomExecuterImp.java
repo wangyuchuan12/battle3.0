@@ -100,11 +100,11 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				Integer process1 = o1.getProcess();
 				Integer process2 = o2.getProcess();
 				if(process1>process2){
-					return 1;
+					return -1;
 				}else if(process1==process2){
 					return 0;
 				}else{
-					return -1;
+					return 1;
 				}
 			}
 		});
