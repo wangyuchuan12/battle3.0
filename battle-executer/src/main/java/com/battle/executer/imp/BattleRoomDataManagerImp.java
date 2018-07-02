@@ -91,7 +91,7 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 	}
 
 	@Override
-	public void init(String battleId, String periodId, List<String> userIds) {
+	public void init(String battleId, String periodId, List<String> userIds,Integer type ,Map<String, Object> data) {
 		
 		eventManager = new EventManager();
 		Integer stageCount = 10;
@@ -119,7 +119,11 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		battleRoom.setRewardBean9(1000);
 		battleRoom.setRewardBean10(2000);
 		
+		battleRoom.setData(data);
+		
 		battleRoom.setSubBean(50);
+		
+		battleRoom.setType(type);
 		
 		battleRoom.setId(UUID.randomUUID().toString());
 		
@@ -168,6 +172,8 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 			battleRoomMemberVo.setProcess(0);
 			battleRoomMemberVo.setId(UUID.randomUUID().toString());
 			battleRoomMemberVo.setCnRightCount(0);
+			battleRoomMemberVo.setIsPass(0);
+			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
 			battleRoomMemberVos.add(battleRoomMemberVo);
 		}
 		

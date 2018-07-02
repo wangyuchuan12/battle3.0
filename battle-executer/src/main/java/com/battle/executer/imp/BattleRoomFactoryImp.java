@@ -1,6 +1,7 @@
 package com.battle.executer.imp;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -35,8 +36,8 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	private BattleRoomPublish battleRoomPublish;
 	
 	@Override
-	public ExecuterStore init(String battleId,String periodId,List<String> userIds) {
-		ExecuterStore executerStore =  super.init(battleId,periodId,userIds);
+	public ExecuterStore init(String battleId,String periodId,List<String> userIds,Integer type,Map<String, Object> data) {
+		ExecuterStore executerStore =  super.init(battleId,periodId,userIds,type,data);
 		
 		BattleRoomDataManager battleRoomDataManager = executerStore.getBattleRoomDataManager();
 		

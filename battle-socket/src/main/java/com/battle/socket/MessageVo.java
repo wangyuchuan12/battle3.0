@@ -26,6 +26,8 @@ public class MessageVo {
 	
 	public final static String PUBLISH_DIE = "publish_die";
 	
+	public final static String PUBLISH_MEMBERS = "publish_members";
+	
 	//调用编号
 	private String code;
 	

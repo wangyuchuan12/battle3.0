@@ -76,6 +76,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			data.put("periodId", battleRoomVo.getPeriodId());
 			data.put("rangeGogal", battleRoomVo.getRangeGogal());
 			data.put("stageCount", battleRoomVo.getStageCount());
+			data.put("members", battleRoomMemberVos);
 			List<String> userIds = new ArrayList<>();
 			MessageVo messageVo = new MessageVo();
 			messageVo.setCode(MessageVo.PUBLISH_ROOM_START);
@@ -251,8 +252,8 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			memberInfo.put("nickname", battleRoomMemberVo.getNickname());
 			memberInfo.put("process", battleRoomMemberVo.getProcess());
 			memberInfo.put("rangeGogal", battleRoomMemberVo.getRangeGogal());
-			memberInfo.put("userId", battleRoomMemberVo.getRemainLove());
-			memberInfo.put("", battleRoomMemberVo.getUserId());
+			memberInfo.put("remainLove", battleRoomMemberVo.getRemainLove());
+			memberInfo.put("userId", battleRoomMemberVo.getUserId());
 			memberInfo.put("status", battleRoomMemberVo.getStatus());
 			memberInfo.put("stageIndex",stageIndex);
 			memberInfo.put("id", battleRoomMemberVo.getId());
@@ -318,5 +319,33 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		}catch(Exception e){
 			logger.error("{}",e);
 		}
+	}
+
+	@Override
+	public void publishMembers() {
+		
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
+			List<String> userIds = new ArrayList<>();
+			userIds.add(battleRoomMember.getUserId());
+			
+			MessageVo messageVo = new MessageVo();
+			messageVo.setCode(MessageVo.PUBLISH_MEMBERS);
+			messageVo.setType(MessageVo.USERS_TYPE);
+			
+			messageVo.setUserIds(userIds);
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("memberInfo", battleRoomMember);
+			data.put("members", battleRoomMemberVos);
+			messageVo.setData(data);
+			try{
+				messageHandler.sendMessage(messageVo);
+			}catch(Exception e){
+				logger.error("{}",e);
+			}
+		}
+		
+		
 	}
 }

@@ -1,8 +1,11 @@
 package com.battle.executer.vo;
 
 import java.util.List;
+import java.util.Map;
 
 public class BattleRoomVo {
+	
+	public static final Integer DAN_TYPE = 0;
 
 	private String id;
 	
@@ -19,6 +22,10 @@ public class BattleRoomVo {
 	private List<BattleRoomMemberVo> members;
 	
 	private List<BattleRoomRewardRecord> battleRoomRewardRecords;
+	
+	private Integer type;
+	
+	private Map<String, Object> data;
 	
 	private Integer rewardBean;
 	
@@ -192,5 +199,21 @@ public class BattleRoomVo {
 
 	public void setBattleRoomRewardRecords(List<BattleRoomRewardRecord> battleRoomRewardRecords) {
 		this.battleRoomRewardRecords = battleRoomRewardRecords;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Map<String, Object> getData() {
+		return data;
+	}
+
+	public void setData(Map<String, Object> data) {
+		this.data = data;
 	}
 }

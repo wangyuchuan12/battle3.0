@@ -19,8 +19,11 @@ public class BattleRoomMemberVo {
 	private String imgUrl;
 	private String nickname;
 	private String userId;
+	private Integer isPass;
 	//连续答对次数
 	private Integer cnRightCount;
+	
+	private String accountId;
 	
 	private Integer rank;
 	
@@ -122,5 +125,17 @@ public class BattleRoomMemberVo {
 	}
 	public void setRewardLove(Integer rewardLove) {
 		this.rewardLove = rewardLove;
+	}
+	public Integer getIsPass() {
+		return isPass;
+	}
+	public void setIsPass(Integer isPass) {
+		this.isPass = isPass;
+	}
+	public String getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
 	}
 }

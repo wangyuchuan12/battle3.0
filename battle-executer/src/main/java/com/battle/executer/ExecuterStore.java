@@ -6,4 +6,6 @@ public interface ExecuterStore {
 	public BattleRoomDataManager getBattleRoomDataManager();
 	public BattleRoomQuestionExecuter getBattleQuestionExecuter();
 	public BattleRoomStageExecuter getBattleRoomStageExecuter();
+	
+	public BattleEndHandle getBattleEndHandle();
 }

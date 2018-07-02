@@ -1,11 +1,14 @@
 package com.battle.executer;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
+import com.battle.executer.endHandle.DanBattleEndHandle;
 import com.battle.executer.imp.EventHandleImp;
+import com.battle.executer.vo.BattleRoomVo;
 
 public abstract class BattleRoomFactory {
 	
@@ -13,7 +16,7 @@ public abstract class BattleRoomFactory {
     public AutowireCapableBeanFactory factory;
 	
 	
-	public ExecuterStore init(String battleId,String periodId,List<String> userIds){
+	public ExecuterStore init(String battleId,String periodId,List<String> userIds,Integer type, Map<String, Object> data){
 		final BattleRoomDataManager battleRoomDataManager = createBattleRoomDataManager();
 		factory.autowireBean(battleRoomDataManager);
 		final BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
@@ -25,8 +28,16 @@ public abstract class BattleRoomFactory {
 		final BattleRoomStageExecuter battleRoomStageExecuter = createBatteRoomStageExecuter();
 		factory.autowireBean(battleRoomStageExecuter);
 		
-		battleRoomDataManager.init(battleId, periodId, userIds);
+		battleRoomDataManager.init(battleId, periodId, userIds,type,data);
 		
+		BattleEndHandle battleEndHandle = null;
+		
+		if(type.intValue()==BattleRoomVo.DAN_TYPE){
+			battleEndHandle = new DanBattleEndHandle();
+		}
+		
+		
+		final BattleEndHandle outBattleEndHandle = battleEndHandle;
 		
 		
 		ExecuterStore executerStore = new ExecuterStore() {
@@ -59,6 +70,11 @@ public abstract class BattleRoomFactory {
 			public BattleRoomDataManager getBattleRoomDataManager() {
 				// TODO Auto-generated method stub
 				return battleRoomDataManager;
+			}
+
+			@Override
+			public BattleEndHandle getBattleEndHandle() {
+				return outBattleEndHandle;
 			}
 		};
 		

@@ -1,16 +1,14 @@
 package com.battle.executer.imp;
-
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.battle.executer.BattleEndHandle;
 import com.battle.executer.BattleRoomConnector;
 import com.battle.executer.BattleRoomDataManager;
 import com.battle.executer.BattleRoomExecuter;
-import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.BattleRoomStageExecuter;
 import com.battle.executer.Event;
@@ -18,7 +16,6 @@ import com.battle.executer.EventCallback;
 import com.battle.executer.EventHandle;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
-import com.battle.executer.vo.BattleRoomMemberVo;
 
 public class EventHandleImp implements EventHandle{
 
@@ -29,6 +26,8 @@ public class EventHandleImp implements EventHandle{
 	private BattleRoomQuestionExecuter battleRoomQuestionExecuter;
 	
 	private BattleRoomExecuter battleRoomExecuter;
+	
+	private BattleEndHandle battleEndHandle;
 	
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
@@ -41,6 +40,7 @@ public class EventHandleImp implements EventHandle{
 		this.battleRoomStageExecuter = executerStore.getBattleRoomStageExecuter();
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
 		this.battleRoomExecuter = executerStore.getBattleRoomExecuter();
+		this.battleEndHandle = executerStore.getBattleEndHandle();
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		Event eventRest = new Event();
 		eventRest.setCode(Event.REST_END_CODE);
@@ -96,8 +96,7 @@ public class EventHandleImp implements EventHandle{
 		eventManager.addCallback(Event.START_ROOM_CODE, new EventCallback() {
 			@Override
 			public void callback(Map<String, Object> data) {
-				
-				System.out.println("...............startRoomEvent");
+				battleRoomExecuter.members();
 				battleRoomStageExecuter.startStage();
 			}
 		});
@@ -125,6 +124,7 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data) {
 				battleRoomExecuter.endRoom();
+				battleEndHandle.end(battleRoomDataManager);
 				battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());
 				battleRoomQuestionExecuter.roomEnd();
 				scheduledExecutorService = null;

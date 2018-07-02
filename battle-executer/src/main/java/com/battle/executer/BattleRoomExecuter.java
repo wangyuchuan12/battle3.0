@@ -23,4 +23,6 @@ public interface BattleRoomExecuter {
 	public void startRoom();
 	
 	public void submitResult();
+
+	public void members();
 }

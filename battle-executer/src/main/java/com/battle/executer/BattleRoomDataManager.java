@@ -1,6 +1,8 @@
 package com.battle.executer;
 
 import java.util.List;
+import java.util.Map;
+
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
@@ -20,5 +22,5 @@ public interface BattleRoomDataManager {
 	
 	public EventManager getEventManager();
 	
-	public void init(String battleId,String periodId,List<String> userIds);
+	public void init(String battleId,String periodId,List<String> userIds,Integer type,Map<String, Object> data);
 }

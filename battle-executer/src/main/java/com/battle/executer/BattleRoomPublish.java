@@ -31,5 +31,7 @@ public interface BattleRoomPublish {
 	public void publishReward(BattleRewardVo battleReward);
 
 	public void publishDie(BattleRoomMemberVo battleRoomMember);
+
+	public void publishMembers();
 	
 }

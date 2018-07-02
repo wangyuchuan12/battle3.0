@@ -2,7 +2,9 @@ package com.battle.api;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitUser;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.vo.BattleRoomVo;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleWaitService;
 import com.battle.service.BattleWaitUserService;
@@ -150,7 +153,18 @@ public class BattleWaitApi {
 					for(BattleWaitUser battleWaitUser2:battleWaitUsers){
 						userIds.add(battleWaitUser2.getUserId());
 					}
-					battleRoomFactory.init(battleWait.getBattleId(),battleWait.getPeriodId(),userIds);
+					Map<String, Object> data = new HashMap<>();
+					List<Map<String, Object>> users = new ArrayList<>();
+					for(BattleWaitUser battleWaitUser:battleWaitUsers){
+						Map<String, Object> user = new HashMap<>();
+						user.put("userId", battleWaitUser.getUserId());
+						user.put("danUserId", battleWaitUser.getDanUserId());
+						user.put("danId",battleWait.getDanId());
+						
+						users.add(user);
+					}
+					data.put("users", users);
+					battleRoomFactory.init(battleWait.getBattleId(),battleWait.getPeriodId(),userIds,BattleRoomVo.DAN_TYPE,data);
 					
 				}
 			}, 4, TimeUnit.SECONDS);

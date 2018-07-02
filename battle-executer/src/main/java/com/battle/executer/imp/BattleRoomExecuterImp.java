@@ -116,10 +116,27 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				battleRoomMember.setRewardBean(battleRoomRewardRecord.getRewardBean());
 				battleRoomMember.setRewardLove(battleRoomRewardRecord.getRewardLove());
 				battleRoomMember.setRank(battleRoomRewardRecord.getRank());
+				
+				Account account = accountService.fineOneSync(battleRoomMember.getAccountId());
+				Long wisdomCount = account.getWisdomCount();
+				Integer loveCount = account.getLoveLife();
+				wisdomCount = wisdomCount+battleRoomMember.getRewardBean();
+				loveCount = loveCount + battleRoomMember.getRewardLove();
+				account.setWisdomCount(wisdomCount);
+				account.setLoveLife(loveCount);
+				accountService.update(account);
+				
 			}else{
 				battleRoomMember.setRewardBean(0);
 				battleRoomMember.setRewardLove(0);
 				battleRoomMember.setRank(i+1);
+			}
+			
+			
+			if(battleRoomMember.getRemainLove().intValue()>0){
+				battleRoomMember.setIsPass(1);
+			}else{
+				battleRoomMember.setIsPass(0);
 			}
 		}
 		battleRoomPublish.publishRoomEnd();
@@ -223,6 +240,12 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 		}
 		
 		battleRoomPublish.publishRest();
+		
+	}
+
+	@Override
+	public void members() {
+		battleRoomPublish.publishMembers();
 		
 	}
 }
