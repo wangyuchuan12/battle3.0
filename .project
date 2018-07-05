@@ -2,7 +2,7 @@
 <projectDescription>
 	<filteredResources>
 		<filter>
-			<id>1528356820448</id>
+			<id>1530696789660</id>
 			<name/>
 			<type>26</type>
 			<matcher>
@@ -35,6 +35,10 @@
 					<matcher>
 						<id>org.eclipse.ui.ide.multiFilter</id>
 						<arguments>1.0-projectRelativePath-equals-true-false-battle-service</arguments>
+					</matcher>
+					<matcher>
+						<id>org.eclipse.ui.ide.multiFilter</id>
+						<arguments>1.0-projectRelativePath-equals-true-false-battle-listener</arguments>
 					</matcher>
 					<matcher>
 						<id>org.eclipse.ui.ide.multiFilter</id>

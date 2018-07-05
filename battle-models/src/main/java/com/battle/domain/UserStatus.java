@@ -22,6 +22,10 @@ import com.wyc.annotation.ParamEntityAnnotation;
 @ParamEntityAnnotation
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE) 
 public class UserStatus implements Serializable{
+	
+	public final static Integer FREE_STATUS = 0;
+	
+	public final static Integer IN_STATUS = 1;
 	/**
 	 * 
 	 */
@@ -51,6 +55,16 @@ public class UserStatus implements Serializable{
 	@Column(name="down_line_count")
 	private Integer downLineCount;
 	
+	
+	@ParamAnnotation
+	@Column(name="room_id")
+	private String roomId;
+	
+	
+	//0表示游离状态  1表示战斗中
+	@ParamAnnotation
+	@Column
+	private Integer status;
 	
 	@ParamAnnotation
 	@Column(name = "on_line_at")
@@ -157,4 +171,21 @@ public class UserStatus implements Serializable{
 	public void setUpdateAt(DateTime updateAt) {
 		this.updateAt = updateAt;
 	}
+
+	public String getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 }

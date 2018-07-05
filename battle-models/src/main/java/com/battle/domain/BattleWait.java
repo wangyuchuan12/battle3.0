@@ -39,6 +39,9 @@ public class BattleWait implements Serializable{
 	@Column(name="period_id")
 	private String periodId;
 	
+	@Column(name="group_id")
+	private String groupId;
+	
 	@ParamAnnotation
 	@Column(name="maxinum")
 	private Integer maxinum;
@@ -176,6 +179,14 @@ public class BattleWait implements Serializable{
 
 	public void setDanId(String danId) {
 		this.danId = danId;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	public DateTime getCreateAt() {

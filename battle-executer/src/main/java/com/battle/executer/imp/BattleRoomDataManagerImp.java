@@ -1,13 +1,11 @@
 package com.battle.executer.imp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
 import com.battle.domain.BattleQuestionDistribution;
 import com.battle.domain.BattleQuestionDistributionQuestion;
 import com.battle.domain.BattleQuestionDistributionStage;
@@ -50,6 +48,8 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 	
 	@Autowired
 	private BattleQuestionDistributionQuestionService battleQuestionDistributionQuestionService;
+	
+	
 
 	@Override
 	public BattleRoomVo getBattleRoom() {
@@ -91,18 +91,14 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 	}
 
 	@Override
-	public void init(String battleId, String periodId, List<String> userIds,Integer type ,Map<String, Object> data) {
+	public void init(String groupId, List<String> userIds,Integer type ,Map<String, Object> data) {
 		
 		eventManager = new EventManager();
 		Integer stageCount = 10;
 		
 		battleRoom = new BattleRoomVo();
 		
-		battleRoom.setBattleId(battleId);
-		
 		battleRoom.setNum(userIds.size());
-		
-		battleRoom.setPeriodId(periodId);
 		
 		battleRoom.setRangeGogal(1000);
 		
@@ -159,11 +155,9 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		for(String userId:userIds){
 			BattleRoomMemberVo battleRoomMemberVo = new BattleRoomMemberVo();
 			UserInfo userInfo = wxUserInfoService.findOne(userId);
-			battleRoomMemberVo.setBattleId(battleId);
 			battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
 			battleRoomMemberVo.setLimitLove(4);
 			battleRoomMemberVo.setNickname(userInfo.getNickname());
-			battleRoomMemberVo.setPeriodId(periodId);
 			battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
 			battleRoomMemberVo.setRemainLove(4);
 			battleRoomMemberVo.setRoomId(battleRoom.getId());
@@ -180,11 +174,15 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		
 		battleRoom.setMembers(battleRoomMemberVos);
 
-		Pageable pageable = new PageRequest(0, 1);
-		List<BattleQuestionDistribution> battleQuestionDistributions = battleQuestionDistributionService.findAllByBattleIdAndPeriodIdAndStatusByRandom(battleId,periodId,BattleQuestionDistribution.STATUS_IN,pageable);
+		
+		System.out.println("........groupId:"+groupId);
+		List<BattleQuestionDistribution> battleQuestionDistributions = battleQuestionDistributionService.findAllByGroupId(groupId);
+		
+		System.out.println("........battleQuestionDistributions:"+battleQuestionDistributions);
 		BattleQuestionDistribution battleQuestionDistribution;
 		
 		if(battleQuestionDistributions.size()>0){
+			Collections.shuffle(battleQuestionDistributions);
 			battleQuestionDistribution = battleQuestionDistributions.get(0);
 		}else{
 			throw new RuntimeException("battleQuestionDistribution 为空");
@@ -216,7 +214,6 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 				
 				BattlePaperQuestionVo battlePaperQuestionVo = new BattlePaperQuestionVo();
 				battlePaperQuestionVo.setAnswer(battleQuestionDistributionQuestion.getAnswer());
-				battlePaperQuestionVo.setBattleId(battleId);
 				battlePaperQuestionVo.setBattlePeriodId(battleQuestionDistributionQuestion.getBattlePeriodId());
 				battlePaperQuestionVo.setBattleSubjectId(battleQuestionDistributionQuestion.getBattleSubjectId());
 				battlePaperQuestionVo.setImgUrl(battleQuestionDistributionQuestion.getImgUrl());
@@ -268,7 +265,7 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 			battleStage.setStageIndex(battleQuestionDistributionStage.getStageIndex());
 			battleStage.setBattlePaperQuestions(battlePaperQuestionMap);
 			battleStage.setBattlePaperSubjects(battlePaperSubjects);
-			battleStage.setTimeLong(20);
+			battleStage.setTimeLong(10);
 			battleStage.setQuestionIndex(0);
 			battleStageVos.add(battleStage);
 		}
@@ -281,4 +278,19 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		return eventManager;
 	}
 
+	@Override
+	public List<BattleRoomMemberVo> getBattleMembers(Integer... statuses) {
+		List<BattleRoomMemberVo> battleRoomMembers = getBattleMembers();
+		List<BattleRoomMemberVo> validMembers = new ArrayList<>();
+		
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			for(Integer status:statuses){
+				if(battleRoomMember.getStatus().intValue()==status.intValue()){
+					validMembers.add(battleRoomMember);
+					break;
+				}
+			}
+		}
+		return validMembers;
+	}
 }

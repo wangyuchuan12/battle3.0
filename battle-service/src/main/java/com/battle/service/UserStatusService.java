@@ -20,7 +20,6 @@ public class UserStatusService {
 	@Autowired
 	private SimpleCacheManager ehRedisCacheManager;
 
-	@Cacheable(value="userCache",key="#p0")
 	public UserStatus findOne(String id) {
 		
 		return userStatusDao.findOne(id);

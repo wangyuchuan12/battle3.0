@@ -163,8 +163,9 @@ public class BattleWaitApi {
 						
 						users.add(user);
 					}
+					data.put("danId",battleWait.getDanId());
 					data.put("users", users);
-					battleRoomFactory.init(battleWait.getBattleId(),battleWait.getPeriodId(),userIds,BattleRoomVo.DAN_TYPE,data);
+					battleRoomFactory.init(battleWait.getGroupId(),userIds,BattleRoomVo.DAN_TYPE,data);
 					
 				}
 			}, 4, TimeUnit.SECONDS);

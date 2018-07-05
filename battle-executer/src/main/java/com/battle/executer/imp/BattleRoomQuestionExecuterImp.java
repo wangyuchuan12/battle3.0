@@ -2,13 +2,9 @@ package com.battle.executer.imp;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.domain.Question;
@@ -19,6 +15,7 @@ import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.vo.BattlePaperOptionVo;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
@@ -30,7 +27,6 @@ import com.battle.executer.vo.QuestionAnswerResultVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.battle.service.QuestionOptionService;
 import com.battle.service.QuestionService;
-import com.battle.socket.MessageVo;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.service.WxUserInfoService;
@@ -49,8 +45,8 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	@Autowired
 	private QuestionService questionService;
 	
-	@Autowired
-	private ScheduledExecutorService scheduledExecutorService;
+
+	private ScheduledExecuter scheduledExecuter;
 	
 	@Autowired
 	private AccountService accountService;
@@ -61,6 +57,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	public void init(ExecuterStore executerStore){
 		this.battleRoomDataManager = executerStore.getBattleRoomDataManager();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
+		this.scheduledExecuter = executerStore.getScheduledExecuter();
 	}
 	
 	@Override
@@ -190,7 +187,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 			battleRoomPublish.publishShowQuestion(battlePaperQuestion);
 			
 			final BattleStageVo inBattleStageVo = battleStageVo;
-			scheduledExecutorService.schedule(new Runnable() {
+			scheduledExecuter.schedule(new Runnable() {
 				
 				@Override
 				public void run() {
@@ -198,7 +195,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 					startQuestion();
 					
 				}
-			}, battlePaperQuestion.getTimeLong(), TimeUnit.SECONDS);
+			}, battlePaperQuestion.getTimeLong()+1);
 		}else{
 			EventManager eventManager = battleRoomDataManager.getEventManager();
 			eventManager.publishEvent(Event.SUBMIT_RESULT, null);
@@ -297,7 +294,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 
 	@Override
 	public void roomEnd() {
-		scheduledExecutorService = null;
+		
 	}
 
 }

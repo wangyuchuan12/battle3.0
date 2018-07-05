@@ -18,4 +18,6 @@ public interface BattleQuestionDistributionDao extends CrudRepository<BattleQues
 			@Param("status") Integer status,
 			Pageable pageable);
 
+	List<BattleQuestionDistribution> findAllByGroupId(String groupId);
+
 }

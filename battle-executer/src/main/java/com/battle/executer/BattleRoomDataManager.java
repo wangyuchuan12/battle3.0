@@ -16,11 +16,13 @@ public interface BattleRoomDataManager {
 	
 	public List<BattleRoomMemberVo> getBattleMembers();
 	
+	public List<BattleRoomMemberVo> getBattleMembers(Integer ...statuses);
+	
 	public BattleRoomMemberVo getBattleMemberByUserId(String userId);
 	
 	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
 	
 	public EventManager getEventManager();
 	
-	public void init(String battleId,String periodId,List<String> userIds,Integer type,Map<String, Object> data);
+	public void init(String groupId,List<String> userIds,Integer type,Map<String, Object> data);
 }

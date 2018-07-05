@@ -1,8 +1,6 @@
 package com.battle.executer.imp;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.executer.BattleEndHandle;
@@ -16,6 +14,8 @@ import com.battle.executer.EventCallback;
 import com.battle.executer.EventHandle;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.ScheduledExecuter;
+import com.battle.executer.vo.BattleRoomMemberVo;
 
 public class EventHandleImp implements EventHandle{
 
@@ -29,8 +29,7 @@ public class EventHandleImp implements EventHandle{
 	
 	private BattleEndHandle battleEndHandle;
 	
-	@Autowired
-	private ScheduledExecutorService scheduledExecutorService;
+	private ScheduledExecuter scheduledExecuter;
 	
 	@Autowired
 	private BattleRoomConnector battleRoomConnector;
@@ -41,6 +40,7 @@ public class EventHandleImp implements EventHandle{
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
 		this.battleRoomExecuter = executerStore.getBattleRoomExecuter();
 		this.battleEndHandle = executerStore.getBattleEndHandle();
+		this.scheduledExecuter = executerStore.getScheduledExecuter();
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		Event eventRest = new Event();
 		eventRest.setCode(Event.REST_END_CODE);
@@ -80,7 +80,21 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data) {
 				battleRoomDataManager.getBattlePaper().setStageIndex(battleRoomDataManager.getBattlePaper().getStageIndex()+1);
 				if(battleRoomDataManager.getBattleRoom().getStageCount()>=battleRoomDataManager.getBattlePaper().getStageIndex()){
-					battleRoomStageExecuter.startStage();
+					List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
+					System.out.println("...............battleRoomMembers:"+battleRoomMemberVos);
+					boolean flag = false;
+					for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
+						System.out.println("...............battleRoomMember:"+battleRoomMember.getRemainLove()+",nickname:"+battleRoomMember.getNickname());
+						if(battleRoomMember.getRemainLove()>0){
+							flag = true;
+							break;
+						}
+					}
+					if(flag){
+						battleRoomStageExecuter.startStage();
+					}else{
+						eventManager.publishEvent(Event.ROOM_END_CODE, null);
+					}
 				}else{
 					eventManager.publishEvent(Event.ROOM_END_CODE, null);
 				}
@@ -125,9 +139,9 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data) {
 				battleRoomExecuter.endRoom();
 				battleEndHandle.end(battleRoomDataManager);
+				scheduledExecuter.shutdown();
 				battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());
 				battleRoomQuestionExecuter.roomEnd();
-				scheduledExecutorService = null;
 
 				battleRoomDataManager = null;
 				
@@ -136,8 +150,6 @@ public class EventHandleImp implements EventHandle{
 				battleRoomQuestionExecuter = null;
 				
 				battleRoomExecuter = null;
-				
-				scheduledExecutorService = null;
 			}
 		});
 	}
@@ -150,13 +162,13 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data) {
 				battleRoomExecuter.submitResult();
 				
-				scheduledExecutorService.schedule(new Runnable() {
+				scheduledExecuter.schedule(new Runnable() {
 					
 					@Override
 					public void run() {
 						eventManager.publishEvent(Event.REST_END_CODE, null);
 					}
-				}, 5, TimeUnit.SECONDS);
+				}, 5);
 			}
 		});
 	}

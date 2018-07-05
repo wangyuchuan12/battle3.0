@@ -2,32 +2,26 @@ package com.battle.executer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.battle.executer.vo.QuestionAnswerVo;
 @Service
-public  class BattleRoomConnector {
+public  class BattleRoomConnector{
 	private Map<String, BattleRoomExecuter> battleRoomExecuterMap = new ConcurrentHashMap<>();
-	
-	@Autowired
-	private ScheduledExecutorService executorService; 
+
 	
 	final static Logger logger = LoggerFactory.getLogger(BattleRoomConnector.class);
 	
 	public void registerExecuter(final String roomId,BattleRoomExecuter battleRoomExecuter){
 		
 		
-		System.out.println("................registerExecuter");
-		System.out.println("...........roomId:"+roomId);
+		
+		System.out.println("***********************...........registerExecuter........roomId:"+roomId+",battleRoomExecuter:"+battleRoomExecuter);
 		battleRoomExecuterMap.put(roomId, battleRoomExecuter);
 		
-		executorService.schedule(new Runnable() {
+		/*scheduledExecutorService.schedule(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -36,22 +30,18 @@ public  class BattleRoomConnector {
 				
 				
 			}
-		}, 1, TimeUnit.HOURS);
+		}, 1, TimeUnit.HOURS);*/
+		
 	
 	}
 	
 	public void removeExecuter(final String roomId){
-		System.out.println("...........roomId:"+roomId);
-		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
-		System.out.println("...........battleRoomExecuter:"+battleRoomExecuter);
 		battleRoomExecuterMap.remove(roomId);
-		battleRoomExecuter = null;
-		System.gc();
+		//scheduledExecutorService.shutdown();
 	}
 	
 	
 	public void startRoom(String roomId){
-		System.out.println("...........roomId:"+roomId);
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		battleRoomExecuter.startRoom();
 	}
@@ -62,13 +52,14 @@ public  class BattleRoomConnector {
 	}
 	
 	public void signOut(String roomId,String userId){
-		System.out.println("...........roomId:"+roomId);
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
-		battleRoomExecuter.signOut(userId);
+		
+		if(battleRoomExecuter!=null){
+			battleRoomExecuter.signOut(userId);
+		}
 	}
 	
 	public void subjectReady(String roomId,String userId){
-		System.out.println("...........roomId:"+roomId);
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		battleRoomExecuter.subjectReady(userId);
 	}
@@ -83,22 +74,23 @@ public  class BattleRoomConnector {
 
 
 	public void doNotDouble(String roomId,String userId) {
-		System.out.println("...........roomId:"+roomId);
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		battleRoomExecuter.doNotDouble(userId);
 		
 	}
 	
 	public void endRoom(String roomId){
-		System.out.println("...........roomId:"+roomId);
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		battleRoomExecuter.endRoom();
 		battleRoomExecuterMap.remove(roomId);
 	}
 
 	public void subjectSelect(String roomId, String subjectId, String userId) {
-		System.out.println("...........roomId:"+roomId);
+		
+		
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		
+		
 		battleRoomExecuter.subjectSelect(subjectId,userId);
 	}
 }

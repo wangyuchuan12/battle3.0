@@ -16,7 +16,7 @@ public abstract class BattleRoomFactory {
     public AutowireCapableBeanFactory factory;
 	
 	
-	public ExecuterStore init(String battleId,String periodId,List<String> userIds,Integer type, Map<String, Object> data){
+	public ExecuterStore init(String groupId,List<String> userIds,Integer type, Map<String, Object> data){
 		final BattleRoomDataManager battleRoomDataManager = createBattleRoomDataManager();
 		factory.autowireBean(battleRoomDataManager);
 		final BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
@@ -28,7 +28,10 @@ public abstract class BattleRoomFactory {
 		final BattleRoomStageExecuter battleRoomStageExecuter = createBatteRoomStageExecuter();
 		factory.autowireBean(battleRoomStageExecuter);
 		
-		battleRoomDataManager.init(battleId, periodId, userIds,type,data);
+		final ScheduledExecuter scheduledExecuter = createScheduledExecuter();
+		factory.autowireBean(scheduledExecuter);
+		
+		battleRoomDataManager.init(groupId, userIds,type,data);
 		
 		BattleEndHandle battleEndHandle = null;
 		
@@ -39,42 +42,43 @@ public abstract class BattleRoomFactory {
 		
 		final BattleEndHandle outBattleEndHandle = battleEndHandle;
 		
+		factory.autowireBean(outBattleEndHandle);
 		
 		ExecuterStore executerStore = new ExecuterStore() {
 			
 			@Override
 			public BattleRoomStageExecuter getBattleRoomStageExecuter() {
-				// TODO Auto-generated method stub
 				return battleRoomStageExecuter;
 			}
 			
 			@Override
 			public BattleRoomPublish getBattleRoomPublish() {
-				// TODO Auto-generated method stub
 				return battleRoomPublish;
 			}
 			
 			@Override
 			public BattleRoomExecuter getBattleRoomExecuter() {
-				// TODO Auto-generated method stub
 				return battleRoomExecuter;
 			}
 			
 			@Override
 			public BattleRoomQuestionExecuter getBattleQuestionExecuter() {
-				// TODO Auto-generated method stub
 				return battleRoomQuestionExecuter;
 			}
 
 			@Override
 			public BattleRoomDataManager getBattleRoomDataManager() {
-				// TODO Auto-generated method stub
 				return battleRoomDataManager;
 			}
 
 			@Override
 			public BattleEndHandle getBattleEndHandle() {
 				return outBattleEndHandle;
+			}
+
+			@Override
+			public ScheduledExecuter getScheduledExecuter() {
+				return scheduledExecuter;
 			}
 		};
 		
@@ -103,4 +107,6 @@ public abstract class BattleRoomFactory {
 	protected  abstract BattleRoomQuestionExecuter createBattleRoomQuestionExecuter();
 	
 	protected abstract BattleRoomStageExecuter createBatteRoomStageExecuter();
+	
+	protected abstract ScheduledExecuter createScheduledExecuter();
 }

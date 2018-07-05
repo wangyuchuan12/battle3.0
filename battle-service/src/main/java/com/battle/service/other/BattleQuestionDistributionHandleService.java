@@ -3,7 +3,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,9 +23,6 @@ import com.wyc.common.util.CommonUtil;
 
 @Service
 public class BattleQuestionDistributionHandleService {
-
-	@Autowired
-	private SimpleCacheManager simpleCacheManager;
 	
 	@Autowired
 	private BattleQuestionDistributionService battleQuestionDistributionService;

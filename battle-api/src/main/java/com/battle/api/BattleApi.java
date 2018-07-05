@@ -40,8 +40,7 @@ public class BattleApi {
 		String optionId = httpServletRequest.getParameter("optionId");
 		String type = httpServletRequest.getParameter("type");
 		
-		System.out.println("roomId:"+roomId+",answer:"+answer+",optionId:"+optionId+",type:"+type);
-		
+
 		QuestionAnswerVo questionAnswer = new QuestionAnswerVo();
 		questionAnswer.setMyAnswer(answer);
 		questionAnswer.setOptionId(optionId);

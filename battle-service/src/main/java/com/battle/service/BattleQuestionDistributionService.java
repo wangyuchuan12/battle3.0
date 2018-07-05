@@ -46,4 +46,10 @@ public class BattleQuestionDistributionService {
 		battleQuestionDistributionDao.save(battleQuestionDistribution);
 		
 	}
+
+	public List<BattleQuestionDistribution> findAllByGroupId(String groupId) {
+		
+		return battleQuestionDistributionDao.findAllByGroupId(groupId);
+		
+	}
 }

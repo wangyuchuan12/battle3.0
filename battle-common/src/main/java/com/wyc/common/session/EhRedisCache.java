@@ -56,23 +56,16 @@ public class EhRedisCache implements Cache{
 
 	    @Override
 	    public ValueWrapper get(Object key) {
-	    	ObjectMapper objectMapper  = new ObjectMapper();
 	         Element value = ehCache.get(key);
 	         LOG.info("Cache L1 (ehcache) :{}={}",key,value);
-	         try{
-	        	 String str = objectMapper.writeValueAsString(value);
-	         }catch(Exception e){
-	        	 e.printStackTrace();
-	         }
-	         
-	         
+
 	         if (value!=null) {
 	        	 SimpleValueWrapper valueWrapper =  (value != null ? new SimpleValueWrapper(value.getObjectValue()) : null);
 	        	 
 	        	 if(valueWrapper!=null){
 	        		 put(key, value.getObjectValue());
 	        	 }
-	        	 
+	        	 LOG.debug("从本地获取缓存{}={}",key,value.getObjectValue());
 	             return valueWrapper;
 	         } 
 	         //TODO 这样会不会更好？访问10次EhCache 强制访问一次redis 使得数据不失效
@@ -95,7 +88,7 @@ public class EhRedisCache implements Cache{
 	            }
 	        },true);  
 	         ehCache.put(new Element(key, objectValue));//取出来之后缓存到本地
-	         LOG.info("Cache L2 (redis) :{}={}",key,objectValue);
+	         LOG.debug("存入缓存到本地{}={}",key,objectValue);
 	         return  (objectValue != null ? new SimpleValueWrapper(objectValue) : null);
 
 	    }
@@ -104,21 +97,25 @@ public class EhRedisCache implements Cache{
 	    public void put(Object key, Object value) {
 	    	if(value!=null){
 	    		
-		        ehCache.put(new Element(key, value));
-		        final String keyStr =  key.toString(); 
-		        final Object valueStr = value;
-		        redisTemplate.execute(new RedisCallback<Long>() {  
-		            public Long doInRedis(RedisConnection connection)  
-		                    throws DataAccessException {  
-		                byte[] keyb = keyStr.getBytes();  
-		                byte[] valueb = toByteArray(valueStr);  
-		                connection.set(keyb, valueb);  
-		                if (liveTime > 0) {  
-		                    connection.expire(keyb, liveTime);  
-		                }  
-		                return 1L;  
-		            }  
-		        },true); 
+	    		try{
+			        ehCache.put(new Element(key, value));
+			        final String keyStr =  key.toString(); 
+			        final Object valueStr = value;
+			        redisTemplate.execute(new RedisCallback<Long>() {  
+			            public Long doInRedis(RedisConnection connection)  
+			                    throws DataAccessException {  
+			                byte[] keyb = keyStr.getBytes();  
+			                byte[] valueb = toByteArray(valueStr);  
+			                connection.set(keyb, valueb);  
+			                if (liveTime > 0) {  
+			                    connection.expire(keyb, liveTime);  
+			                }  
+			                return 1L;  
+			            }  
+			        },true); 
+	    		}catch(Exception e){
+	    			LOG.error("保存缓存数据出错：{}",e);
+	    		}
 	        }
 
 	    }

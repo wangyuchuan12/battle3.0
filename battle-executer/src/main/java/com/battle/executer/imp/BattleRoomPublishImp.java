@@ -27,7 +27,6 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	private MessageHandler messageHandler;
 	
 	private BattleRoomDataManager battleRoomDataManager;
-
 	
 	final static Logger logger = LoggerFactory.getLogger(BattleRoomPublishImp.class);
 	
@@ -35,11 +34,12 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	public void init(ExecuterStore executerStore) {
 		
 		this.battleRoomDataManager = executerStore.getBattleRoomDataManager();
+		
 	}
 	
 	@Override
 	public void publishRoomEnd() {
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			MessageVo messageVo = new MessageVo();
 			messageVo.setCode(MessageVo.PUBLISH_ROOM_END);
@@ -52,11 +52,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			messageVo.setType(MessageVo.USERS_TYPE);
 			messageVo.setData(data);
 			messageVo.setUserIds(userIds);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
+			publishMessage(messageVo);
 		}
 	}
 
@@ -65,7 +61,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		BattleRoomVo battleRoomVo = battleRoomDataManager.getBattleRoom();
 		
 		
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			
 			Map<String, Object> data = new HashMap<>();
@@ -84,16 +80,9 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			messageVo.setType(MessageVo.USERS_TYPE);
 			messageVo.setData(battleRoomVo);
 			messageVo.setUserIds(userIds);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
-		}
-		
-		
-		
-		
+			publishMessage(messageVo);
+			
+		}	
 	}
 
 	@Override
@@ -104,7 +93,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.PUBLISH_ROOM_START);
 		
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			userIds.add(battleRoomMemberVo.getUserId());
 		}
@@ -112,12 +101,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		messageVo.setUserIds(userIds);
 		messageVo.setType(MessageVo.USERS_TYPE);
 		messageVo.setData(publishBattleRoomMemberVo);
-		try{
-			messageHandler.sendMessage(messageVo);
-		}catch(Exception e){
-			logger.error("{}",e);
-		}
-		
+		publishMessage(messageVo);
 	}
 
 	@Override
@@ -132,7 +116,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.SHOW_SUBJECTS);
 		
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			userIds.add(battleRoomMemberVo.getUserId());
 		}
@@ -147,18 +131,14 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		messageVo.setType(MessageVo.USERS_TYPE);
 		messageVo.setData(data);
 		messageVo.setUserIds(userIds);
-		try{
-			messageHandler.sendMessage(messageVo);
-		}catch(Exception e){
-			logger.error("{}",e);
-		}
+		publishMessage(messageVo);
 		
 	}
 	
 	
 	@Override
 	public void publishShowSubjectStatus(BattlePaperSubjectVo battlePaperSubject){
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			List<String> userIds = new ArrayList<>();
 			MessageVo messageVo = new MessageVo();
@@ -181,18 +161,14 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			messageVo.setType(MessageVo.USERS_TYPE);
 			messageVo.setData(data);
 			messageVo.setUserIds(userIds);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
+			publishMessage(messageVo);
 		}
 		
 	}
 
 	@Override
 	public void publishShowQuestion(BattlePaperQuestionVo battlePaperQuestion) {
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		List<String> userIds = new ArrayList<>();
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			userIds.add(battleRoomMemberVo.getUserId());
@@ -203,11 +179,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		messageVo.setType(MessageVo.USERS_TYPE);
 		messageVo.setUserIds(userIds);
 		
-		try{
-			messageHandler.sendMessage(messageVo);
-		}catch(Exception e){
-			logger.error("{}",e);
-		}
+		publishMessage(messageVo);
 		
 	}
 
@@ -217,7 +189,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.PUBLISH_DO_ANSWER);
 		
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			userIds.add(battleRoomMemberVo.getUserId());
 		}
@@ -226,18 +198,14 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		
 		messageVo.setUserIds(userIds);
 		
-		try{
-			messageHandler.sendMessage(messageVo);
-		}catch(Exception e){
-			logger.error("{}",e);
-		}
+		publishMessage(messageVo);
 		
 	}
 
 	@Override
 	public void publishRest() {
 		Integer stageIndex = battleRoomDataManager.getBattlePaper().getStageIndex();
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			List<String> userIds = new ArrayList<>();
 			MessageVo messageVo = new MessageVo();
@@ -261,18 +229,13 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			data.put("members", battleRoomMemberVos);
 			data.put("memberInfo", memberInfo);
 			messageVo.setData(data);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
+			publishMessage(messageVo);
 		}
 	}
 
 	@Override
 	public void publishReward(BattleRewardVo battleReward) {
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
-		
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			Map<String, Object> data = new HashMap<>();
 			data.put("cnRightCount", battleReward.getCnRightCount());
@@ -295,11 +258,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			messageVo.setData(data);
 			messageVo.setType(MessageVo.USERS_TYPE);
 			messageVo.setUserIds(userIds);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
+			publishMessage(messageVo);
 		}
 		
 	}
@@ -314,6 +273,10 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		Map<String, Object> data = new HashMap<>();
 		messageVo.setData(data);
 		messageVo.setUserIds(userIds);
+		publishMessage(messageVo);
+	}
+	
+	private void publishMessage(MessageVo messageVo){
 		try{
 			messageHandler.sendMessage(messageVo);
 		}catch(Exception e){
@@ -324,7 +287,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	@Override
 	public void publishMembers() {
 		
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
 			List<String> userIds = new ArrayList<>();
 			userIds.add(battleRoomMember.getUserId());
@@ -339,11 +302,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			data.put("memberInfo", battleRoomMember);
 			data.put("members", battleRoomMemberVos);
 			messageVo.setData(data);
-			try{
-				messageHandler.sendMessage(messageVo);
-			}catch(Exception e){
-				logger.error("{}",e);
-			}
+			publishMessage(messageVo);
 		}
 		
 		

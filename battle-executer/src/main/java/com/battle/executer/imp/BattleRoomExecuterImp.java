@@ -1,12 +1,17 @@
 package com.battle.executer.imp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.battle.domain.UserStatus;
 import com.battle.executer.BattleRoomDataManager;
 import com.battle.executer.BattleRoomExecuter;
 import com.battle.executer.BattleRoomPublish;
@@ -22,6 +27,7 @@ import com.battle.executer.vo.BattleRoomRewardRecord;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerVo;
+import com.battle.service.UserStatusService;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.util.CommonUtil;
@@ -38,6 +44,13 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private PlatformTransactionManager platformTransactionManager;
+	
+	@Autowired
+	private UserStatusService userStatusService;
+
 	@Override
 	public void answerQuestion(QuestionAnswerVo questionAnswer) {
 		battleRoomQuestionExecuter.answerQuestion(questionAnswer);
@@ -45,7 +58,13 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 	@Override
 	public void signOut(String userId) {
-		// TODO Auto-generated method stub
+		
+		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			if(battleRoomMember.getUserId().equals(userId)){
+				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_OUT);
+			}
+		}
 		
 	}
 
@@ -80,12 +99,30 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	public void startRoom() {
 		battleRoomPublish.publishRoomStart();
 		eventManager.publishEvent(Event.START_ROOM_CODE, null);
+		
+		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+		
+		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+		
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			UserStatus userStatus = userStatusService.findOneByUserId(battleRoomMember.getUserId());
+			userStatus.setRoomId(battleRoom.getId());
+			userStatus.setStatus(UserStatus.IN_STATUS);
+			userStatusService.update(userStatus);
+		}
 	}
 
 	@Override
 	public void endRoom() {
 		
-		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();//事务定义类
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		
+		TransactionStatus transactionStatus = platformTransactionManager.getTransaction(def);
+
+		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+		
+		
 		List<BattleRoomRewardRecord> battleRoomRewardRecords = battleRoomDataManager.getBattleRoom().getBattleRoomRewardRecords();
 		Map<Integer, BattleRoomRewardRecord> battleRoomRewardRecordMap = new HashMap<>();
 		for(BattleRoomRewardRecord battleRoomRewardRecord:battleRoomRewardRecords){
@@ -117,14 +154,18 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				battleRoomMember.setRewardLove(battleRoomRewardRecord.getRewardLove());
 				battleRoomMember.setRank(battleRoomRewardRecord.getRank());
 				
-				Account account = accountService.fineOneSync(battleRoomMember.getAccountId());
-				Long wisdomCount = account.getWisdomCount();
-				Integer loveCount = account.getLoveLife();
-				wisdomCount = wisdomCount+battleRoomMember.getRewardBean();
-				loveCount = loveCount + battleRoomMember.getRewardLove();
-				account.setWisdomCount(wisdomCount);
-				account.setLoveLife(loveCount);
-				accountService.update(account);
+				try{
+					Account account = accountService.fineOneSync(battleRoomMember.getAccountId());
+					Long wisdomCount = account.getWisdomCount();
+					Integer loveCount = account.getLoveLife();
+					wisdomCount = wisdomCount+battleRoomMember.getRewardBean();
+					loveCount = loveCount + battleRoomMember.getRewardLove();
+					account.setWisdomCount(wisdomCount);
+					account.setLoveLife(loveCount);
+					accountService.update(account);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 				
 			}else{
 				battleRoomMember.setRewardBean(0);
@@ -140,6 +181,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			}
 		}
 		battleRoomPublish.publishRoomEnd();
+		
+		platformTransactionManager.commit(transactionStatus);
 		
 	}
 

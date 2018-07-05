@@ -73,6 +73,10 @@ public class BattleDan implements Serializable{
 	@Column(name="period_id")
 	private String periodId;
 	
+	@ParamAnnotation
+	@Column(name="group_id")
+	private String groupId;
+	
 	//名额数量
 	@ParamAnnotation
 	@Column
@@ -265,6 +269,14 @@ public class BattleDan implements Serializable{
 
 	public void setProcessGogal(Integer processGogal) {
 		this.processGogal = processGogal;
+	}
+	
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	public DateTime getCreateAt() {

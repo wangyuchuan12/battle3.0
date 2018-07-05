@@ -35,6 +35,9 @@ public class BattleQuestionDistribution {
 	@Column
 	private Integer status;
 	
+	@Column(name="group_id")
+	private String groupId;
+	
 	@ParamAnnotation
 	@Column(name = "last_flush_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -101,6 +104,15 @@ public class BattleQuestionDistribution {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+	
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	public DateTime getCreateAt() {

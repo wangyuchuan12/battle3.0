@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
+
+import com.battle.domain.UserStatus;
 import com.battle.socket.service.UserStatusManager;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.wx.domain.UserInfo;
@@ -48,6 +50,10 @@ public class WebSocketManager {
 	public WebSocketSession get(String token){
 		WebSocketSession webSocketSession = userStatusManager.getWebSocketSession(token);
 		return webSocketSession;
+	}
+	
+	public UserStatus getUserStatus(String token){
+		return userStatusManager.getUserStatus(token);
 	}
 	
 	public void downLine(String token){

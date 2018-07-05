@@ -15,6 +15,7 @@ import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.BattleRoomStageExecuter;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.ScheduledExecuter;
 
 @Service
 public class BattleRoomFactoryImp extends BattleRoomFactory{
@@ -25,34 +26,29 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	@Autowired
 	private BattleRoomConnector battleRoomConnetor;
 	
-	private BattleRoomExecuter battleRoomExecuter;
-	
-	private BattleRoomStageExecuter battleRoomStageExecuter;
-	
-	private BattleRoomDataManager battleRoomDataManager;
-	
-	private BattleRoomQuestionExecuter battleRoomQuestionExecuter;
-	
-	private BattleRoomPublish battleRoomPublish;
-	
 	@Override
-	public ExecuterStore init(String battleId,String periodId,List<String> userIds,Integer type,Map<String, Object> data) {
-		ExecuterStore executerStore =  super.init(battleId,periodId,userIds,type,data);
+	public ExecuterStore init(String groupId,List<String> userIds,Integer type,Map<String, Object> data) {
 		
-		BattleRoomDataManager battleRoomDataManager = executerStore.getBattleRoomDataManager();
 		
-		BattleRoomExecuter battleRoomExecuter = executerStore.getBattleRoomExecuter();
-		
-		battleRoomConnetor.registerExecuter(battleRoomDataManager.getBattleRoom().getId(), battleRoomExecuter);
-		
-		return executerStore;
+		try{
+			ExecuterStore executerStore =  super.init(groupId,userIds,type,data);
+			
+			BattleRoomDataManager battleRoomDataManager = executerStore.getBattleRoomDataManager();
+			
+			BattleRoomExecuter battleRoomExecuter = executerStore.getBattleRoomExecuter();
+			
+			battleRoomConnetor.registerExecuter(battleRoomDataManager.getBattleRoom().getId(), battleRoomExecuter);
+			return executerStore;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override
 	protected BattleRoomExecuter createBatteRoomExecuter() {
 		BattleRoomExecuter battleRoomExecuter = new BattleRoomExecuterImp();
 		factory.autowireBean(battleRoomExecuter);
-		this.battleRoomExecuter = battleRoomExecuter;
 		return battleRoomExecuter;
 	}
 	
@@ -60,14 +56,12 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	protected BattleRoomStageExecuter createBatteRoomStageExecuter() {
 		BattleRoomStageExecuter battleRoomStageExecuter = new BatttleRoomStageExecuterImp();
 		factory.autowireBean(battleRoomStageExecuter);
-		this.battleRoomStageExecuter = battleRoomStageExecuter;
 		return battleRoomStageExecuter;
 	}
 
 	@Override
 	protected BattleRoomDataManager createBattleRoomDataManager() {
 		BattleRoomDataManager battleRoomDataManager = new BattleRoomDataManagerImp();
-		this.battleRoomDataManager = battleRoomDataManager;
 		return battleRoomDataManager;
 	}
 
@@ -75,7 +69,6 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	protected BattleRoomPublish createBattleRoomPublish() {
 		BattleRoomPublish battleRoomPublish = new BattleRoomPublishImp();
 		factory.autowireBean(battleRoomPublish);
-		this.battleRoomPublish = battleRoomPublish;
 		return battleRoomPublish;
 	}
 
@@ -83,8 +76,13 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	protected BattleRoomQuestionExecuter createBattleRoomQuestionExecuter() {
 		BattleRoomQuestionExecuter battleRoomQuestionExecuter = new BattleRoomQuestionExecuterImp();
 		factory.autowireBean(battleRoomQuestionExecuter);
-		this.battleRoomQuestionExecuter = battleRoomQuestionExecuter;
 		return battleRoomQuestionExecuter;
+	}
+
+	@Override
+	protected ScheduledExecuter createScheduledExecuter() {
+		ScheduledExecuter scheduledExecuter = new ScheduledExecuterImp();
+		return scheduledExecuter;
 	}
 
 	
