@@ -1,4 +1,5 @@
 package com.battle.service.other;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +72,12 @@ public class BattleQuestionDistributionHandleService {
 			Integer subjectCount = battleQuestionDistributionStage.getSubjectCount();
 			Collections.shuffle(battleSubjects);
 			
-			List<BattleSubject> subSubjects = battleSubjects.subList(0, subjectCount);
+			List<BattleSubject> subSubjects = new ArrayList<>();
+			if(subjectCount<battleSubjects.size()){
+				subSubjects = battleSubjects.subList(0, subjectCount);
+			}else{
+				subSubjects = battleSubjects;
+			}
 			
 			Pageable pageable2 = new PageRequest(0, averageQuestionCount);
 			int index = 0;
@@ -118,7 +124,10 @@ public class BattleQuestionDistributionHandleService {
 						battleQuestionDistributionQuestion.setAnswer(battleQuestionDistributionQuestion.getRightAnswer());
 					}
 					
-					battleQuestionDistributionQuestionService.add(battleQuestionDistributionQuestion);
+					Integer count = battleQuestionDistributionQuestionService.countByQuestionIdAndDistributionId(battleQuestion.getQuestionId(),battleQuestionDistribution.getId());
+					if(count==null||count==0){
+						battleQuestionDistributionQuestionService.add(battleQuestionDistributionQuestion);
+					}
 				}
 			}
 			

@@ -1,9 +1,14 @@
 package com.battle.socket;
 import com.alibaba.druid.support.json.JSONUtils;
+import com.battle.domain.UserStatus;
+import com.battle.socket.service.UserStatusManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -17,7 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * @author xiaojf 2017/3/2 9:55.
  */
 @Service
-public class SocketHandler extends TextWebSocketHandler {
+public class SocketHandler extends TextWebSocketHandler implements ApplicationEventPublisherAware {
     @Autowired
     private AutowireCapableBeanFactory factory;
     
@@ -26,6 +31,11 @@ public class SocketHandler extends TextWebSocketHandler {
     
     @Autowired
     private WebSocketManager webSocketManager;
+    
+    @Autowired
+    private UserStatusManager userStatusManager;
+    
+    private ApplicationEventPublisher applicationEventPublisher;
     
     final static Logger logger = LoggerFactory.getLogger(SocketHandler.class);
     @Override
@@ -98,15 +108,30 @@ public class SocketHandler extends TextWebSocketHandler {
 	                    		 System.out.println("..........sendMessage:"+msg);
 	                    		session.sendMessage(new TextMessage(msg.getBytes()));
 	                    	}catch(Exception e){
-	                    		e.printStackTrace();
+	                    	
 	                    		logger.error("信息发生错误 {}",e);
+	                    		
+	                    		
+	                    		UserStatus userStatus = userStatusManager.getUserStatus(acceptor);
+	                    		
+	                    		applicationEventPublisher.publishEvent(new DownEvent(userStatus));
+	                    		throw e;
 	                    	}
 	                    }
 	                }
             	}else{
+            		UserStatus userStatus = userStatusManager.getUserStatus(acceptor);
+            		applicationEventPublisher.publishEvent(new DownEvent(userStatus));
             		logger.error("连接已经关闭");
             	}
             }
         }
     }
+
+	@Override
+	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+		
+		this.applicationEventPublisher = applicationEventPublisher;
+		
+	}
 }

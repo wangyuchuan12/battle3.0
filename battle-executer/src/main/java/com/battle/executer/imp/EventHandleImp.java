@@ -81,16 +81,13 @@ public class EventHandleImp implements EventHandle{
 				battleRoomDataManager.getBattlePaper().setStageIndex(battleRoomDataManager.getBattlePaper().getStageIndex()+1);
 				if(battleRoomDataManager.getBattleRoom().getStageCount()>=battleRoomDataManager.getBattlePaper().getStageIndex()){
 					List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
-					System.out.println("...............battleRoomMembers:"+battleRoomMemberVos);
-					boolean flag = false;
+					int liveNum = 0;
 					for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
-						System.out.println("...............battleRoomMember:"+battleRoomMember.getRemainLove()+",nickname:"+battleRoomMember.getNickname());
 						if(battleRoomMember.getRemainLove()>0){
-							flag = true;
-							break;
+							liveNum++;
 						}
 					}
-					if(flag){
+					if(liveNum>1){
 						battleRoomStageExecuter.startStage();
 					}else{
 						eventManager.publishEvent(Event.ROOM_END_CODE, null);
@@ -137,19 +134,24 @@ public class EventHandleImp implements EventHandle{
 		eventManager.addCallback(Event.ROOM_END_CODE, new EventCallback() {
 			@Override
 			public void callback(Map<String, Object> data) {
-				battleRoomExecuter.endRoom();
-				battleEndHandle.end(battleRoomDataManager);
-				scheduledExecuter.shutdown();
-				battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());
-				battleRoomQuestionExecuter.roomEnd();
-
-				battleRoomDataManager = null;
 				
-				battleRoomStageExecuter = null;
-				
-				battleRoomQuestionExecuter = null;
-				
-				battleRoomExecuter = null;
+				try{
+					battleRoomExecuter.endRoom();
+					battleEndHandle.end(battleRoomDataManager);
+					scheduledExecuter.shutdown();
+					battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());
+					battleRoomQuestionExecuter.roomEnd();
+	
+					battleRoomDataManager = null;
+					
+					battleRoomStageExecuter = null;
+					
+					battleRoomQuestionExecuter = null;
+					
+					battleRoomExecuter = null;
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		});
 	}

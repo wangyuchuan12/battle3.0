@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.battle.executer.endHandle.DanBattleEndHandle;
+import com.battle.executer.endHandle.RoomBattleEndHandle;
 import com.battle.executer.imp.EventHandleImp;
 import com.battle.executer.vo.BattleRoomVo;
 
@@ -37,6 +38,8 @@ public abstract class BattleRoomFactory {
 		
 		if(type.intValue()==BattleRoomVo.DAN_TYPE){
 			battleEndHandle = new DanBattleEndHandle();
+		}else if(type.intValue()==BattleRoomVo.ROOM_TYPE){
+			battleEndHandle = new RoomBattleEndHandle();
 		}
 		
 		

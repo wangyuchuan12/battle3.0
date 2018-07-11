@@ -25,10 +25,14 @@ public class BattleQuestionDistributionStage {
 	
 	@Column(name="subject_count")
 	private Integer subjectCount;
-	
+
+	//平均每个主题几道题目，不是实际题目数量
 	@Column(name="average_question_count")
 	private Integer averageQuestionCount;
 	
+	//实际答题题目数量
+	@Column(name="question_count")
+	private Integer questionCount;
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -84,6 +88,13 @@ public class BattleQuestionDistributionStage {
 		this.averageQuestionCount = averageQuestionCount;
 	}
 	
+	public Integer getQuestionCount() {
+		return questionCount;
+	}
+
+	public void setQuestionCount(Integer questionCount) {
+		this.questionCount = questionCount;
+	}
 
 	public DateTime getCreateAt() {
 		return createAt;

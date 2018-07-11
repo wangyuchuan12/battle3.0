@@ -1,4 +1,5 @@
 package com.wyc.common.config;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.annotation.ParamClassAnnotation;
+import com.wyc.annotation.UnFilter;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.filter.Filter;
 import com.wyc.common.filter.manager.FilterEntrySession;
@@ -67,7 +69,6 @@ public class ManagerInterceptConfig {
 	
 	public Object aroundAction(ProceedingJoinPoint proceedingJoinPoint)throws Throwable{
 		 Method method = getControllerMethod(proceedingJoinPoint);
-		 System.out.println("...............method:"+method.getName());
 		 Object returnValue = null;
 		 HttpServletRequest httpServletRequest = (HttpServletRequest)proceedingJoinPoint.getArgs()[0];		 
 		 HandlerAnnotation handlerAnnotation2 = method.getAnnotation(HandlerAnnotation.class);

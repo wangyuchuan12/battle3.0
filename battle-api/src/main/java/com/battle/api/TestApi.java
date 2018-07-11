@@ -26,9 +26,12 @@ public class TestApi {
 	@ResponseBody
 	@Transactional
 	public void flushDistribution(HttpServletRequest httpServletRequest){
-		String id = httpServletRequest.getParameter("id");
-		BattleQuestionDistribution battleQuestionDistribution = battleQuestionDistributionHandleService.findOne(id);
-		battleQuestionDistributionHandleService.flushDistribution(battleQuestionDistribution);
+		String ids = httpServletRequest.getParameter("ids");
+		
+		for(String id:ids.split(",")){
+			BattleQuestionDistribution battleQuestionDistribution = battleQuestionDistributionHandleService.findOne(id);
+			battleQuestionDistributionHandleService.flushDistribution(battleQuestionDistribution);
+		}
 	}
 	
 	

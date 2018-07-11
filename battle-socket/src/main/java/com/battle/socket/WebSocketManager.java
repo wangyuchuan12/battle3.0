@@ -38,13 +38,14 @@ public class WebSocketManager {
 	}
 	
 	public void onLine(String token,WebSocketSession webSocketSession){
+		
+		
+		logger.debug("online before");
 		userStatusManager.downLine(token);
 		UserInfo userInfo = userInfoService.findByToken(token);
 		userStatusManager.onLine(userInfo, webSocketSession);
+		logger.debug("online after");
 		
-		logger.debug("onLine,webSocketSession:"+webSocketSession.getId());
-		
-		logger.debug("webSocketSession.isOpen:"+webSocketSession.isOpen());
 	}
 	
 	public WebSocketSession get(String token){

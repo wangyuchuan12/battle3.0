@@ -1,5 +1,4 @@
 package com.battle.executer.imp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -115,6 +114,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public void endRoom() {
 		
+		BattleRoomVo battleroom = battleRoomDataManager.getBattleRoom();
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();//事务定义类
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		
@@ -173,11 +173,23 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				battleRoomMember.setRank(i+1);
 			}
 			
-			
-			if(battleRoomMember.getRemainLove().intValue()>0){
-				battleRoomMember.setIsPass(1);
+			Map<String, Object> data = battleroom.getData();
+			Integer passNum = null;
+			if(data!=null){
+				passNum = (Integer)data.get("passNum");
+			}
+			if(passNum!=null&&passNum>0){
+				if(battleRoomMember.getRank()<=passNum){
+					battleRoomMember.setIsPass(1);
+				}else{
+					battleRoomMember.setIsPass(0);
+				}
 			}else{
-				battleRoomMember.setIsPass(0);
+				if(battleRoomMember.getRemainLove().intValue()>0){
+					battleRoomMember.setIsPass(1);
+				}else{
+					battleRoomMember.setIsPass(0);
+				}
 			}
 		}
 		battleRoomPublish.publishRoomEnd();

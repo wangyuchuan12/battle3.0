@@ -13,7 +13,7 @@ import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
-import com.battle.executer.vo.BattleRewardVo;
+import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
@@ -49,6 +49,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			data.put("rank", battleRoomMemberVo.getRank());
 			data.put("rewardBean", battleRoomMemberVo.getRewardBean());
 			data.put("rewardLove", battleRoomMemberVo.getRewardLove());
+			data.put("isPass", battleRoomMemberVo.getIsPass());
 			messageVo.setType(MessageVo.USERS_TYPE);
 			messageVo.setData(data);
 			messageVo.setUserIds(userIds);
@@ -155,7 +156,6 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 				data.put("isSelf",0);
 			}
 			
-			System.out.println("............battlePaperSubject.getId:"+battlePaperSubject.getId());
 			userIds.add(battleRoomMemberVo.getUserId());
 			
 			messageVo.setType(MessageVo.USERS_TYPE);
@@ -234,7 +234,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	}
 
 	@Override
-	public void publishReward(BattleRewardVo battleReward) {
+	public void publishReward(BattleUserRewardVo battleReward) {
 		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			Map<String, Object> data = new HashMap<>();

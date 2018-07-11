@@ -38,6 +38,9 @@ public class BattleQuestionDistribution {
 	@Column(name="group_id")
 	private String groupId;
 	
+	@Column(name="love_count")
+	private Integer loveCount;
+	
 	@ParamAnnotation
 	@Column(name = "last_flush_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -113,6 +116,14 @@ public class BattleQuestionDistribution {
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+	
+	public Integer getLoveCount() {
+		return loveCount;
+	}
+
+	public void setLoveCount(Integer loveCount) {
+		this.loveCount = loveCount;
 	}
 
 	public DateTime getCreateAt() {

@@ -34,15 +34,10 @@ public class DanBattleEndHandle implements BattleEndHandle{
 		BattleDan battleDan = battleDanService.findOne(danId);
 		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-			
-			System.out.println(".........battleRoomMember.getIsPass:"+battleRoomMember.getIsPass());
 			if(battleRoomMember.getIsPass().intValue()==1){
 				BattleAccountResult battleAccountResult = battleAccountResultService.findOneByUserId(battleRoomMember.getUserId());
-				
-				System.out.println("battleAccountResult.getLevel:"+battleAccountResult.getLevel()+",battleDan.getLevel():"+battleDan.getLevel());
 				if(battleAccountResult.getLevel().intValue()<=battleDan.getLevel().intValue()){
 					battleAccountResult.setLevel(battleDan.getLevel()+1);
-					System.out.println("这里进来了，哈哈哈："+battleAccountResult.getLevel());
 					battleAccountResultService.update(battleAccountResult);
 				}
 			}

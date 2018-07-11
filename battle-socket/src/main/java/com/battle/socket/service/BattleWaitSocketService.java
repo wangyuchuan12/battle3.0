@@ -2,7 +2,6 @@ package com.battle.socket.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ public class BattleWaitSocketService {
 
 	@Autowired
 	private BattleWaitUserService battleWaitUserService;
-	
-	@Autowired
-	private ScheduledExecutorService scheduledExecutorService;
 
 	final static Logger logger = LoggerFactory.getLogger(BattleWaitSocketService.class);
 	public void waitPublish(final BattleWaitUser user)throws Exception{
@@ -31,10 +27,11 @@ public class BattleWaitSocketService {
 		List<String> userIds = new ArrayList<>();
 		for(BattleWaitUser battleWaitUser:battleWaitUsers){
 			String userId = battleWaitUser.getUserId();
-			userIds.add(userId);
+			if(!userId.equals(user.getUserId())){
+				userIds.add(userId);
+			}
 		}
 		
-		System.out.println("............userIds:"+userIds);
 		final MessageVo messageVo = new MessageVo();
 		messageVo.setData(user);
 		messageVo.setType(MessageVo.USERS_TYPE);

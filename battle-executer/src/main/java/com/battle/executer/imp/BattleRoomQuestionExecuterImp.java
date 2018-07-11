@@ -19,7 +19,7 @@ import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.vo.BattlePaperOptionVo;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
-import com.battle.executer.vo.BattleRewardVo;
+import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
@@ -74,8 +74,6 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 		
 		Map<String,List<BattlePaperQuestionVo>> battlePaperQuestionMap = battleStageVo.getBattlePaperQuestions();
 		
-		
-		System.out.println("...........battlePaperQuestionMap:"+battlePaperQuestionMap);
 		List<BattlePaperSubjectVo> battlePaperSubjects = battleStageVo.getBattlePaperSubjects();
 		
 		List<BattlePaperSubjectVo> selectPaperSubjects = new ArrayList<>();
@@ -86,7 +84,6 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 			}
 		}
 		
-		System.out.println("........................111");
 		
 		List<BattlePaperQuestionVo> selectQuestions = new ArrayList<>();
 		
@@ -94,18 +91,20 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 		
 		Collections.shuffle(selectPaperSubjects);
 		
-		System.out.println("........................222");
+		List<String> selectQuestionIds = new ArrayList<>();
+		
 		for(BattlePaperSubjectVo battlePaperSubjectVo:selectPaperSubjects){
 			if(selectQuestions.size()<questionCount){
 				List<BattlePaperQuestionVo> subjectBattlePaperQuestions = battlePaperQuestionMap.get(battlePaperSubjectVo.getId());
 				if(subjectBattlePaperQuestions.size()>0){
 					Collections.shuffle(subjectBattlePaperQuestions);
 					selectQuestions.add(subjectBattlePaperQuestions.get(0));
+					selectQuestionIds.add(subjectBattlePaperQuestions.get(0).getQuestionId());
 				}
 			}
 		}
 		
-		System.out.println("........................333");
+		
 		
 		if(selectQuestions.size()<questionCount){
 			Collections.shuffle(selectPaperSubjects);
@@ -114,22 +113,18 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 					List<BattlePaperQuestionVo> subjectBattlePaperQuestions = battlePaperQuestionMap.get(battlePaperSubjectVo.getId());
 					if(subjectBattlePaperQuestions.size()>0){
 						Collections.shuffle(subjectBattlePaperQuestions);
-						selectQuestions.add(subjectBattlePaperQuestions.get(0));
+						if(!selectQuestionIds.contains(subjectBattlePaperQuestions.get(0).getQuestionId())){
+							selectQuestions.add(subjectBattlePaperQuestions.get(0));
+						}
 					}
 				}
 			}
 		}
 		
-		System.out.println("........................444");
-		
 		for(BattlePaperQuestionVo battlePaperQuestionVo:selectQuestions){
-			
-			System.out.println("........................555");
 			if(battlePaperQuestionVo.getType().intValue()==Question.SELECT_TYPE){
 				List<QuestionOption> questionOptions = questionOptionService.findAllByQuestionId(battlePaperQuestionVo.getQuestionId());
 				List<BattlePaperOptionVo> battlePaperOptionVos = battlePaperQuestionVo.getOptions();
-				
-				System.out.println("...........questionOptions:"+questionOptions);
 				for(QuestionOption questionOption:questionOptions){
 					BattlePaperOptionVo battlePaperOptionVo = new BattlePaperOptionVo();
 					battlePaperOptionVo.setContent(questionOption.getContent());
@@ -145,31 +140,20 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				}
 				
 			}else if(battlePaperQuestionVo.getType().intValue()==Question.FILL_TYPE){
-				
-				System.out.println("........................666");
 				Question question = questionService.findOne(battlePaperQuestionVo.getQuestionId());
-				System.out.println("........................888");
 				if(question!=null){
-					System.out.println("........................999");
 					String fillWords = question.getFillWords();
-					System.out.println("........................000");
 					battlePaperQuestionVo.setFillWords(fillWords);
-					System.out.println("........................1111");
 				}
 			}
 		}
 		
-		System.out.println("........................777");
-		
-		System.out.println("...........startQuestions.selectQuestions:"+selectQuestions);
 		battleStageVo.setSelectBattlePaperQuestions(selectQuestions);
 		startQuestion();
 	}
 	
 	@Override
 	public void startQuestion(){
-		
-		System.out.println("...........startQuestion");
 		List<BattleStageVo> battleStageVos = battleRoomDataManager.getBattlePaper().getBattleStages();
 		Integer stageIndex = battleRoomDataManager.getBattlePaper().getStageIndex();
 		BattleStageVo battleStageVo = null;
@@ -231,7 +215,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 		questionAnswerResultVo.setIsRight(isRight);
 		battleRoomPublish.publishDoAnswer(questionAnswerResultVo);
 		BattleRoomMemberVo battleRoomMember = battleRoomDataManager.getBattleMemberByUserId(questionAnswer.getUserId());
-		BattleRewardVo battleRewardVo = new BattleRewardVo();
+		BattleUserRewardVo battleRewardVo = new BattleUserRewardVo();
 		battleRewardVo.setId(UUID.randomUUID().toString());
 		battleRewardVo.setImgUrl(questionAnswer.getUserImg());
 		battleRewardVo.setNickname(battleRewardVo.getNickname());
@@ -262,7 +246,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				battleRewardVo.setRewardBean(battleRoom.getRewardBean10());
 			}
 			
-			battleRewardVo.setStatus(BattleRewardVo.ADD_STATUS);
+			battleRewardVo.setStatus(BattleUserRewardVo.ADD_STATUS);
 			
 			battleRewardVo.setCnRightCount(cnRightCount);
 			
@@ -275,7 +259,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 			accountService.update(account);
 		}else{
 			battleRoomMember.setCnRightCount(0);
-			battleRewardVo.setStatus(BattleRewardVo.SUB_STATUS);
+			battleRewardVo.setStatus(BattleUserRewardVo.SUB_STATUS);
 			battleRewardVo.setSubBean(battleRoom.getSubBean());
 			UserInfo userInfo = userInfoService.findOne(questionAnswer.getUserId());
 			Account account = accountService.fineOneSync(userInfo.getAccountId());

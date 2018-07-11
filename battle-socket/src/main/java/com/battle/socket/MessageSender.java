@@ -3,7 +3,10 @@ package com.battle.socket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.domain.UserStatus;
@@ -31,6 +34,7 @@ public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 		
 		List<String> excludeUserIds = messageVo.getExcludeUserIds();
 		
+		Map<String, UserStatus> userStatuMap = new HashMap<>();
 		if(messageVo.getType()==MessageVo.USERS_TYPE){
 			List<String> userIds = messageVo.getUserIds();
 			for(String userId:userIds){
@@ -55,9 +59,11 @@ public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 				if(userStatus.getIsLine()==1){
 					if(excludeUserIds==null||excludeUserIds.size()==0){
 						tokens.add(userStatus.getToken());
+						userStatuMap.put(userStatus.getToken(), userStatus);
 					}else{
 						if(!excludeUserIds.contains(userStatus.getUserId())){
 							tokens.add(userStatus.getToken());
+							userStatuMap.put(userStatus.getToken(), userStatus);
 						}
 					}
 				}
@@ -68,7 +74,10 @@ public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 		String value = objectMapper.writeValueAsString(messageVo);
 		
 		if(tokens.size()>0){
-			socketHandler.sendMessage(tokens, Arrays.asList(value));
+			try{
+				socketHandler.sendMessage(tokens, Arrays.asList(value));
+			}catch(Exception e){
+			}
 		}
 		
 	}

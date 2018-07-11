@@ -32,7 +32,7 @@ public class BattleDanUserService {
 	@Autowired
 	private BattleDanUserDao battleDanUserDao;
 	
-	public void saveToRedisByUserIdAndPointId(String userId,String pointId,List<BattleDanUser> battleDanUsers){
+	/*public void saveToRedisByUserIdAndPointId(String userId,String pointId,List<BattleDanUser> battleDanUsers){
 		try{
 			readWriteLock.writeLock().lock();
 			String key = BATTLE_DAN_USERS_BY_USERID_POINTID_KEY;
@@ -44,9 +44,9 @@ public class BattleDanUserService {
 			readWriteLock.writeLock().unlock();
 		}
 		
-	}
+	}*/
 	
-	public List<BattleDanUser> findBattleDanUsersByUserIdAndPointId(String userId,String pointId){
+	/*public List<BattleDanUser> findBattleDanUsersByUserIdAndPointId(String userId,String pointId){
 		
 		try{
 			readWriteLock.readLock().lock();
@@ -70,18 +70,18 @@ public class BattleDanUserService {
 		}
 		return null;
 		
-	}
+	}*/
 
 	public List<BattleDanUser> findAllByUserIdAndPointIdOrderByLevelAsc(String userId, String pointId) {
 		
-		List<BattleDanUser> battleDanUsers = findBattleDanUsersByUserIdAndPointId(userId, pointId);
+		/*List<BattleDanUser> battleDanUsers = findBattleDanUsersByUserIdAndPointId(userId, pointId);
 	
 		
 		if(battleDanUsers!=null&&battleDanUsers.size()>0){
 			return battleDanUsers;
-		}
+		}*/
 				
-		battleDanUsers = battleDanUserDao.findAllByUserIdAndPointId(userId,pointId);
+		List<BattleDanUser> battleDanUsers = battleDanUserDao.findAllByUserIdAndPointId(userId,pointId);
 		
 		Collections.sort(battleDanUsers, new Comparator<BattleDanUser>() {
 			public int compare(BattleDanUser battleDanUser, BattleDanUser battleDanUser2) {  
@@ -89,7 +89,7 @@ public class BattleDanUserService {
             }  
 		});
 		
-		saveToRedisByUserIdAndPointId(userId, pointId, battleDanUsers);
+		//saveToRedisByUserIdAndPointId(userId, pointId, battleDanUsers);
 		
 		return battleDanUsers;
 		
@@ -106,7 +106,7 @@ public class BattleDanUserService {
 	public void update(BattleDanUser battleDanUser) {
 		battleDanUser.setUpdateAt(new DateTime());
 		battleDanUserDao.save(battleDanUser);
-		List<BattleDanUser> battleDanUsers = findAllByUserIdAndPointIdOrderByLevelAsc(battleDanUser.getUserId(), battleDanUser.getPointId());
+		/*List<BattleDanUser> battleDanUsers = findAllByUserIdAndPointIdOrderByLevelAsc(battleDanUser.getUserId(), battleDanUser.getPointId());
 		
 		List<BattleDanUser> battleDanUsers2 = new ArrayList<>();
 		
@@ -116,9 +116,9 @@ public class BattleDanUserService {
 			}else{
 				battleDanUsers2.add(battleDanUser2);
 			}
-		}
+		}*/
 		
-		saveToRedisByUserIdAndPointId(battleDanUser.getUserId(), battleDanUser.getPointId(), battleDanUsers2);
+		//saveToRedisByUserIdAndPointId(battleDanUser.getUserId(), battleDanUser.getPointId(), battleDanUsers2);
 	}
 
 	public BattleDanUser findOne(String id) {

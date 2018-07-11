@@ -115,6 +115,26 @@ public class BattleDan implements Serializable{
 	@Column(name="love_count")
 	private Integer loveCount;
 	
+	private Integer rewardBean1;
+	
+	private Integer rewardBean2;
+	
+	private Integer rewardBean3;
+	
+	private Integer rewardBean4;
+	
+	private Integer rewardBean5;
+	
+	private Integer rewardBean6;
+	
+	private Integer rewardBean7;
+	
+	private Integer rewardBean8;
+	
+	private Integer rewardBean9;
+	
+	private Integer rewardBean10;
+	
 	@ParamAnnotation
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -277,6 +297,88 @@ public class BattleDan implements Serializable{
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+	
+	
+
+	public Integer getRewardBean1() {
+		return rewardBean1;
+	}
+
+	public void setRewardBean1(Integer rewardBean1) {
+		this.rewardBean1 = rewardBean1;
+	}
+
+	public Integer getRewardBean2() {
+		return rewardBean2;
+	}
+
+	public void setRewardBean2(Integer rewardBean2) {
+		this.rewardBean2 = rewardBean2;
+	}
+
+	public Integer getRewardBean3() {
+		return rewardBean3;
+	}
+
+	public void setRewardBean3(Integer rewardBean3) {
+		this.rewardBean3 = rewardBean3;
+	}
+
+	public Integer getRewardBean4() {
+		return rewardBean4;
+	}
+
+	public void setRewardBean4(Integer rewardBean4) {
+		this.rewardBean4 = rewardBean4;
+	}
+
+	public Integer getRewardBean5() {
+		return rewardBean5;
+	}
+
+	public void setRewardBean5(Integer rewardBean5) {
+		this.rewardBean5 = rewardBean5;
+	}
+
+	public Integer getRewardBean6() {
+		return rewardBean6;
+	}
+
+	public void setRewardBean6(Integer rewardBean6) {
+		this.rewardBean6 = rewardBean6;
+	}
+
+	public Integer getRewardBean7() {
+		return rewardBean7;
+	}
+
+	public void setRewardBean7(Integer rewardBean7) {
+		this.rewardBean7 = rewardBean7;
+	}
+
+	public Integer getRewardBean8() {
+		return rewardBean8;
+	}
+
+	public void setRewardBean8(Integer rewardBean8) {
+		this.rewardBean8 = rewardBean8;
+	}
+
+	public Integer getRewardBean9() {
+		return rewardBean9;
+	}
+
+	public void setRewardBean9(Integer rewardBean9) {
+		this.rewardBean9 = rewardBean9;
+	}
+
+	public Integer getRewardBean10() {
+		return rewardBean10;
+	}
+
+	public void setRewardBean10(Integer rewardBean10) {
+		this.rewardBean10 = rewardBean10;
 	}
 
 	public DateTime getCreateAt() {

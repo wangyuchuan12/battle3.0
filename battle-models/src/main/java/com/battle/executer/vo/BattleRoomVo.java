@@ -6,6 +6,8 @@ import java.util.Map;
 public class BattleRoomVo {
 	
 	public static final Integer DAN_TYPE = 0;
+	
+	public static final Integer ROOM_TYPE = 1;
 
 	private String id;
 	

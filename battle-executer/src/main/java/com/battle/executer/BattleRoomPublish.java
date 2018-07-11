@@ -2,7 +2,7 @@ package com.battle.executer;
 
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
-import com.battle.executer.vo.BattleRewardVo;
+import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
@@ -28,7 +28,7 @@ public interface BattleRoomPublish {
 
 	public void publishRoomStart();
 	
-	public void publishReward(BattleRewardVo battleReward);
+	public void publishReward(BattleUserRewardVo battleReward);
 
 	public void publishDie(BattleRoomMemberVo battleRoomMember);
 

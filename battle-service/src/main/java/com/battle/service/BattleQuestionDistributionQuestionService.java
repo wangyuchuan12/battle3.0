@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.battle.dao.BattleQuestionDistributionQuestionDao;
@@ -38,8 +39,13 @@ public class BattleQuestionDistributionQuestionService {
 	}
 
 	public List<BattleQuestionDistributionQuestion> findAllByDistributionIdAndDistributionStageIdAndIsDel(String distributionId,
-			String distributionStageId, int isDel) {
+			String distributionStageId, int isDel,Pageable pageable) {
 		
-		return battleQuestionDistributionQuestionDao.findAllByDistributionIdAndDistributionStageIdAndIsDel(distributionId,distributionStageId,isDel);
+		return battleQuestionDistributionQuestionDao.findAllByDistributionIdAndDistributionStageIdAndIsDel(distributionId,distributionStageId,isDel,pageable);
+	}
+
+	public Integer countByQuestionIdAndDistributionId(String questionId, String distributionId) {
+		
+		return battleQuestionDistributionQuestionDao.countByQuestionIdAndDistributionId(questionId,distributionId);
 	}
 }

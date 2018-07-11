@@ -187,6 +187,7 @@ public class BattleDanApi {
 			battleWait.setStatus(BattleWait.CALL_STATUS);
 			battleWait.setDanId(battleDan.getId());
 			battleWait.setGroupId(battleDan.getGroupId());
+			battleWait.setPassNum(battleDan.getPlaces());
 			battleWaitService.add(battleWait);
 		}else{
 			battleWait = battleWaits.get(0);

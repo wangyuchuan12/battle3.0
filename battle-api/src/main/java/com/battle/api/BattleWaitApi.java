@@ -16,11 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.battle.domain.BattleDan;
 import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitUser;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.filter.element.LoginStatusFilter;
+import com.battle.service.BattleDanService;
 import com.battle.service.BattleWaitService;
 import com.battle.service.BattleWaitUserService;
 import com.battle.socket.service.BattleWaitSocketService;
@@ -48,6 +51,9 @@ public class BattleWaitApi {
 	
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
+	
+	@Autowired
+	private BattleDanService battleDanService;
 	
 	
 	@RequestMapping(value="waitUsers")
@@ -165,6 +171,93 @@ public class BattleWaitApi {
 					}
 					data.put("danId",battleWait.getDanId());
 					data.put("users", users);
+					data.put("passNum", battleWait.getPassNum());
+					
+					BattleDan battledan = battleDanService.findOne(battleWait.getDanId());
+				
+					List<BattleRewardVo> battleRewards = new ArrayList<>();
+					if(battledan.getRewardBean1()!=null&&battledan.getRewardBean1()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(1);
+						battleRewardVo.setRewardBean(battledan.getRewardBean1());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					
+					if(battledan.getRewardBean2()!=null&&battledan.getRewardBean2()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(2);
+						battleRewardVo.setRewardBean(battledan.getRewardBean2());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean3()!=null&&battledan.getRewardBean3()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(3);
+						battleRewardVo.setRewardBean(battledan.getRewardBean3());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean4()!=null&&battledan.getRewardBean4()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(4);
+						battleRewardVo.setRewardBean(battledan.getRewardBean4());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean5()!=null&&battledan.getRewardBean5()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(5);
+						battleRewardVo.setRewardBean(battledan.getRewardBean5());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean6()!=null&&battledan.getRewardBean6()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(6);
+						battleRewardVo.setRewardBean(battledan.getRewardBean6());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean7()!=null&&battledan.getRewardBean7()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(7);
+						battleRewardVo.setRewardBean(battledan.getRewardBean7());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean8()!=null&&battledan.getRewardBean8()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(8);
+						battleRewardVo.setRewardBean(battledan.getRewardBean8());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean9()!=null&&battledan.getRewardBean9()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(9);
+						battleRewardVo.setRewardBean(battledan.getRewardBean9());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					if(battledan.getRewardBean10()!=null&&battledan.getRewardBean10()>0){
+						BattleRewardVo battleRewardVo = new BattleRewardVo();
+						battleRewardVo.setRank(10);
+						battleRewardVo.setRewardBean(battledan.getRewardBean10());
+						battleRewardVo.setRewardLove(0);
+						battleRewards.add(battleRewardVo);
+					}
+					
+					data.put("rewards", battleRewards);
 					battleRoomFactory.init(battleWait.getGroupId(),userIds,BattleRoomVo.DAN_TYPE,data);
 					
 				}

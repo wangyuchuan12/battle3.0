@@ -55,6 +55,10 @@ public class BattleWait implements Serializable{
 	private Integer num;
 	
 	@ParamAnnotation
+	@Column(name="pass_num")
+	private Integer passNum;
+	
+	@ParamAnnotation
 	@Column(name = "create_time")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -187,6 +191,16 @@ public class BattleWait implements Serializable{
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+	
+	
+
+	public Integer getPassNum() {
+		return passNum;
+	}
+
+	public void setPassNum(Integer passNum) {
+		this.passNum = passNum;
 	}
 
 	public DateTime getCreateAt() {
