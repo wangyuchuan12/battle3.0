@@ -136,13 +136,16 @@ public class BattleWaitRoomApi {
 				userStatusService.update(userStatus);
 				userIds.add(battleWaitRoomMember.getUserId());
 			}else{
-				downLineMembers.add(battleWaitRoomMember);
+				int status = battleWaitRoomMember.getStatus();
+				if(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS){
+					downLineMembers.add(battleWaitRoomMember);
+				}
 			}
 		}
 		
 		if(downLineMembers.size()>0){
 			for(BattleWaitRoomMember downLineMember:downLineMembers){
-				downLineMember.setStatus(BattleWaitRoomMember.END_STATUS);
+				downLineMember.setStatus(BattleWaitRoomMember.OUT_STATUS);
 				battleWaitRoomMemberService.update(downLineMember);
 				battleWaitRoomSocketService.waitRoomMemberPublish(downLineMember, userIds);
 			}
