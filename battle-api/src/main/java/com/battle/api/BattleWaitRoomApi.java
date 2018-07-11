@@ -114,6 +114,8 @@ public class BattleWaitRoomApi {
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
 		
+		
+		System.out.println("...............battleWaitRoomMembers:"+battleWaitRoomMembers);
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		
 		List<String> userIds = new ArrayList<>();
@@ -127,6 +129,8 @@ public class BattleWaitRoomApi {
 			}
 		}
 		
+		System.out.println("...............battleWaitRoomMembers2:"+battleWaitRoomMembers);
+		
 		List<BattleWaitRoomMember> downLineMembers = new ArrayList<>();
 		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
 			UserStatus userStatus = userStatusManager.getUserStatus(battleWaitRoomMember.getToken());
@@ -135,6 +139,7 @@ public class BattleWaitRoomApi {
 				userStatus.setStatus(UserStatus.IN_STATUS);
 				userStatusService.update(userStatus);
 				userIds.add(battleWaitRoomMember.getUserId());
+				System.out.println("...............battleWaitRoomMembers3:"+battleWaitRoomMembers);
 			}else{
 				int status = battleWaitRoomMember.getStatus();
 				if(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS){
@@ -142,6 +147,8 @@ public class BattleWaitRoomApi {
 				}
 			}
 		}
+		
+		System.out.println("...............downLineMembers:"+downLineMembers);
 		
 		if(downLineMembers.size()>0){
 			for(BattleWaitRoomMember downLineMember:downLineMembers){
@@ -154,6 +161,7 @@ public class BattleWaitRoomApi {
 			return resultVo;
 		}
 		
+		System.out.println("...............downLineMembers2:"+downLineMembers);
 		battleWaitRoom.setStatus(BattleWaitRoom.IN_STATUS);
 		
 		battleWaitRoomService.update(battleWaitRoom);
