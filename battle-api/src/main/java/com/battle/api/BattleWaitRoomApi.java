@@ -310,7 +310,6 @@ public class BattleWaitRoomApi {
 		String id = httpServletRequest.getParameter("id");
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOneByRoomIdAndUserId(id, userInfo.getId());
-		battleWaitRoomSocketService.kickOutPublish(battleWaitRoomMember);
 		if(battleWaitRoomMember==null){
 			battleWaitRoomMember = new BattleWaitRoomMember();
 			battleWaitRoomMember.setImgUrl(userInfo.getHeadimgurl());
