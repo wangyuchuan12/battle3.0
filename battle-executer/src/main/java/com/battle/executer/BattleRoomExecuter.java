@@ -25,4 +25,5 @@ public interface BattleRoomExecuter {
 	public void submitResult();
 
 	public void members();
+
 }

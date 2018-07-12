@@ -29,10 +29,6 @@ public class LoginStatusFilter extends Filter{
 		
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		
-		
-		if(userInfo!=null&&userInfo.getToken().equals(token)){
-			return userInfo;
-		}
 		if(loginVo!=null&&loginVo.getToken().equals(token)){
 			sessionManager.save(loginVo.getUserInfo());
 		}else if(token!=null){

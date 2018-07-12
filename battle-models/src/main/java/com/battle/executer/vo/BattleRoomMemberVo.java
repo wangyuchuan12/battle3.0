@@ -30,6 +30,12 @@ public class BattleRoomMemberVo {
 	private Integer rewardBean;
 	
 	private Integer rewardLove;
+	
+	//如果为1表示不能允许再加进来了
+	private Integer isEnd;
+	
+	//结束语
+	private String endCotent;
 	public String getId() {
 		return id;
 	}
@@ -138,4 +144,17 @@ public class BattleRoomMemberVo {
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
 	}
+	public Integer getIsEnd() {
+		return isEnd;
+	}
+	public void setIsEnd(Integer isEnd) {
+		this.isEnd = isEnd;
+	}
+	public String getEndCotent() {
+		return endCotent;
+	}
+	public void setEndCotent(String endCotent) {
+		this.endCotent = endCotent;
+	}
+	
 }

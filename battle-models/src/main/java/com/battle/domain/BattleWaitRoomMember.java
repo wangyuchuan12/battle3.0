@@ -52,6 +52,12 @@ public class BattleWaitRoomMember {
 	@Column
 	private String token;
 	
+	@Column(name="is_end")
+	private Integer isEnd;
+	
+	@Column(name="end_content")
+	private String endContent;
+	
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -127,6 +133,23 @@ public class BattleWaitRoomMember {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+	
+
+	public Integer getIsEnd() {
+		return isEnd;
+	}
+
+	public void setIsEnd(Integer isEnd) {
+		this.isEnd = isEnd;
+	}
+
+	public String getEndContent() {
+		return endContent;
+	}
+
+	public void setEndContent(String endContent) {
+		this.endContent = endContent;
 	}
 
 	public DateTime getCreateAt() {

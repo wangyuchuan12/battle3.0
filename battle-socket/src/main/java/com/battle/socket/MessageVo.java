@@ -32,6 +32,8 @@ public class MessageVo {
 	
 	public final static String WAIT_ROOM_MEMBER_STATUS_CODE= "waitRoomMemberStatusCode";
 	
+	public final static String FORCE_KICK_OUT = "forceKickOut";
+	
 	//调用编号
 	private String code;
 	

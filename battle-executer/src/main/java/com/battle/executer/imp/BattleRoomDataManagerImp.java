@@ -178,6 +178,7 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 			battleRoomMemberVo.setCnRightCount(0);
 			battleRoomMemberVo.setIsPass(0);
 			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
+			battleRoomMemberVo.setIsEnd(0);
 			battleRoomMemberVos.add(battleRoomMemberVo);
 		}
 		
