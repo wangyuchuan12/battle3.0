@@ -71,6 +71,7 @@ public class BattleWaitRoomApi {
 	
 	
 	
+	
 	@RequestMapping(value="out")
 	@ResponseBody
 	@Transactional
@@ -133,6 +134,9 @@ public class BattleWaitRoomApi {
 		
 		List<BattleWaitRoomMember> downLineMembers = new ArrayList<>();
 		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			battleWaitRoomMember.setIsEnd(1);
+			battleWaitRoomMember.setEndContent("比赛已经开始");
+			battleWaitRoomMemberService.update(battleWaitRoomMember);
 			UserStatus userStatus = userStatusManager.getUserStatus(battleWaitRoomMember.getToken());
 			if(userStatus!=null&&webSocketManager.isOpen(battleWaitRoomMember.getToken())){
 				userStatus.setRoomId(id);
@@ -218,7 +222,8 @@ public class BattleWaitRoomApi {
 		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOne(id);
 		
 		battleWaitRoomMember.setStatus(BattleWaitRoomMember.OUT_STATUS);
-		
+		battleWaitRoomMember.setIsEnd(1);
+		battleWaitRoomMember.setEndContent("你已经被踢出房间");
 		battleWaitRoomMemberService.update(battleWaitRoomMember);
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoomMember.getRoomId());
@@ -227,10 +232,11 @@ public class BattleWaitRoomApi {
 			userIds.add(battleWaitRoomMember2.getUserId());
 		}
 		
-		System.out.println("...........userIds:"+userIds);
-		System.out.println("...........battleWaitRoomMembers:"+battleWaitRoomMembers);
+		battleWaitRoomSocketService.kickOutPublish(battleWaitRoomMember);
 		
 		battleWaitRoomSocketService.waitRoomMemberPublish(battleWaitRoomMember, userIds);
+		
+		
 		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
@@ -304,6 +310,7 @@ public class BattleWaitRoomApi {
 		String id = httpServletRequest.getParameter("id");
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOneByRoomIdAndUserId(id, userInfo.getId());
+		battleWaitRoomSocketService.kickOutPublish(battleWaitRoomMember);
 		if(battleWaitRoomMember==null){
 			battleWaitRoomMember = new BattleWaitRoomMember();
 			battleWaitRoomMember.setImgUrl(userInfo.getHeadimgurl());
@@ -313,8 +320,16 @@ public class BattleWaitRoomApi {
 			battleWaitRoomMember.setUserId(userInfo.getId());
 			battleWaitRoomMember.setIsOwner(0);
 			battleWaitRoomMember.setToken(userInfo.getToken());
+			battleWaitRoomMember.setIsEnd(0);
 			battleWaitRoomMemberService.add(battleWaitRoomMember);
 		}else{
+			if(battleWaitRoomMember.getIsEnd()!=null&&battleWaitRoomMember.getIsEnd().intValue()==1){
+				battleWaitRoomSocketService.kickOutPublish(battleWaitRoomMember);
+				ResultVo resultVo = new ResultVo();
+				resultVo.setSuccess(false);
+				resultVo.setData(null);
+				return resultVo;
+			}
 			battleWaitRoomMember.setStatus(BattleWaitRoomMember.FREE_STATUS);
 			battleWaitRoomMemberService.update(battleWaitRoomMember);
 		}
@@ -335,7 +350,8 @@ public class BattleWaitRoomApi {
 	
 		System.out.println("............battleWaitRoomMember.status:"+battleWaitRoomMember.getStatus());
 		battleWaitRoomSocketService.waitRoomMemberPublish(battleWaitRoomMember, userIds);
-
+		
+		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
 		resultVo.setData(data);
@@ -386,6 +402,7 @@ public class BattleWaitRoomApi {
 			battleWaitRoomMember.setIsOwner(1);
 			battleWaitRoomMember.setUserId(userInfo.getId());
 			battleWaitRoomMember.setToken(userInfo.getToken());
+			battleWaitRoomMember.setIsEnd(0);
 			battleWaitRoomMemberService.add(battleWaitRoomMember);
 			members.add(battleWaitRoomMember);
 		}else{
