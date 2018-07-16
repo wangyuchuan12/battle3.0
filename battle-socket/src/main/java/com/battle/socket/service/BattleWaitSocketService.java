@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.battle.domain.BattleWaitUser;
+import com.battle.exception.SendMessageException;
 import com.battle.service.BattleWaitUserService;
 import com.battle.socket.MessageHandler;
 import com.battle.socket.MessageVo;
@@ -39,7 +40,7 @@ public class BattleWaitSocketService {
 		messageVo.setCode(MessageVo.WAIT_STATUS_CODE);
 		try {
 			messageHandler.sendMessage(messageVo);
-		} catch (IOException e) {
+		} catch (SendMessageException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

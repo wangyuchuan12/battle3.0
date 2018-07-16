@@ -162,14 +162,16 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 			throw new RuntimeException("battleQuestionDistribution 为空");
 		}
 		
+		
+		battleRoom.setLoveCount(battleQuestionDistribution.getLoveCount());
 		for(String userId:userIds){
 			BattleRoomMemberVo battleRoomMemberVo = new BattleRoomMemberVo();
 			UserInfo userInfo = wxUserInfoService.findOne(userId);
 			battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
-			battleRoomMemberVo.setLimitLove(battleQuestionDistribution.getLoveCount());
 			battleRoomMemberVo.setNickname(userInfo.getNickname());
 			battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
-			battleRoomMemberVo.setRemainLove(battleQuestionDistribution.getLoveCount());
+			battleRoomMemberVo.setRemainLove(battleRoom.getLoveCount());
+			battleRoomMemberVo.setLimitLove(battleRoom.getLoveCount());
 			battleRoomMemberVo.setRoomId(battleRoom.getId());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
 			battleRoomMemberVo.setUserId(userId);

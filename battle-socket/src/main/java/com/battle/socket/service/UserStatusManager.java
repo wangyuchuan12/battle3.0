@@ -14,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import com.battle.domain.UserStatus;
 import com.battle.service.UserStatusService;
 import com.battle.socket.DownEvent;
+import com.battle.socket.OnlineEvent;
 import com.battle.socket.WebSocketManager;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.util.CommonUtil;
@@ -130,6 +131,8 @@ public class UserStatusManager implements ApplicationEventPublisherAware{
 					userInfoService.update(userInfo);
 				}
 			}
+			
+			applicationEventPublisher.publishEvent(new OnlineEvent(userStatusData.getUserStatus()));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -137,11 +140,11 @@ public class UserStatusManager implements ApplicationEventPublisherAware{
 		
 	}
 	
-	public synchronized void downLine(String token){
+	public synchronized UserStatus doDownLine(String token){
 		UserStatusData userStatusData = sessionMap.get(token);
 		logger.debug("downline");
 		if(userStatusData==null){
-			return;
+			return null;
 		}
 		UserStatus userStatus = userStatusData.getUserStatus();
 		WebSocketSession webSocketSession = userStatusData.getWebSocketSession();
@@ -160,7 +163,15 @@ public class UserStatusManager implements ApplicationEventPublisherAware{
 		userStatusService.update(userStatus);
 		sessionMap.remove(token);
 		
-		applicationEventPublisher.publishEvent(new DownEvent(userStatus));
+		return userStatus;
+	}
+	
+	public synchronized void downLine(String token){
+		
+		UserStatus userStatus = this.doDownLine(token);
+		if(userStatus!=null){
+			applicationEventPublisher.publishEvent(new DownEvent(userStatus));
+		}
 		
 	}
 	

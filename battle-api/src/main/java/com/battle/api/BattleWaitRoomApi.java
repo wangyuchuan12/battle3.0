@@ -1,6 +1,5 @@
 package com.battle.api;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitRoom;
 import com.battle.domain.BattleWaitRoomGroup;
 import com.battle.domain.BattleWaitRoomMember;
@@ -29,14 +28,15 @@ import com.battle.service.BattleWaitRoomMemberService;
 import com.battle.service.BattleWaitRoomNumService;
 import com.battle.service.BattleWaitRoomService;
 import com.battle.service.UserStatusService;
-import com.battle.socket.DownEvent;
 import com.battle.socket.WebSocketManager;
 import com.battle.socket.service.BattleWaitRoomSocketService;
 import com.battle.socket.service.UserStatusManager;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.session.SessionManager;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
+import com.wyc.handle.BattleWaitRoomHandle;
 
 @Controller
 @RequestMapping(value="/api/battle/battleWaitRoom")
@@ -69,6 +69,8 @@ public class BattleWaitRoomApi {
 	@Autowired
 	private WebSocketManager webSocketManager;
 	
+	@Autowired
+	private BattleWaitRoomHandle battleWaitRoomHandle;
 	
 	
 	
@@ -77,6 +79,7 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo out(HttpServletRequest httpServletRequest)throws Exception{
+		System.out.println(".........out");
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		String id = httpServletRequest.getParameter("id");
@@ -109,14 +112,13 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo start(HttpServletRequest httpServletRequest)throws Exception{
+		System.out.println(".........start");
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		String id = httpServletRequest.getParameter("id");
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
 		
-		
-		System.out.println("...............battleWaitRoomMembers:"+battleWaitRoomMembers);
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		
 		List<String> userIds = new ArrayList<>();
@@ -130,8 +132,6 @@ public class BattleWaitRoomApi {
 			}
 		}
 		
-		System.out.println("...............battleWaitRoomMembers2:"+battleWaitRoomMembers);
-		
 		List<BattleWaitRoomMember> downLineMembers = new ArrayList<>();
 		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
 			battleWaitRoomMember.setIsEnd(1);
@@ -143,7 +143,6 @@ public class BattleWaitRoomApi {
 				userStatus.setStatus(UserStatus.IN_STATUS);
 				userStatusService.update(userStatus);
 				userIds.add(battleWaitRoomMember.getUserId());
-				System.out.println("...............battleWaitRoomMembers3:"+battleWaitRoomMembers);
 			}else{
 				int status = battleWaitRoomMember.getStatus();
 				if(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS){
@@ -151,8 +150,6 @@ public class BattleWaitRoomApi {
 				}
 			}
 		}
-		
-		System.out.println("...............downLineMembers:"+downLineMembers);
 		
 		if(downLineMembers.size()>0){
 			for(BattleWaitRoomMember downLineMember:downLineMembers){
@@ -165,11 +162,16 @@ public class BattleWaitRoomApi {
 			return resultVo;
 		}
 		
-		System.out.println("...............downLineMembers2:"+downLineMembers);
 		battleWaitRoom.setStatus(BattleWaitRoom.IN_STATUS);
 		
 		battleWaitRoomService.update(battleWaitRoom);
 		battleRoomFactory.init(battleWaitRoom.getGroupId(),userIds,BattleRoomVo.ROOM_TYPE,null);
+		
+		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			battleWaitRoomMember.setStatus(BattleWaitRoomMember.END_STATUS);
+			battleWaitRoomMember.setEndContent("比赛已经开始");
+			battleWaitRoomMemberService.update(battleWaitRoomMember);
+		}
 		
 		ResultVo resultVo = new ResultVo();
 		
@@ -185,6 +187,7 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo cancel(HttpServletRequest httpServletRequest)throws Exception{
+		System.out.println(".........cancel");
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		String id = httpServletRequest.getParameter("id");
@@ -216,7 +219,7 @@ public class BattleWaitRoomApi {
 	@ResponseBody
 	@Transactional
 	public ResultVo kickOut(HttpServletRequest httpServletRequest)throws Exception{
-		
+
 		String id = httpServletRequest.getParameter("id");
 		
 		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOne(id);
@@ -272,6 +275,7 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo ready(HttpServletRequest httpServletRequest)throws Exception{
+
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		String id = httpServletRequest.getParameter("id");
@@ -305,11 +309,13 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo into(HttpServletRequest httpServletRequest)throws Exception{
+		
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		String id = httpServletRequest.getParameter("id");
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOneByRoomIdAndUserId(id, userInfo.getId());
+		Integer num = battleWaitRoom.getNum();
 		if(battleWaitRoomMember==null){
 			battleWaitRoomMember = new BattleWaitRoomMember();
 			battleWaitRoomMember.setImgUrl(userInfo.getHeadimgurl());
@@ -329,11 +335,12 @@ public class BattleWaitRoomApi {
 				resultVo.setData(null);
 				return resultVo;
 			}
-			battleWaitRoomMember.setStatus(BattleWaitRoomMember.FREE_STATUS);
+			battleWaitRoomMember.setStatus(BattleWaitRoomMember.READY_STATUS);
 			battleWaitRoomMemberService.update(battleWaitRoomMember);
 		}
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
+		
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("room", battleWaitRoom);
@@ -347,9 +354,18 @@ public class BattleWaitRoomApi {
 			}
 		}
 	
-		System.out.println("............battleWaitRoomMember.status:"+battleWaitRoomMember.getStatus());
+		
+		num++;
+		battleWaitRoom.setNum(num);
+		battleWaitRoomService.update(battleWaitRoom);
+		
+		if(num>=battleWaitRoom.getMaxNum()){
+			battleWaitRoom.setIsFull(1);
+			battleWaitRoomService.update(battleWaitRoom);
+		}
 		battleWaitRoomSocketService.waitRoomMemberPublish(battleWaitRoomMember, userIds);
 		
+		System.out.println("...........into3");
 		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
@@ -357,6 +373,136 @@ public class BattleWaitRoomApi {
 		return resultVo;
 		
 	}
+	
+	
+	@RequestMapping(value="toPrivite")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo toPrivite(HttpServletRequest httpServletRequest)throws Exception{
+		
+		System.out.println(".........toPrivite");
+		String id = httpServletRequest.getParameter("id");
+		
+		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
+		
+		battleWaitRoom.setIsPublic(0);
+		
+		battleWaitRoomService.update(battleWaitRoom);
+		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoom.getId());
+		List<String> userIds = new ArrayList<>();
+		
+		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			int status = battleWaitRoomMember.getStatus();
+			if(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS){
+				userIds.add(battleWaitRoomMember.getUserId());
+			}
+		}
+		
+		battleWaitRoomSocketService.roomInfoPublish(battleWaitRoom, userIds);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		return resultVo;
+		
+	}
+	
+	
+	@RequestMapping(value="toPublic")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo toPublic(HttpServletRequest httpServletRequest)throws Exception{
+		
+		System.out.println(".........toPublic");
+		String id = httpServletRequest.getParameter("id");
+		
+		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
+		
+		battleWaitRoom.setIsPublic(1);
+		
+		battleWaitRoomService.update(battleWaitRoom);
+		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoom.getId());
+		List<String> userIds = new ArrayList<>();
+		
+		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			int status = battleWaitRoomMember.getStatus();
+			if(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS){
+				userIds.add(battleWaitRoomMember.getUserId());
+			}
+		}
+		
+		battleWaitRoomSocketService.roomInfoPublish(battleWaitRoom, userIds);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		return resultVo;
+		
+	}
+	
+	
+	@RequestMapping(value="ownerChange")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo ownerChange(HttpServletRequest httpServletRequest)throws Exception{
+		String id = httpServletRequest.getParameter("id");
+		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
+		
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		
+		BattleWaitRoomMember battleWaitRoomMember = battleWaitRoomMemberService.findOneByRoomIdAndUserId(id, userInfo.getId());
+		
+		for(BattleWaitRoomMember ownerMember:battleWaitRoomMembers){
+			if(ownerMember.getIsOwner().intValue()==1){
+				battleWaitRoomMember = battleWaitRoomHandle.switchOwner(ownerMember, battleWaitRoomMember, battleWaitRoomMembers);
+				ResultVo resultVo = new ResultVo();
+				resultVo.setSuccess(true);
+				resultVo.setData(battleWaitRoomMember);
+				return resultVo;
+			}
+		}
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(false);
+		return resultVo;
+	}
+	
+	
+	@RequestMapping(value="searchRoom")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo searchRoom(HttpServletRequest httpServletRequest)throws Exception{
+		
+		Pageable pageable = new PageRequest(0, 1);
+		String searchKey = httpServletRequest.getParameter("searchKey");
+		Page<BattleWaitRoom> battleWaitRoomPage = battleWaitRoomService.findAllByStatusAndSearchKeyAndIsPublicAndIsFull(BattleWaitRoom.FREE_STATUS, searchKey,1,0,pageable);
+		
+		List<BattleWaitRoom> battleWaitRooms = battleWaitRoomPage.getContent();
+		
+		if(battleWaitRooms==null||battleWaitRooms.size()==0){
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+		}
+		
+		
+		BattleWaitRoom battleWaitRoom = battleWaitRooms.get(0);
+		
+		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoom.getId());
+	
+		Map<String, Object> data = new HashMap<>();
+		data.put("room", battleWaitRoom);
+		data.put("members", battleWaitRoomMembers);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(data);
+		return resultVo;
+	}
+	
+	
 	
 	@RequestMapping(value="create")
 	@ResponseBody
@@ -367,8 +513,14 @@ public class BattleWaitRoomApi {
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		
+		String searchKey = httpServletRequest.getParameter("searchKey");
 		
-		List<BattleWaitRoom> battleWaitRooms = battleWaitRoomService.findAllByOwnerIdAndStatus(userInfo.getId(),BattleWaitRoom.FREE_STATUS);
+		if(CommonUtil.isEmpty(searchKey)){
+			searchKey = "personal";
+		}
+		
+		
+		List<BattleWaitRoom> battleWaitRooms = battleWaitRoomService.findAllByOwnerIdAndSearchKeyAndStatus(userInfo.getId(),searchKey,BattleWaitRoom.FREE_STATUS);
 		BattleWaitRoom battleWaitRoom = null;
 		if(battleWaitRooms==null||battleWaitRooms.size()==0){
 			battleWaitRoom = new BattleWaitRoom();
@@ -384,6 +536,10 @@ public class BattleWaitRoomApi {
 			
 			battleWaitRoom.setOwnerId(userInfo.getId());
 			battleWaitRoom.setStatus(BattleWaitRoom.FREE_STATUS);
+			battleWaitRoom.setIsPublic(1);
+			battleWaitRoom.setIsFull(0);
+			battleWaitRoom.setNum(0);
+			battleWaitRoom.setSearchKey(searchKey);
 			
 			battleWaitRoomService.add(battleWaitRoom);
 		}else{

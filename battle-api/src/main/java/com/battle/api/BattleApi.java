@@ -1,5 +1,9 @@
 package com.battle.api;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
@@ -11,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.battle.domain.Question;
 import com.battle.domain.QuestionOption;
 import com.battle.executer.BattleRoomConnector;
+import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.QuestionOptionService;
@@ -27,6 +33,37 @@ public class BattleApi {
 	
 	@Autowired
 	private QuestionOptionService questionOptionService;
+	
+	
+	
+	@RequestMapping(value="takepart")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo takepart(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);	
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		String id = httpServletRequest.getParameter("id");
+		BattleRoomMemberVo battleRoomMemberVo = battleRoomConnector.takepart(id, userInfo);
+		
+		if(battleRoomMemberVo!=null){
+			List<BattleRoomMemberVo> battleRoomMembers = battleRoomConnector.members(id);
+			
+			BattleRoomVo battleRoom = battleRoomConnector.getRoom(id);
+			Map<String, Object> data = new HashMap<>();
+			data.put("id", battleRoom.getId());
+			data.put("memberInfo", battleRoomMemberVo);
+			data.put("members",battleRoomMembers);
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(true);
+			resultVo.setData(data);
+			return resultVo;
+		}else{
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			return resultVo;
+		}
+	}
 
 	@RequestMapping(value="answerQuestion")
 	@ResponseBody

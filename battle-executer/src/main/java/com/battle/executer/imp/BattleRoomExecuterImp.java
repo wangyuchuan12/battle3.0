@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -30,6 +32,7 @@ import com.battle.service.UserStatusService;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.util.CommonUtil;
+import com.wyc.common.wx.domain.UserInfo;
 
 public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
@@ -49,6 +52,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	
 	@Autowired
 	private UserStatusService userStatusService;
+
 
 	@Override
 	public void answerQuestion(QuestionAnswerVo questionAnswer) {
@@ -148,6 +152,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 		
 		for(int i=0;i<battleRoomMembers.size();i++){
 			BattleRoomMemberVo battleRoomMember = battleRoomMembers.get(i);
+			battleRoomMember.setIsEnd(1);
+			battleRoomMember.setEndCotent("比赛已经结束");
 			BattleRoomRewardRecord battleRoomRewardRecord = battleRoomRewardRecordMap.get(i+1);
 			if(battleRoomRewardRecord!=null){
 				battleRoomMember.setRewardBean(battleRoomRewardRecord.getRewardBean());
@@ -302,5 +308,54 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	public void members() {
 		battleRoomPublish.publishMembers();
 		
+	}
+
+	@Override
+	public BattleRoomMemberVo takepart(UserInfo userInfo) {
+		
+		List<BattleRoomMemberVo> battleRoomMembers =  battleRoomDataManager.getBattleMembers();
+		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+		BattleRoomMemberVo battleRoomMemberVo = null;
+		for(BattleRoomMemberVo thisMember:battleRoomMembers){
+			if(thisMember.getUserId().equals(userInfo.getId())){
+				battleRoomMemberVo = thisMember;
+			}
+		}
+		if(battleRoomMemberVo==null){
+			battleRoomMemberVo = new BattleRoomMemberVo();
+			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
+			battleRoomMemberVo.setBattleId(battleRoom.getBattleId());
+			battleRoomMemberVo.setCnRightCount(0);
+			battleRoomMemberVo.setEndCotent("");
+			battleRoomMemberVo.setId(UUID.randomUUID().toString());
+			battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
+			battleRoomMemberVo.setIsEnd(0);
+			battleRoomMemberVo.setIsPass(0);
+			battleRoomMemberVo.setRemainLove(battleRoom.getLoveCount());
+			battleRoomMemberVo.setLimitLove(battleRoom.getLoveCount());
+			battleRoomMemberVo.setNickname(userInfo.getNickname());
+			battleRoomMemberVo.setPeriodId(battleRoom.getPeriodId());
+			battleRoomMemberVo.setProcess(0);
+			battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
+			battleRoomMemberVo.setRank(100);
+			battleRoomMemberVo.setRewardBean(0);
+			battleRoomMemberVo.setRewardLove(0);
+			battleRoomMemberVo.setRoomId(battleRoom.getId());
+			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
+			battleRoomMemberVo.setUserId(userInfo.getId());
+			battleRoomMembers.add(battleRoomMemberVo);
+		}else{
+			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
+		}
+		
+		battleRoomPublish.publishTakepart(battleRoomMemberVo);
+		return battleRoomMemberVo;
+	}
+
+	@Override
+	public BattleRoomVo getRoom() {
+		
+		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+		return battleRoom;
 	}
 }

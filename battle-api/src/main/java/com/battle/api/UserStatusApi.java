@@ -13,11 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.battle.domain.UserStatus;
+import com.battle.executer.BattleRoomConnector;
 import com.battle.filter.element.LoginStatusFilter;
+import com.battle.service.UserStatusService;
 import com.battle.socket.WebSocketManager;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.session.SessionManager;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
 
 @Controller
@@ -26,6 +29,12 @@ public class UserStatusApi {
 
 	@Autowired
 	private WebSocketManager webSocketManager;
+	
+	@Autowired
+	private BattleRoomConnector battleRoomConnector;
+	
+	@Autowired
+	private UserStatusService userStatusService;
 	
 	final static Logger logger = LoggerFactory.getLogger(UserStatusApi.class);
 	
@@ -40,15 +49,36 @@ public class UserStatusApi {
 		
 		UserStatus userStatus = webSocketManager.getUserStatus(userInfo.getToken());
 		
+		boolean isProgress = false;
+		
+		
 		Map<String, Object> data = new HashMap<>();
 		data.put("isLine",isLine);
 		
 		logger.debug("isLine:{}",isLine);
+		
+		System.out.println(".....userStatuszzz:"+userStatus);
+		
 		if(userStatus!=null){
-			data.put("roomId", userStatus.getRoomId());
+			
+			
 		}else{
+			
+			userStatus = userStatusService.findOne(userInfo.getStatusId()); 
 			logger.debug("useStatus is null");
 		}
+		
+		
+		if(CommonUtil.isNotEmpty(userStatus.getRoomId())){
+			isProgress = battleRoomConnector.isInProgress(userStatus.getRoomId());
+			if(isProgress){
+				data.put("roomId", userStatus.getRoomId());
+			}
+		}
+		
+		
+		data.put("isProgress", isProgress);
+	
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
 		resultVo.setData(data);

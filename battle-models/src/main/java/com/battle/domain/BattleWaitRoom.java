@@ -43,6 +43,16 @@ public class BattleWaitRoom {
 	@Column
 	private Integer status;
 	
+	@Column(name="is_public")
+	private Integer isPublic;
+	
+	@Column(name="is_full")
+	private Integer isFull;
+	
+	
+	@Column(name="search_key")
+	private String searchKey;
+	
 	@ParamAnnotation
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -109,6 +119,30 @@ public class BattleWaitRoom {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public Integer getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Integer isPublic) {
+		this.isPublic = isPublic;
+	}
+	
+	public Integer getIsFull() {
+		return isFull;
+	}
+
+	public void setIsFull(Integer isFull) {
+		this.isFull = isFull;
+	}
+	
+	public String getSearchKey() {
+		return searchKey;
+	}
+
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
 	}
 
 	public DateTime getCreateAt() {

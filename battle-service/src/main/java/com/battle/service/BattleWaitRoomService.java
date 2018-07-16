@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.battle.dao.BattleWaitRoomDao;
@@ -30,9 +32,9 @@ public class BattleWaitRoomService {
 		return battleWaitRoomDao.findOne(id);
 	}
 
-	public List<BattleWaitRoom> findAllByOwnerIdAndStatus(String userId, Integer status) {
+	public List<BattleWaitRoom> findAllByOwnerIdAndSearchKeyAndStatus(String userId, String searchKey,Integer status) {
 		
-		return battleWaitRoomDao.findAllByOwnerIdAndStatus(userId,status);
+		return battleWaitRoomDao.findAllByOwnerIdAndSearchKeyAndStatus(userId,searchKey,status);
 	}
 
 	public void update(BattleWaitRoom battleWaitRoom) {
@@ -40,5 +42,10 @@ public class BattleWaitRoomService {
 		battleWaitRoom.setUpdateAt(new DateTime());
 		battleWaitRoomDao.save(battleWaitRoom);
 		
+	}
+
+	public Page<BattleWaitRoom> findAllByStatusAndSearchKeyAndIsPublicAndIsFull(Integer status, String searchKey, int isPublic,int isFull,Pageable pageable) {
+		
+		return battleWaitRoomDao.findAllByStatusAndSearchKeyAndIsPublicAndIsFull(status,searchKey,isPublic,isFull,pageable);
 	}
 }

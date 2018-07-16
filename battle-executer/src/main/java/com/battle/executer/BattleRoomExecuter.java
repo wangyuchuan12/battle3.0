@@ -1,6 +1,9 @@
 package com.battle.executer;
 
+import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.QuestionAnswerVo;
+import com.wyc.common.wx.domain.UserInfo;
 
 public interface BattleRoomExecuter {
 
@@ -25,5 +28,9 @@ public interface BattleRoomExecuter {
 	public void submitResult();
 
 	public void members();
+	
+	public BattleRoomMemberVo takepart(UserInfo userInfo);
+	
+	public BattleRoomVo getRoom();
 
 }

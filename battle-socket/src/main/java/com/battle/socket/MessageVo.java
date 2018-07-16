@@ -34,6 +34,10 @@ public class MessageVo {
 	
 	public final static String FORCE_KICK_OUT = "forceKickOut";
 	
+	public final static String BATTLE_ROOM_INFO = "battleRoomInfo";
+	
+	public final static String CHANGE_OWNER = "changeOwner";
+	
 	//调用编号
 	private String code;
 	

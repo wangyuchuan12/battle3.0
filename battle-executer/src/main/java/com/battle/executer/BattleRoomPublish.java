@@ -34,4 +34,6 @@ public interface BattleRoomPublish {
 
 	public void publishMembers();
 	
+	public void publishTakepart(BattleRoomMemberVo battleRoomMember);
+	
 }

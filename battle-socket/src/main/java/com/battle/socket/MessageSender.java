@@ -1,6 +1,5 @@
 package com.battle.socket;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +9,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.domain.UserStatus;
+import com.battle.exception.SendMessageException;
 import com.battle.service.UserStatusService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.wx.domain.UserInfo;
@@ -26,7 +27,7 @@ private UserStatusService userStatusService;
 @Autowired
 private WxUserInfoService wxUserInfoService;
 	
-public synchronized void sendMessage(MessageVo messageVo) throws IOException{
+public synchronized void sendMessage(MessageVo messageVo) throws SendMessageException{
 	
 	
 		
@@ -71,14 +72,17 @@ public synchronized void sendMessage(MessageVo messageVo) throws IOException{
 		}
 		
 		ObjectMapper objectMapper = new ObjectMapper();
-		String value = objectMapper.writeValueAsString(messageVo);
-		
-		if(tokens.size()>0){
-			try{
+		String value;
+		try {
+			value = objectMapper.writeValueAsString(messageVo);
+			if(tokens.size()>0){
 				socketHandler.sendMessage(tokens, Arrays.asList(value));
-			}catch(Exception e){
 			}
+		} catch (JsonProcessingException e) {
+			throw new SendMessageException();
 		}
+		
+		
 		
 	}
 }

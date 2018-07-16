@@ -1,6 +1,5 @@
 package com.wyc.listener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.battle.domain.BattleWaitRoomMember;
 import com.battle.domain.UserStatus;
+import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleRoomConnector;
 import com.battle.service.BattleWaitRoomMemberService;
 import com.battle.socket.DownEvent;
 import com.battle.socket.service.BattleWaitRoomSocketService;
-import com.wyc.annotation.UnFilter;
-
 
 
 @Service
@@ -29,18 +27,20 @@ public class DownListener implements ApplicationListener<DownEvent>{
 	
 	@Autowired
 	private BattleWaitRoomSocketService battleWaitRoomSocketService;
+
+	
 	@Override
 	public void onApplicationEvent(DownEvent event) {
+		
 		UserStatus userStatus = (UserStatus)event.getSource();
 		String roomId = userStatus.getRoomId();
 		battleRoomConnector.signOut(roomId, userStatus.getUserId());
-		
-		
-		
+
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByUserIdAndStatus(userStatus.getUserId(),BattleWaitRoomMember.FREE_STATUS);
 		List<BattleWaitRoomMember> battleWaitRoomMembers2 = battleWaitRoomMemberService.findAllByUserIdAndStatus(userStatus.getUserId(),BattleWaitRoomMember.READY_STATUS);
 		
 		battleWaitRoomMembers.addAll(battleWaitRoomMembers2);
+		
 		
 		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
 			battleWaitRoomMember.setStatus(BattleWaitRoomMember.END_STATUS);
@@ -54,18 +54,43 @@ public class DownListener implements ApplicationListener<DownEvent>{
 				}
 			}
 			
-			try {				
-				battleWaitRoomSocketService.waitRoomMemberPublish(battleWaitRoomMember, userIds);
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			boolean flag = false;
+			if(battleWaitRoomMember.getIsOwner().intValue()==1){
+				BattleWaitRoomMember ownerMember = battleWaitRoomMember;
+				if(battleWaitRoomMembers3.size()>1){
+					for(BattleWaitRoomMember switchBattleWaitRoomMember:battleWaitRoomMembers3){
+						int status = switchBattleWaitRoomMember.getStatus();
+						if(switchBattleWaitRoomMember.getIsOwner().intValue()==0&&
+								(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS)){
+							
+							try {
+								battleWaitRoomSocketService.changeOwnerPublish(switchBattleWaitRoomMember);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+							break;
+						}
+						flag = true;
+					}
+				}else{
+		
+				}
 			}
 			
 			
+			
+			if(!flag){
+				try {				
+					battleWaitRoomSocketService.waitRoomMemberPublish(battleWaitRoomMember, userIds);
+	
+				} catch (SendMessageException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
-
-	
-
 }

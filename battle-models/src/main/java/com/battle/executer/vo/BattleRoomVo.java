@@ -29,6 +29,8 @@ public class BattleRoomVo {
 	
 	private Map<String, Object> data;
 	
+	private Integer loveCount;
+	
 	private Integer rewardBean;
 	
 	private Integer rewardBean2;
@@ -218,4 +220,13 @@ public class BattleRoomVo {
 	public void setData(Map<String, Object> data) {
 		this.data = data;
 	}
+
+	public Integer getLoveCount() {
+		return loveCount;
+	}
+
+	public void setLoveCount(Integer loveCount) {
+		this.loveCount = loveCount;
+	}
+	
 }

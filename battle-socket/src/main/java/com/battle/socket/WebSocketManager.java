@@ -1,5 +1,8 @@
 package com.battle.socket;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,11 @@ public class WebSocketManager {
 	@Autowired
 	private WxUserInfoService userInfoService;
 	
+	 @Autowired
+	private ScheduledExecutorService scheduledExecutorService;
+	
+	
+	
 	final static Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
 	
 	public boolean isOpen(String token){
@@ -37,14 +45,23 @@ public class WebSocketManager {
 		return b;
 	}
 	
-	public void onLine(String token,WebSocketSession webSocketSession){
+	public void onLine(String token,final WebSocketSession webSocketSession){
 		
 		
 		logger.debug("online before");
 		userStatusManager.downLine(token);
-		UserInfo userInfo = userInfoService.findByToken(token);
-		userStatusManager.onLine(userInfo, webSocketSession);
-		logger.debug("online after");
+		final UserInfo userInfo = userInfoService.findByToken(token);
+		
+		scheduledExecutorService.schedule(new Runnable() {
+			
+			@Override
+			public void run() {
+				userStatusManager.onLine(userInfo, webSocketSession);
+				logger.debug("online after");
+				
+			}
+		}, 1, TimeUnit.SECONDS);
+		
 		
 	}
 	

@@ -1,12 +1,16 @@
 package com.battle.executer;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.QuestionAnswerVo;
+import com.wyc.common.wx.domain.UserInfo;
 @Service
 public  class BattleRoomConnector{
 	private Map<String, BattleRoomExecuter> battleRoomExecuterMap = new ConcurrentHashMap<>();
@@ -33,6 +37,26 @@ public  class BattleRoomConnector{
 		}, 1, TimeUnit.HOURS);*/
 		
 	
+	}
+	
+	public List<BattleRoomMemberVo> members(String roomId){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		if(battleRoomExecuter!=null){
+			List<BattleRoomMemberVo> battleRoomMembers = battleRoomExecuter.getRoom().getMembers();
+			return battleRoomMembers;
+		}else{
+			return null;
+		}
+	}
+	
+	public BattleRoomMemberVo takepart(String roomId,UserInfo userInfo){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		if(battleRoomExecuter!=null){
+			BattleRoomMemberVo battleRoomMemberVo = battleRoomExecuter.takepart(userInfo);
+			return battleRoomMemberVo;
+		}else{
+			return null;
+		}
 	}
 	
 	public void removeExecuter(final String roomId){
@@ -83,6 +107,24 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		battleRoomExecuter.endRoom();
 		battleRoomExecuterMap.remove(roomId);
+	}
+	
+	public boolean isInProgress(String roomId){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		if(battleRoomExecuter!=null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public BattleRoomVo getRoom(String roomId){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		if(battleRoomExecuter!=null){
+			return battleRoomExecuter.getRoom();
+		}else{
+			return null;
+		}
 	}
 
 	public void subjectSelect(String roomId, String subjectId, String userId) {

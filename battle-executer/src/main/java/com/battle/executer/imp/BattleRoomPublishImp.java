@@ -307,4 +307,10 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		
 		
 	}
+
+	@Override
+	public void publishTakepart(BattleRoomMemberVo battleRoomMember) {
+		
+		
+	}
 }
