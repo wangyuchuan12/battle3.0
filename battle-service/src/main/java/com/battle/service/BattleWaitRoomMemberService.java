@@ -55,4 +55,9 @@ public class BattleWaitRoomMemberService {
 		
 		return battleWaitRoomMemberDao.findOne(id);
 	}
+
+	public List<BattleWaitRoomMember> findAllByIsOwner(int isOwner) {
+		
+		return battleWaitRoomMemberDao.findAllByIsOwner(isOwner);
+	}
 }

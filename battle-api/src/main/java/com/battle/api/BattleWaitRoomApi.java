@@ -393,6 +393,38 @@ public class BattleWaitRoomApi {
 			battleWaitRoomMemberService.update(battleWaitRoomMember);
 		}
 		
+		List<BattleWaitRoomMember> ownerMembers = battleWaitRoomMemberService.findAllByIsOwner(1);
+		
+		BattleWaitRoomMember ownerMember = null;
+		
+		if(ownerMembers.size()>0){
+			ownerMember = ownerMembers.get(0);
+		}else{
+			
+		}
+		
+		if((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken())){
+			
+		}else{
+			
+			List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoomMember.getRoomId());
+			for(BattleWaitRoomMember switchBattleWaitRoomMember:battleWaitRoomMembers){
+				int status = switchBattleWaitRoomMember.getStatus();
+				if(switchBattleWaitRoomMember.getIsOwner().intValue()==0&&
+						(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS)){
+					
+					try {
+						battleWaitRoomSocketService.changeOwnerPublish(switchBattleWaitRoomMember);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					break;
+				}
+			}
+		}
+		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
 		
 		
