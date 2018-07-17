@@ -24,4 +24,9 @@ public class BattleQuickRoomService {
 		
 		return battleQuickRoomDao.findOne(id);
 	}
+
+	public List<BattleQuickRoom> findAllByIsDel(int isDel, Pageable pageable) {
+		
+		return battleQuickRoomDao.findAllByIsDel(isDel,pageable);
+	}
 }

@@ -11,4 +11,6 @@ public interface BattleQuickRoomDao extends CrudRepository<BattleQuickRoom, Stri
 
 	List<BattleQuickRoom> findAllByStatusAndIsDel(Integer status, Integer isDel,Pageable pageable);
 
+	List<BattleQuickRoom> findAllByIsDel(int isDel, Pageable pageable);
+
 }

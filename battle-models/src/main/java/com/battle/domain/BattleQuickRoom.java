@@ -56,6 +56,9 @@ public class BattleQuickRoom {
 	@Column(name="cost_love")
 	private Integer costLove;
 	
+	@Column(name="search_key")
+	private String searchKey;
+	
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -171,6 +174,14 @@ public class BattleQuickRoom {
 
 	public void setImgs(String imgs) {
 		this.imgs = imgs;
+	}
+
+	public String getSearchKey() {
+		return searchKey;
+	}
+
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
 	}
 
 	public DateTime getCreateAt() {

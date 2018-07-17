@@ -164,10 +164,14 @@ public class BattleQuickRoomApi {
 			battleQuickRoomMember.setStatus(BattleQuickRoomMember.IN_STATUS);
 			battleQuickRoomMemberService.add(battleQuickRoomMember);
 		}
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("searchKey", battleQuickRoom.getSearchKey());
+		data.put("id", battleQuickRoom.getId());
 
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
-		resultVo.setData(battleQuickRoomMember);
+		resultVo.setData(data);
 		
 		return resultVo;
 	}

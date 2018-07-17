@@ -10,4 +10,6 @@ public interface BattleWaitRoomNumDao extends CrudRepository<BattleWaitRoomNum, 
 
 	List<BattleWaitRoomNum> findAllByIsDefault(int isDefault);
 
+	BattleWaitRoomNum findOneBySearchKey(String searchKey);
+
 }

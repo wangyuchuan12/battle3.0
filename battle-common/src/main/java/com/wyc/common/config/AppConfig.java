@@ -176,7 +176,6 @@ public class AppConfig{
 	        wxContext.setQnBucketname(myProperties.getProperty("qn_bucketname"));
 	        wxContext.setQnDomain(myProperties.getProperty("qn_domain"));
 //	        wxContext = wxContextService.getWxContextBean();
-	        
 	        return wxContext;
 	    }
 	    

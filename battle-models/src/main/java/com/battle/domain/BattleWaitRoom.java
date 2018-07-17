@@ -40,6 +40,9 @@ public class BattleWaitRoom {
 	@Column(name="max_num")
 	private Integer maxNum;
 	
+	@Column(name="min_num")
+	private Integer minNum;
+	
 	@Column
 	private Integer status;
 	
@@ -143,6 +146,15 @@ public class BattleWaitRoom {
 
 	public void setSearchKey(String searchKey) {
 		this.searchKey = searchKey;
+	}
+	
+
+	public Integer getMinNum() {
+		return minNum;
+	}
+
+	public void setMinNum(Integer minNum) {
+		this.minNum = minNum;
 	}
 
 	public DateTime getCreateAt() {

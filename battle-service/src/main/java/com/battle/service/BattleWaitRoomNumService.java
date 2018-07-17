@@ -18,4 +18,9 @@ public class BattleWaitRoomNumService {
 		
 		return battleWaitRoomNumDao.findAllByIsDefault(isDefault);
 	}
+
+	public BattleWaitRoomNum findOneBySearchKey(String searchKey) {
+		
+		return battleWaitRoomNumDao.findOneBySearchKey(searchKey);
+	}
 }

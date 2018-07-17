@@ -9,35 +9,31 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wyc.annotation.ParamAnnotation;
-import com.wyc.annotation.ParamEntityAnnotation;
 
-@ParamEntityAnnotation
 @Entity
-@Table(name="battle_wait_room_num")
-public class BattleWaitRoomNum {
+@Table(name="battle_search_room_reward")
+public class BattleSearchRoomReward {
 	@Id
 	private String id;
 	
-	@Column(name="max_num")
-	private Integer maxNum;
 	
-	@Column(name="min_num")
-	private Integer minNum;
+	@Column(name="reward_bean")
+	private Integer rewardBean;
 	
-	@Column(name="is_default")
-	private Integer isDefault;
+	@Column(name="reward_love")
+	private Integer rewardLove;
+	
+	@Column
+	private Integer rank;
 	
 	@Column(name="search_key")
 	private String searchKey;
 	
-	@ParamAnnotation
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
     private DateTime createAt;
 	
-	@ParamAnnotation
     @Column(name = "update_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -50,24 +46,29 @@ public class BattleWaitRoomNum {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	
 
-
-	public Integer getMaxNum() {
-		return maxNum;
+	public Integer getRewardBean() {
+		return rewardBean;
 	}
 
-	public void setMaxNum(Integer maxNum) {
-		this.maxNum = maxNum;
+	public void setRewardBean(Integer rewardBean) {
+		this.rewardBean = rewardBean;
 	}
 
-	public Integer getMinNum() {
-		return minNum;
+	public Integer getRewardLove() {
+		return rewardLove;
 	}
 
-	public void setMinNum(Integer minNum) {
-		this.minNum = minNum;
+	public void setRewardLove(Integer rewardLove) {
+		this.rewardLove = rewardLove;
+	}
+
+	public Integer getRank() {
+		return rank;
+	}
+
+	public void setRank(Integer rank) {
+		this.rank = rank;
 	}
 
 	public String getSearchKey() {
@@ -76,14 +77,6 @@ public class BattleWaitRoomNum {
 
 	public void setSearchKey(String searchKey) {
 		this.searchKey = searchKey;
-	}
-
-	public Integer getIsDefault() {
-		return isDefault;
-	}
-
-	public void setIsDefault(Integer isDefault) {
-		this.isDefault = isDefault;
 	}
 
 	public DateTime getCreateAt() {
