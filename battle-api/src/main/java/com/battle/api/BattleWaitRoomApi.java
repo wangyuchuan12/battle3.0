@@ -404,7 +404,6 @@ public class BattleWaitRoomApi {
 		}
 		
 		
-		System.out.println(".......status:"+ownerMember.getStatus().intValue());
 		if((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken())){
 			
 		}else{
@@ -565,13 +564,7 @@ public class BattleWaitRoomApi {
 	public ResultVo searchRoom(HttpServletRequest httpServletRequest)throws Exception{
 		
 		
-		Random r = new Random();
 		
-		if(r.nextInt(10)<2){
-			ResultVo resultVo = new ResultVo();
-			resultVo.setSuccess(false);
-			return resultVo;
-		}
 		
 		Pageable pageable = new PageRequest(0, 1);
 		String searchKey = httpServletRequest.getParameter("searchKey");
@@ -582,6 +575,14 @@ public class BattleWaitRoomApi {
 		
 		
 		if(battleWaitRooms==null||battleWaitRooms.size()==0){
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			return resultVo;
+		}
+		
+		Random r = new Random();
+		
+		if(battleWaitRooms.size()<2&&r.nextInt(10)<2){
 			ResultVo resultVo = new ResultVo();
 			resultVo.setSuccess(false);
 			return resultVo;
