@@ -403,6 +403,8 @@ public class BattleWaitRoomApi {
 			
 		}
 		
+		
+		System.out.println(".......status:"+ownerMember.getStatus().intValue());
 		if((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken())){
 			
 		}else{
