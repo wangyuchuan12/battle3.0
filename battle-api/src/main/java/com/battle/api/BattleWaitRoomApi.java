@@ -408,7 +408,7 @@ public class BattleWaitRoomApi {
 			battleWaitRoomMemberService.update(battleWaitRoomMember);
 		}
 		
-		List<BattleWaitRoomMember> ownerMembers = battleWaitRoomMemberService.findAllByIsOwner(1);
+		List<BattleWaitRoomMember> ownerMembers = battleWaitRoomMemberService.findAllByRoomIdAndIsOwner(battleWaitRoomMember.getRoomId(),1);
 		
 		BattleWaitRoomMember ownerMember = null;
 		
@@ -417,7 +417,6 @@ public class BattleWaitRoomApi {
 		}else{
 			
 		}
-		
 		
 		if((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken())){
 			

@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import com.battle.domain.BattleWaitRoom;
 import com.battle.domain.BattleWaitRoomMember;
 import com.battle.domain.UserStatus;
 import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleRoomConnector;
 import com.battle.service.BattleWaitRoomMemberService;
+import com.battle.service.BattleWaitRoomService;
 import com.battle.socket.DownEvent;
 import com.battle.socket.service.BattleWaitRoomSocketService;
 
@@ -27,6 +29,9 @@ public class DownListener implements ApplicationListener<DownEvent>{
 	
 	@Autowired
 	private BattleWaitRoomSocketService battleWaitRoomSocketService;
+	
+	@Autowired
+	private BattleWaitRoomService battleWaitRoomService;
 
 	
 	@Override
@@ -90,6 +95,10 @@ public class DownListener implements ApplicationListener<DownEvent>{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}else{
+				BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(battleWaitRoomMember.getRoomId());
+				battleWaitRoom.setStatus(BattleWaitRoom.COMPLETE_STATUS);
+				battleWaitRoomService.update(battleWaitRoom);
 			}
 		}
 	}

@@ -14,6 +14,6 @@ public interface BattleWaitRoomMemberDao extends CrudRepository<BattleWaitRoomMe
 
 	List<BattleWaitRoomMember> findAllByUserIdAndStatus(String userId, Integer status);
 
-	List<BattleWaitRoomMember> findAllByIsOwner(int isOwner);
+	List<BattleWaitRoomMember> findAllByRoomIdAndIsOwner(String roomId, int isOwner);
 
 }
