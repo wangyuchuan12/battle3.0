@@ -426,12 +426,12 @@ public class BattleWaitRoomApi {
 			
 		}
 		
-		if(ownerMember==null||((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken()))){
-			
-		}else{
-			
+		if(ownerMember==null){
+			battleWaitRoomSocketService.changeOwnerPublish(battleWaitRoomMember);
+		}else if(!webSocketManager.isOpen(ownerMember.getToken())){
 			battleWaitRoomSocketService.changeOwnerPublish(battleWaitRoomMember);
 		}
+		
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
 		
