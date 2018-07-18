@@ -430,22 +430,7 @@ public class BattleWaitRoomApi {
 			
 		}else{
 			
-			List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoomMember.getRoomId());
-			for(BattleWaitRoomMember switchBattleWaitRoomMember:battleWaitRoomMembers){
-				int status = switchBattleWaitRoomMember.getStatus();
-				if(switchBattleWaitRoomMember.getIsOwner().intValue()==0&&
-						(status==BattleWaitRoomMember.FREE_STATUS||status==BattleWaitRoomMember.READY_STATUS)){
-					
-					try {
-						battleWaitRoomSocketService.changeOwnerPublish(switchBattleWaitRoomMember);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					break;
-				}
-			}
+			battleWaitRoomSocketService.changeOwnerPublish(battleWaitRoomMember);
 		}
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
