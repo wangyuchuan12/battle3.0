@@ -327,6 +327,14 @@ public class BattleWaitRoomApi {
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
+		
+		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			if(!webSocketManager.isOpen(battleWaitRoomMember.getToken())&&
+					(battleWaitRoomMember.getStatus()==BattleWaitRoomMember.FREE_STATUS||battleWaitRoomMember.getStatus()==BattleWaitRoomMember.READY_STATUS)){
+				battleWaitRoomMember.setStatus(BattleWaitRoomMember.END_STATUS);
+				battleWaitRoomMemberService.update(battleWaitRoomMember);
+			}
+		}
 	
 		Map<String, Object> data = new HashMap<>();
 		data.put("room", battleWaitRoom);
@@ -418,7 +426,7 @@ public class BattleWaitRoomApi {
 			
 		}
 		
-		if((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken())){
+		if(ownerMember==null||((ownerMember.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||ownerMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS)&&webSocketManager.isOpen(ownerMember.getToken()))){
 			
 		}else{
 			
