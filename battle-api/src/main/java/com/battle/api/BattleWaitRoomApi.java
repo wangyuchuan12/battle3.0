@@ -98,16 +98,25 @@ public class BattleWaitRoomApi {
 		battleWaitRoomMemberService.update(battleWaitRoomMember);
 		
 		
+		boolean flag = false;
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(id);
 		List<String> userIds = new ArrayList<>();
 		for(BattleWaitRoomMember battleWaitRoomMember2:battleWaitRoomMembers){
+			if(battleWaitRoomMember2.getStatus().intValue()==BattleWaitRoomMember.FREE_STATUS||battleWaitRoomMember2.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS){
+				if(webSocketManager.isOpen(battleWaitRoomMember2.getToken())){
+					flag = true;
+				}
+			}
 			if(!battleWaitRoomMember2.getId().equals(battleWaitRoomMember.getId())){
 				userIds.add(battleWaitRoomMember2.getUserId());
 			}
 		}
 		
-		
-		if(battleWaitRoomMember.getIsOwner().intValue()==1){
+		if(!flag){
+			BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
+			battleWaitRoom.setStatus(BattleWaitRoom.COMPLETE_STATUS);
+			battleWaitRoomService.update(battleWaitRoom);
+		}else if(battleWaitRoomMember.getIsOwner().intValue()==1){
 			if(battleWaitRoomMembers.size()>1){
 				for(BattleWaitRoomMember switchBattleWaitRoomMember:battleWaitRoomMembers){
 					int status = switchBattleWaitRoomMember.getStatus();
@@ -168,7 +177,7 @@ public class BattleWaitRoomApi {
 			battleWaitRoomMember.setEndContent("比赛已经开始");
 			battleWaitRoomMemberService.update(battleWaitRoomMember);
 			UserStatus userStatus = userStatusManager.getUserStatus(battleWaitRoomMember.getToken());
-			if(userStatus!=null&&webSocketManager.isOpen(battleWaitRoomMember.getToken())){
+			if(userStatus!=null&&webSocketManager.isOpen(battleWaitRoomMember.getToken())&&battleWaitRoomMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS){
 				userStatus.setRoomId(id);
 				userStatus.setStatus(UserStatus.IN_STATUS);
 				userStatusService.update(userStatus);
@@ -194,7 +203,13 @@ public class BattleWaitRoomApi {
 		}
 		
 		
-		if(battleWaitRoomMembers.size()<battleWaitRoom.getMinNum()){
+		int num = 0;
+		for(BattleWaitRoomMember battleWaitRoomMember:battleWaitRoomMembers){
+			if(battleWaitRoomMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS){
+				num++;
+			}
+		}
+		if(num<battleWaitRoom.getMinNum()){
 			ResultVo resultVo = new ResultVo();
 			resultVo.setSuccess(false);
 			resultVo.setErrorCode(1);
