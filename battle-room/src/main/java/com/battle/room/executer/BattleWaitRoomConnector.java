@@ -183,6 +183,7 @@ public class BattleWaitRoomConnector {
 	public void start(String roomId)throws BattleWaitRoomStartException{
 		BattleWaitRoomExecuter battleWaitRoomExecuter = battleWaitRoomExecuterMap.get(roomId);
 		battleWaitRoomExecuter.start();
+		battleWaitRoomExecuterMap.remove(roomId);
 	}
 	
 	public BattleWaitRoomMemberVo cancel(String roomId,String userId){
