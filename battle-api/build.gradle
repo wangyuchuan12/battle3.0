@@ -115,6 +115,8 @@ dependencies{
 	
 	compile project(':battle-listener');
 	
+	compile project(':battle-room');
+	
 }
 
 

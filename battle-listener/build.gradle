@@ -21,4 +21,5 @@ dependencies{
 	compile project(':battle-socket');
 	compile project(':battle-executer');
 	compile project(':battle-handle');
+	compile project(':battle-room');
 }

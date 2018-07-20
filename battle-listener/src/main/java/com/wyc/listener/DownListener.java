@@ -12,9 +12,15 @@ import com.battle.domain.BattleWaitRoomMember;
 import com.battle.domain.UserStatus;
 import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleRoomConnector;
+import com.battle.room.executer.BattleWaitRoomConnector;
+import com.battle.room.executer.BattleWaitRoomDataManager;
+import com.battle.room.executer.BattleWaitRoomPublish;
+import com.battle.room.vo.BattleWaitRoomMemberVo;
+import com.battle.room.vo.BattleWaitRoomVo;
 import com.battle.service.BattleWaitRoomMemberService;
 import com.battle.service.BattleWaitRoomService;
 import com.battle.socket.DownEvent;
+import com.battle.socket.WebSocketManager;
 import com.battle.socket.service.BattleWaitRoomSocketService;
 
 
@@ -25,13 +31,11 @@ public class DownListener implements ApplicationListener<DownEvent>{
 	private BattleRoomConnector battleRoomConnector;
 	
 	@Autowired
-	private BattleWaitRoomMemberService battleWaitRoomMemberService;
+	private BattleWaitRoomConnector battleWaitRoomConnector;
+	
 	
 	@Autowired
-	private BattleWaitRoomSocketService battleWaitRoomSocketService;
-	
-	@Autowired
-	private BattleWaitRoomService battleWaitRoomService;
+	private WebSocketManager webSocketManager;
 
 	
 	@Override
@@ -40,6 +44,56 @@ public class DownListener implements ApplicationListener<DownEvent>{
 		UserStatus userStatus = (UserStatus)event.getSource();
 		String roomId = userStatus.getRoomId();
 		battleRoomConnector.signOut(roomId, userStatus.getUserId());
+		
+		BattleWaitRoomVo battleWaitRoom = battleWaitRoomConnector.findRoomByUserId(userStatus.getUserId());
+		
+		
+		if(battleWaitRoom == null){
+			return;
+		}
+		
+		BattleWaitRoomDataManager battleWaitRoomDataManager = battleWaitRoomConnector.findDataManager(battleWaitRoom.getId());
+		
+		BattleWaitRoomPublish battleWaitRoomPublish = battleWaitRoomConnector.findPublish(battleWaitRoom.getId());
+		
+		if(battleWaitRoomDataManager!=null){
+			List<BattleWaitRoomMemberVo> battleWaitRoomMembers = battleWaitRoomDataManager.findAllByStatues(BattleWaitRoomMemberVo.FREE_STATUS,BattleWaitRoomMemberVo.READY_STATUS);
+			
+			
+			System.out.println("..............battleWaitRoomMembers:"+battleWaitRoomMembers);
+			BattleWaitRoomMemberVo myMember = battleWaitRoomConnector.findMember(battleWaitRoom.getId(), userStatus.getUserId());
+			
+			myMember.setStatus(BattleWaitRoomMemberVo.END_STATUS);
+			
+			boolean flag = false;
+			if(myMember.getIsOwner().intValue()==1){
+				for(BattleWaitRoomMemberVo battleWaitRoomMember:battleWaitRoomMembers){
+					
+					
+					
+					boolean isOpen = webSocketManager.isOpen(battleWaitRoomMember.getToken());
+	
+					if(isOpen&&battleWaitRoomMember.getIsOwner().intValue()==0&&!battleWaitRoomMember.getUserId().equals(myMember.getUserId())){
+						
+						battleWaitRoomPublish.changeOwnerPublish(battleWaitRoomMember.getUserId());
+						flag = true;
+						break;
+					}
+				}
+			}
+			
+			if(!flag){
+				battleWaitRoomConnector.out(battleWaitRoom.getId(), userStatus.getUserId());
+			}
+		
+		}
+		 
+		
+		/*
+		UserStatus userStatus = (UserStatus)event.getSource();
+		String roomId = userStatus.getRoomId();
+		battleRoomConnector.signOut(roomId, userStatus.getUserId());
+
 
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByUserIdAndStatus(userStatus.getUserId(),BattleWaitRoomMember.FREE_STATUS);
 		List<BattleWaitRoomMember> battleWaitRoomMembers2 = battleWaitRoomMemberService.findAllByUserIdAndStatus(userStatus.getUserId(),BattleWaitRoomMember.READY_STATUS);
@@ -100,6 +154,6 @@ public class DownListener implements ApplicationListener<DownEvent>{
 				battleWaitRoom.setStatus(BattleWaitRoom.COMPLETE_STATUS);
 				battleWaitRoomService.update(battleWaitRoom);
 			}
-		}
+		}*/
 	}
 }

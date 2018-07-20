@@ -1,9 +1,9 @@
 #org.springsource.ide.eclipse.gradle.core.preferences.GradleImportPreferences
-#Wed Jul 04 17:32:40 CST 2018
+#Thu Jul 19 21:17:45 CST 2018
 addResourceFilters=true
 afterTasks=afterEclipseImport;
 beforeTasks=cleanEclipse;eclipse;
 enableAfterTasks=true
 enableBeforeTasks=true
 enableDependendencyManagement=true
-projects=;battle-action;battle-api;battle-common;battle-dao;battle-executer;battle-filter;battle-handle;battle-listener;battle-manager;battle-models;battle-service;battle-socket;
+projects=;battle-action;battle-api;battle-common;battle-dao;battle-executer;battle-filter;battle-handle;battle-listener;battle-manager;battle-models;battle-room;battle-service;battle-socket;
