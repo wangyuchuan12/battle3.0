@@ -41,6 +41,13 @@ public class BattleWaitRoomExecuter {
 	private BattleSearchRoomRewardService battleSearchRoomRewardService;
 	
 	public boolean checkRoom(){
+		
+		BattleWaitRoomVo battleWaitRoomVo = battleWaitRoomDataManager.getBattleWaitRoom();
+		
+		if(battleWaitRoomVo.getStatus().intValue()!=BattleWaitRoomVo.FREE_STATUS){
+			return false;
+		}
+		
 		List<BattleWaitRoomMemberVo> battleWaitRoomMembers = battleWaitRoomDataManager.checkOut();
 		for(BattleWaitRoomMemberVo battleWaitRoomMember:battleWaitRoomMembers){
 			out(battleWaitRoomMember.getUserId());
@@ -53,6 +60,8 @@ public class BattleWaitRoomExecuter {
 				return true;
 			}
 		}
+		
+		
 		
 		return false;
 	}
