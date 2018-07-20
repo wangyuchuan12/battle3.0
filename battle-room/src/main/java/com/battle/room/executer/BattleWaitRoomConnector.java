@@ -52,13 +52,11 @@ public class BattleWaitRoomConnector {
 	}
 	
 	
-	@Scheduled(cron="0/100 * *  * * ? ")
+	@Scheduled(cron="0/10 * *  * * ? ")
 	public void checkOut(){
 		for(Entry<String, BattleWaitRoomExecuter> entry:battleWaitRoomExecuterMap.entrySet()){
 			BattleWaitRoomExecuter battleWaitRoomExecuter = entry.getValue();
 			boolean flag = battleWaitRoomExecuter.checkRoom();
-			
-			System.out.println(".............flag:"+flag);
 			if(!flag){
 				battleWaitRoomExecuterMap.remove(battleWaitRoomExecuter.getBattleWaitRoomDataManager().getBattleWaitRoom().getId());
 			}
@@ -172,7 +170,9 @@ public class BattleWaitRoomConnector {
 	
 	public void out(String roomId,String userId){
 		BattleWaitRoomExecuter battleWaitRoomExecuter = battleWaitRoomExecuterMap.get(roomId);
-		battleWaitRoomExecuter.out(userId);
+		if(battleWaitRoomExecuter!=null){
+			battleWaitRoomExecuter.out(userId);
+		}
 	}
 	
 	public void into(String roomId,UserInfo userInfo){
