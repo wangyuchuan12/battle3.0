@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class BattleWaitRoomConnector {
 	@Autowired
     private AutowireCapableBeanFactory factory;
 	
+	 @Autowired
+	 private ScheduledExecutorService executorService;
+	
 	public List<BattleWaitRoomMemberVo> getMembers(String roomId){
 		
 		BattleWaitRoomExecuter battleWaitRoomExecuter = battleWaitRoomExecuterMap.get(roomId);
@@ -56,10 +61,16 @@ public class BattleWaitRoomConnector {
 	@Scheduled(cron="0/10 * *  * * ? ")
 	public void checkOut(){
 		for(Entry<String, BattleWaitRoomExecuter> entry:battleWaitRoomExecuterMap.entrySet()){
-			BattleWaitRoomExecuter battleWaitRoomExecuter = entry.getValue();
+			final BattleWaitRoomExecuter battleWaitRoomExecuter = entry.getValue();
 			boolean flag = battleWaitRoomExecuter.checkRoom();
 			if(!flag){
-				battleWaitRoomExecuterMap.remove(battleWaitRoomExecuter.getBattleWaitRoomDataManager().getBattleWaitRoom().getId());
+				executorService.schedule(new Runnable() {
+					@Override
+					public void run() {
+						battleWaitRoomExecuterMap.remove(battleWaitRoomExecuter.getBattleWaitRoomDataManager().getBattleWaitRoom().getId());
+					}
+				}, 10, TimeUnit.SECONDS);
+				
 			}
 		}
 	}
@@ -186,7 +197,6 @@ public class BattleWaitRoomConnector {
 		System.out.println(".......battleWaitRoomExecuterMap.startBefore:"+battleWaitRoomExecuterMap);
 		BattleWaitRoomExecuter battleWaitRoomExecuter = battleWaitRoomExecuterMap.get(roomId);
 		battleWaitRoomExecuter.start();
-		battleWaitRoomExecuterMap.remove(roomId);
 		
 		System.out.println(".......battleWaitRoomExecuterMap.startAfter:"+battleWaitRoomExecuterMap);
 	}
