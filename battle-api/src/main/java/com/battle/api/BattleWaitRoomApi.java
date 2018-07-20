@@ -345,18 +345,18 @@ public class BattleWaitRoomApi {
 		
 		Random r = new Random();
 		
-		if(battleWaitRooms.size()<2&&r.nextInt(10)<2){
+		/*if(battleWaitRooms.size()<2&&r.nextInt(10)<2){
 			ResultVo resultVo = new ResultVo();
 			resultVo.setSuccess(false);
 			return resultVo;
-		}
+		}*/
 		
 		
 		
 		Integer roomNum = battleWaitRooms.size();
 		
 		Integer index = r.nextInt(roomNum);
-		BattleWaitRoomVo battleWaitRoom = battleWaitRooms.get(index);
+		BattleWaitRoomVo battleWaitRoom = battleWaitRooms.get(0);
 		
 		List<BattleWaitRoomMember> battleWaitRoomMembers = battleWaitRoomMemberService.findAllByRoomId(battleWaitRoom.getId());
 		

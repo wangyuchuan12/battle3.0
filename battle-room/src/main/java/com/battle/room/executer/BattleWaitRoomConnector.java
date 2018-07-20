@@ -212,7 +212,7 @@ public class BattleWaitRoomConnector {
 			
 			BattleWaitRoomVo battleWaitRoom = battleWaitRoomDataManager.getBattleWaitRoom();
 			
-			if(battleWaitRoom.getSearchKey().equals(searchKey)){
+			if(battleWaitRoom.getSearchKey().equals(searchKey)&&battleWaitRoom.getStatus().intValue()==BattleWaitRoomVo.FREE_STATUS){
 				battleWaitRoomVos.add(battleWaitRoom);
 			}
 		}
