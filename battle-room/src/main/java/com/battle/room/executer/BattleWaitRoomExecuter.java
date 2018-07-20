@@ -1,8 +1,10 @@
 package com.battle.room.executer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -77,6 +79,15 @@ public class BattleWaitRoomExecuter {
 				battleWaitRoomPublish.changeOwnerPublish(member.getUserId());
 				if(ownerMember!=null){
 					ownerMember.setStatus(BattleWaitRoomMemberVo.END_STATUS);
+				}
+			}
+		}else{
+			long ownTime = ownerMember.getOwnerTime().toDate().getTime();
+			long nowTime = new Date().getTime();
+			long diffSechod = (nowTime-ownTime)/1000;
+			if(diffSechod>30){
+				if(member!=null){
+					battleWaitRoomPublish.changeOwnerPublish(member.getUserId());
 				}
 			}
 		}
@@ -322,6 +333,7 @@ public class BattleWaitRoomExecuter {
 		BattleWaitRoomMemberVo battleWaitRoomMember = battleWaitRoomDataManager.findMemberByUserId(userId);
 		ownerMember.setIsOwner(0);
 		battleWaitRoomMember.setIsOwner(1);
+		battleWaitRoomMember.setOwnerTime(new DateTime());
 		battleWaitRoomPublish.waitRoomMemberPublish(ownerMember.getUserId());
 		battleWaitRoomPublish.waitRoomMemberPublish(battleWaitRoomMember.getUserId());
 		return battleWaitRoomMember;

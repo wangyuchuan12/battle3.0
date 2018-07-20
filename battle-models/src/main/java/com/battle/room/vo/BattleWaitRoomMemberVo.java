@@ -1,4 +1,7 @@
 package com.battle.room.vo;
+
+import org.joda.time.DateTime;
+
 public class BattleWaitRoomMemberVo {
 	public static final Integer FREE_STATUS = 1;
 		
@@ -29,6 +32,8 @@ public class BattleWaitRoomMemberVo {
 	private Integer isEnd;
 	
 	private String endContent;
+	
+	private DateTime ownerTime;
 
 	public String getId() {
 		return id;
@@ -108,5 +113,13 @@ public class BattleWaitRoomMemberVo {
 
 	public void setEndContent(String endContent) {
 		this.endContent = endContent;
+	}
+
+	public DateTime getOwnerTime() {
+		return ownerTime;
+	}
+
+	public void setOwnerTime(DateTime ownerTime) {
+		this.ownerTime = ownerTime;
 	}
 }

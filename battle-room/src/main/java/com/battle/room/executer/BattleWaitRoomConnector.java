@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -134,6 +135,7 @@ public class BattleWaitRoomConnector {
 			battleWaitRoomMember.setToken(ownerUser.getToken());
 			battleWaitRoomMember.setIsEnd(0);
 			battleWaitRoomMember.setId(UUID.randomUUID().toString());
+			battleWaitRoomMember.setOwnerTime(new DateTime());
 			battleWaitRoomMemberVos.add(battleWaitRoomMember);
 			battleWaitRoomVo.setBattleWaitRoomMembers(battleWaitRoomMemberVos);
 			
@@ -181,9 +183,12 @@ public class BattleWaitRoomConnector {
 	}
 	
 	public void start(String roomId)throws BattleWaitRoomStartException{
+		System.out.println(".......battleWaitRoomExecuterMap.startBefore:"+battleWaitRoomExecuterMap);
 		BattleWaitRoomExecuter battleWaitRoomExecuter = battleWaitRoomExecuterMap.get(roomId);
 		battleWaitRoomExecuter.start();
 		battleWaitRoomExecuterMap.remove(roomId);
+		
+		System.out.println(".......battleWaitRoomExecuterMap.startAfter:"+battleWaitRoomExecuterMap);
 	}
 	
 	public BattleWaitRoomMemberVo cancel(String roomId,String userId){
