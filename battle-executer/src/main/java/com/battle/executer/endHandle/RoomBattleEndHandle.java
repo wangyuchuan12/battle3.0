@@ -1,12 +1,12 @@
 package com.battle.executer.endHandle;
 
 import com.battle.executer.BattleEndHandle;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
 
 public class RoomBattleEndHandle implements BattleEndHandle{
 
 	@Override
-	public void end(BattleRoomDataManager battleRoomDataManager) {
+	public void end(BattleDataManager battleRoomDataManager) {
 		// TODO Auto-generated method stub
 		
 	}

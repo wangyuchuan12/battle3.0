@@ -3,12 +3,14 @@ package com.battle.executer;
 import java.util.List;
 import java.util.Map;
 
+import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
+import com.battle.executer.vo.BattleStageVo;
 
-public interface BattleRoomDataManager {
+public interface BattleDataManager {
 
 	public BattleRoomVo getBattleRoom();
 	
@@ -20,9 +22,21 @@ public interface BattleRoomDataManager {
 	
 	public BattleRoomMemberVo getBattleMemberByUserId(String userId);
 	
-	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
-	
 	public EventManager getEventManager();
 	
-	public void init(String groupId,List<String> userIds,Integer type,Map<String, Object> data);
+	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
+	
+	public BattleStageVo currentStage();
+	
+	public List<BattlePaperQuestionVo> selectQuestions();
+	
+	public void nextQuestion();
+	
+	public BattlePaperQuestionVo currentQuestion();
+	
+	public int stageCount();
+	
+	public void nextStage();
+	
+	public void init(BattleQuestionManager battleQuestionManager,BattleDataRoomManager battleDataRoomManager);
 }

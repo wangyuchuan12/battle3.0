@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.executer.BattleEndHandle;
 import com.battle.executer.BattleRoomConnector;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomExecuter;
 import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.BattleRoomStageExecuter;
@@ -16,10 +16,11 @@ import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleStageVo;
 
 public class EventHandleImp implements EventHandle{
 
-	private BattleRoomDataManager battleRoomDataManager;
+	private BattleDataManager battleRoomDataManager;
 	
 	private BattleRoomStageExecuter battleRoomStageExecuter;
 	
@@ -35,7 +36,7 @@ public class EventHandleImp implements EventHandle{
 	private BattleRoomConnector battleRoomConnector;
 	
 	public void init(ExecuterStore executerStore){
-		this.battleRoomDataManager = executerStore.getBattleRoomDataManager();
+		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		this.battleRoomStageExecuter = executerStore.getBattleRoomStageExecuter();
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
 		this.battleRoomExecuter = executerStore.getBattleRoomExecuter();
@@ -78,8 +79,9 @@ public class EventHandleImp implements EventHandle{
 			
 			@Override
 			public void callback(Map<String, Object> data) {
-				battleRoomDataManager.getBattlePaper().setStageIndex(battleRoomDataManager.getBattlePaper().getStageIndex()+1);
-				if(battleRoomDataManager.getBattleRoom().getStageCount()>=battleRoomDataManager.getBattlePaper().getStageIndex()){
+				battleRoomDataManager.nextStage();
+				BattleStageVo battleStageVo = battleRoomDataManager.currentStage();
+				if(battleStageVo!=null){
 					List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
 					int liveNum = 0;
 					for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){

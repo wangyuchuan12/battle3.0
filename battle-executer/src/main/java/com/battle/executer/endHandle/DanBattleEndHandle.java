@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.battle.domain.BattleAccountResult;
 import com.battle.domain.BattleDan;
 import com.battle.executer.BattleEndHandle;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.service.BattleAccountResultService;
@@ -22,7 +22,7 @@ public class DanBattleEndHandle implements BattleEndHandle{
 	@Autowired
 	private BattleDanService battleDanService;
 	@Override
-	public void end(BattleRoomDataManager battleRoomDataManager) {
+	public void end(BattleDataManager battleRoomDataManager) {
 		
 	
 		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();

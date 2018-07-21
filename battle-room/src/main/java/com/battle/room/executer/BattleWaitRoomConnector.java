@@ -58,7 +58,7 @@ public class BattleWaitRoomConnector {
 	}
 	
 	
-	@Scheduled(cron="0/10 * *  * * ? ")
+	//@Scheduled(cron="0/10 * *  * * ? ")
 	public void checkOut(){
 		for(Entry<String, BattleWaitRoomExecuter> entry:battleWaitRoomExecuterMap.entrySet()){
 			final BattleWaitRoomExecuter battleWaitRoomExecuter = entry.getValue();
@@ -75,7 +75,7 @@ public class BattleWaitRoomConnector {
 		}
 	}
 	
-	@Scheduled(cron="0/10 * *  * * ? ")
+	//@Scheduled(cron="0/10 * *  * * ? ")
 	public void checkOwner(){
 		for(Entry<String, BattleWaitRoomExecuter> entry:battleWaitRoomExecuterMap.entrySet()){
 			BattleWaitRoomExecuter battleWaitRoomExecuter = entry.getValue();
@@ -95,7 +95,11 @@ public class BattleWaitRoomConnector {
 		
 		
 		BattleWaitRoomVo battleWaitRoomVo = null;
-		if(battleWaitRooms==null||battleWaitRooms.size()==0){
+		
+		if(battleWaitRooms!=null&&battleWaitRooms.size()>0){
+			battleWaitRoomVo = battleWaitRooms.get(0);
+		}
+		if(battleWaitRoomVo==null||battleWaitRoomVo.getStatus().intValue()!=BattleWaitRoomVo.FREE_STATUS){
 			battleWaitRoomVo = new BattleWaitRoomVo();
 			List<BattleWaitRoomGroup> battleWaitRoomGroups = battleWaitRoomGroupService.findAllByIsDefault(1);
 			BattleWaitRoomGroup battleWaitRoomGroup = battleWaitRoomGroups.get(0);

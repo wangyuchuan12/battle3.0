@@ -47,7 +47,7 @@ public class DownListener implements ApplicationListener<DownEvent>{
 		
 		BattleWaitRoomVo battleWaitRoom = battleWaitRoomConnector.findRoomByUserId(userStatus.getUserId());
 		
-		
+		battleWaitRoom = null;
 		if(battleWaitRoom == null){
 			return;
 		}

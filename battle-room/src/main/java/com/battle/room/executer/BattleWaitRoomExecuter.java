@@ -276,6 +276,8 @@ public class BattleWaitRoomExecuter {
 			resultVo.setErrorCode(1);
 			return resultVo;*/
 			
+			System.out.println("...............num:"+num+",battleWaitRoom.getMinNum:"+battleWaitRoom.getMinNum());
+			
 			throw new BattleWaitRoomStartException(BattleWaitRoomStartException.ROOM_NUM_ERROR_TYPE);
 		}
 		

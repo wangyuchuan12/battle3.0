@@ -1,5 +1,6 @@
 package com.battle.executer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,11 +16,10 @@ public abstract class BattleRoomFactory {
 	
 	@Autowired
     public AutowireCapableBeanFactory factory;
-	
-	
+
 	public ExecuterStore init(String groupId,List<String> userIds,Integer type, Map<String, Object> data){
-		final BattleRoomDataManager battleRoomDataManager = createBattleRoomDataManager();
-		factory.autowireBean(battleRoomDataManager);
+		final BattleDataManager battleDataManager = createBattleDataManager();
+		factory.autowireBean(battleDataManager);
 		final BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
 		factory.autowireBean(battleRoomExecuter);
 		final BattleRoomPublish battleRoomPublish = createBattleRoomPublish();
@@ -32,7 +32,24 @@ public abstract class BattleRoomFactory {
 		final ScheduledExecuter scheduledExecuter = createScheduledExecuter();
 		factory.autowireBean(scheduledExecuter);
 		
-		battleRoomDataManager.init(groupId, userIds,type,data);
+		final BattleQuestionManager battleQuestionManager = createQuestionManager();
+		factory.autowireBean(battleQuestionManager);
+		
+		final BattleDataRoomManager battleDataRoomManager = createBattleDataRoomManager();
+		factory.autowireBean(battleDataRoomManager);
+		
+		battleDataRoomManager.init(userIds, type, data);
+		
+		BattleRoomVo battleRoomVo = battleDataRoomManager.getBattleRoom();
+		
+		Map<String, Object> questionData = new HashMap<>();
+		questionData.put("groupId", groupId);
+		questionData.put("userIds", userIds);
+		questionData.put("roomId", battleRoomVo.getId());
+		
+		battleQuestionManager.init(questionData);
+	
+		battleDataManager.init(battleQuestionManager,battleDataRoomManager);
 		
 		BattleEndHandle battleEndHandle = null;
 		
@@ -70,8 +87,8 @@ public abstract class BattleRoomFactory {
 			}
 
 			@Override
-			public BattleRoomDataManager getBattleRoomDataManager() {
-				return battleRoomDataManager;
+			public BattleDataManager getBattleDataManager() {
+				return battleDataManager;
 			}
 
 			@Override
@@ -82,6 +99,16 @@ public abstract class BattleRoomFactory {
 			@Override
 			public ScheduledExecuter getScheduledExecuter() {
 				return scheduledExecuter;
+			}
+
+			@Override
+			public BattleQuestionManager getBattleQuestionManager() {
+				return battleQuestionManager;
+			}
+
+			@Override
+			public BattleDataRoomManager getBattleDataRoomManager() {
+				return battleDataRoomManager;
 			}
 		};
 		
@@ -94,7 +121,7 @@ public abstract class BattleRoomFactory {
 		
 		battleRoomStageExecuter.init(executerStore);
 		
-		battleRoomExecuter.init(battleRoomDataManager.getEventManager(),executerStore);
+		battleRoomExecuter.init(battleDataManager.getEventManager(),executerStore);
 		
 		battleRoomQuestionExecuter.init(executerStore);
 		return executerStore;
@@ -103,7 +130,7 @@ public abstract class BattleRoomFactory {
 
 	protected  abstract BattleRoomExecuter createBatteRoomExecuter();
 	
-	protected  abstract BattleRoomDataManager createBattleRoomDataManager();
+	protected  abstract BattleDataManager createBattleDataManager();
 	
 	protected  abstract BattleRoomPublish createBattleRoomPublish();
 	
@@ -112,4 +139,8 @@ public abstract class BattleRoomFactory {
 	protected abstract BattleRoomStageExecuter createBatteRoomStageExecuter();
 	
 	protected abstract ScheduledExecuter createScheduledExecuter();
+	
+	protected abstract BattleQuestionManager createQuestionManager();
+	
+	protected abstract BattleDataRoomManager createBattleDataRoomManager();
 }

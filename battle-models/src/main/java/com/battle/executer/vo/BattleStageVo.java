@@ -96,9 +96,6 @@ public class BattleStageVo {
 	}
 	
 	public BattlePaperQuestionVo currentQuestion(){
-		
-		System.out.println(".........questionIndex:"+questionIndex+",selectBattlePaperQuestions.size:"+selectBattlePaperQuestions.size());
-		System.out.println("..............selectBattlePaperQuestions:"+selectBattlePaperQuestions);
 		if(questionIndex<selectBattlePaperQuestions.size()){
 			return selectBattlePaperQuestions.get(questionIndex);
 		}else{

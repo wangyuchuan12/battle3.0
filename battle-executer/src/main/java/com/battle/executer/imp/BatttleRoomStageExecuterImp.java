@@ -1,6 +1,6 @@
 package com.battle.executer.imp;
 import java.util.List;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomStageExecuter;
 import com.battle.executer.Event;
@@ -11,7 +11,7 @@ import com.battle.executer.vo.BattleStageVo;
 
 public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 
-	private BattleRoomDataManager battleRoomDataManager;
+	private BattleDataManager battleRoomDataManager;
 	
 	private BattleRoomPublish battleRoomPublish;
 	
@@ -22,35 +22,30 @@ public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 	
 	@Override
 	public void init(ExecuterStore executerStore){
-		this.battleRoomDataManager = executerStore.getBattleRoomDataManager();
+		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
-		this.eventManager = executerStore.getBattleRoomDataManager().getEventManager();
+		this.eventManager = executerStore.getBattleDataManager().getEventManager();
 		this.scheduledExecuter = executerStore.getScheduledExecuter();
 	}
 	
 	@Override
 	public void startStage() {
-		System.out.println(".........startStage");
-		Integer stageIndex = battleRoomDataManager.getBattlePaper().getStageIndex();
-		List<BattleStageVo> battleStages = battleRoomDataManager.getBattlePaper().getBattleStages();
-		BattleStageVo battleStageVo = null;
-		for(BattleStageVo thisBattleStageVo:battleStages){
-			if(thisBattleStageVo.getStageIndex().intValue()==stageIndex.intValue()){
-				battleStageVo = thisBattleStageVo;
-			}
+		
+		System.out.println("........startStage1");
+		try{
+			BattleStageVo battleStageVo = battleRoomDataManager.currentStage();
+			battleStageVo.setStatus(BattleStageVo.STATUS_IN);
+			battleRoomPublish.publishShowSubjects(battleStageVo);
+			scheduledExecuter.schedule(new Runnable() {
+				@Override
+				public void run() {
+					eventManager.publishEvent(Event.START_QUESTIONS, null);
+				}
+			}, battleStageVo.getTimeLong());
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		
-		battleStageVo.setStatus(BattleStageVo.STATUS_IN);
-		battleRoomPublish.publishShowSubjects(battleStageVo);
-		
-		scheduledExecuter.schedule(new Runnable() {
-			
-			@Override
-			public void run() {
-				System.out.println(".........startQuestions");
-				eventManager.publishEvent(Event.START_QUESTIONS, null);
-			}
-		}, battleStageVo.getTimeLong());
+		System.out.println("........startStage2");
 	}
 
 }

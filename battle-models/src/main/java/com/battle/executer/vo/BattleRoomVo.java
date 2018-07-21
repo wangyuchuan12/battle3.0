@@ -19,8 +19,6 @@ public class BattleRoomVo {
 	
 	private String periodId;
 	
-	private Integer stageCount;
-	
 	private List<BattleRoomMemberVo> members;
 	
 	private List<BattleRoomRewardRecord> battleRoomRewardRecords;
@@ -93,13 +91,6 @@ public class BattleRoomVo {
 		this.periodId = periodId;
 	}
 
-	public Integer getStageCount() {
-		return stageCount;
-	}
-
-	public void setStageCount(Integer stageCount) {
-		this.stageCount = stageCount;
-	}
 
 	public List<BattleRoomMemberVo> getMembers() {
 		return members;

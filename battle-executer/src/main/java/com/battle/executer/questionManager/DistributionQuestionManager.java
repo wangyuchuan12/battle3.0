@@ -1,10 +1,12 @@
-package com.battle.executer.imp;
+package com.battle.executer.questionManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,36 +15,24 @@ import com.battle.domain.BattleQuestionDistribution;
 import com.battle.domain.BattleQuestionDistributionQuestion;
 import com.battle.domain.BattleQuestionDistributionStage;
 import com.battle.domain.BattleQuestionDistributionSubject;
-import com.battle.executer.BattleRoomDataManager;
-import com.battle.executer.EventManager;
+import com.battle.domain.Question;
+import com.battle.domain.QuestionOption;
+import com.battle.executer.BattleQuestionManager;
+import com.battle.executer.vo.BattlePaperOptionVo;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
-import com.battle.executer.vo.BattleRewardVo;
-import com.battle.executer.vo.BattleRoomMemberVo;
-import com.battle.executer.vo.BattleRoomRewardRecord;
-import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
 import com.battle.service.BattleQuestionDistributionQuestionService;
 import com.battle.service.BattleQuestionDistributionService;
 import com.battle.service.BattleQuestionDistributionStageService;
 import com.battle.service.BattleQuestionDistributionSubjectService;
-import com.wyc.common.service.WxUserInfoService;
-import com.wyc.common.wx.domain.UserInfo;
-public class BattleRoomDataManagerImp implements BattleRoomDataManager{
+import com.battle.service.QuestionOptionService;
+import com.battle.service.QuestionService;
 
-	
-	private BattleRoomVo battleRoom;
-	
+public class DistributionQuestionManager implements BattleQuestionManager{
+
 	private BattlePaperVo battlePaper;
-	
-	@Autowired
-	private BattleQuestionDistributionService battleQuestionDistributionService;
-	
-	@Autowired
-	private WxUserInfoService wxUserInfoService;
-	
-	private EventManager eventManager;
 	
 	@Autowired
 	private BattleQuestionDistributionStageService battleQuestionDistributionStageService;
@@ -53,103 +43,22 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 	@Autowired
 	private BattleQuestionDistributionQuestionService battleQuestionDistributionQuestionService;
 	
+	@Autowired
+	private BattleQuestionDistributionService battleQuestionDistributionService;
 	
-
+	@Autowired
+	private QuestionOptionService questionOptionService;
+	
+	@Autowired
+	private QuestionService questionService;
 	@Override
-	public BattleRoomVo getBattleRoom() {
-		
-		return battleRoom;
-	}
-
-	@Override
-	public BattlePaperVo getBattlePaper() {
-		return battlePaper;
-	}
-
-	@Override
-	public List<BattleRoomMemberVo> getBattleMembers() {
-		return battleRoom.getMembers();
-	}
-
-
-	@Override
-	public BattleRoomMemberVo getBattleMemberByUserId(String userId) {
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoom.getMembers();
-		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
-			if(battleRoomMemberVo.getUserId().equals(userId)){
-				return battleRoomMemberVo;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex) {
-		List<BattleStageVo> battleStageVos = battlePaper.getBattleStages();
-		for(BattleStageVo battleStageVo:battleStageVos){
-			if(battleStageVo.getStageIndex().intValue()==stageIndex.intValue()){
-				return battleStageVo.getBattlePaperSubjects();
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public void init(String groupId, List<String> userIds,Integer type ,Map<String, Object> data) {
-		
-		eventManager = new EventManager();
-		
-		battleRoom = new BattleRoomVo();
-		
-		battleRoom.setNum(userIds.size());
-		
-		battleRoom.setRangeGogal(1000);
-		
-		List<BattleRewardVo> battleRewards = null;
-		if(data!=null&&data.get("rewards")!=null){
-			battleRewards = (List<BattleRewardVo>)data.get("rewards");
-		}
-		List<BattleRoomRewardRecord> battleRoomRewardRecords = new ArrayList<>();
-		
-		if(battleRewards!=null){
-			for(BattleRewardVo battleReward:battleRewards){
-				
-				BattleRoomRewardRecord battleRoomRewardRecord = new BattleRoomRewardRecord();
-				battleRoomRewardRecord.setId(UUID.randomUUID().toString());
-				battleRoomRewardRecord.setRank(battleReward.getRank());
-				battleRoomRewardRecord.setRewardBean(battleReward.getRewardBean());
-				battleRoomRewardRecord.setRewardLove(battleReward.getRewardLove());
-				
-				battleRoomRewardRecords.add(battleRoomRewardRecord);
-				
-			}
-		}
-		
-		battleRoom.setRewardBean(10);
-		battleRoom.setRewardBean2(20);
-		battleRoom.setRewardBean3(30);
-		battleRoom.setRewardBean4(40);
-		battleRoom.setRewardBean5(50);
-		battleRoom.setRewardBean6(60);
-		battleRoom.setRewardBean7(70);
-		battleRoom.setRewardBean8(80);
-		battleRoom.setRewardBean9(90);
-		battleRoom.setRewardBean10(100);
-		
-		battleRoom.setData(data);
-		
-		battleRoom.setSubBean(50);
-		
-		battleRoom.setType(type);
-		
-		battleRoom.setId(UUID.randomUUID().toString());
+	public void init(Map<String, Object> data) {
+		List<String> userIds = (List<String>)data.get("userIds");
+		String roomId = (String)data.get("roomId");
+		String groupId = (String)data.get("groupId");
 		
 		
-		battleRoom.setBattleRoomRewardRecords(battleRoomRewardRecords);
-		
-		List<BattleRoomMemberVo> battleRoomMemberVos = new ArrayList<>();
-		
-		
+		System.out.println("..........groupId:"+groupId);
 		List<BattleQuestionDistribution> battleQuestionDistributions = battleQuestionDistributionService.findAllByGroupId(groupId);
 		
 		System.out.println("........battleQuestionDistributions:"+battleQuestionDistributions);
@@ -161,35 +70,6 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		}else{
 			throw new RuntimeException("battleQuestionDistribution 为空");
 		}
-		
-		
-		battleRoom.setLoveCount(battleQuestionDistribution.getLoveCount());
-		for(String userId:userIds){
-			BattleRoomMemberVo battleRoomMemberVo = new BattleRoomMemberVo();
-			UserInfo userInfo = wxUserInfoService.findOne(userId);
-			battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
-			battleRoomMemberVo.setNickname(userInfo.getNickname());
-			battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
-			battleRoomMemberVo.setRemainLove(battleRoom.getLoveCount());
-			battleRoomMemberVo.setLimitLove(battleRoom.getLoveCount());
-			battleRoomMemberVo.setRoomId(battleRoom.getId());
-			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
-			battleRoomMemberVo.setUserId(userId);
-			battleRoomMemberVo.setProcess(0);
-			battleRoomMemberVo.setId(UUID.randomUUID().toString());
-			battleRoomMemberVo.setCnRightCount(0);
-			battleRoomMemberVo.setIsPass(0);
-			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
-			battleRoomMemberVo.setIsEnd(0);
-			battleRoomMemberVos.add(battleRoomMemberVo);
-		}
-		
-		
-		battleRoom.setMembers(battleRoomMemberVos);
-
-		
-		System.out.println("........groupId:"+groupId);
-		
 		
 		battlePaper = new BattlePaperVo();
 		battlePaper.setId(UUID.randomUUID().toString());
@@ -203,7 +83,6 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 		List<BattleQuestionDistributionStage> battleQuestionDistributionStages = battleQuestionDistributionStageService.findAllByDistributionIdOrderByStageIndexAsc(battleQuestionDistribution.getId());
 		
 		
-		battleRoom.setStageCount(battleQuestionDistributionStages.size());
 		for(int i = 0;i<battleQuestionDistributionStages.size();i++){
 			BattleQuestionDistributionStage battleQuestionDistributionStage = battleQuestionDistributionStages.get(i);
 			List<BattleQuestionDistributionSubject> battleQuestionDistributionSubjects = battleQuestionDistributionSubjectService.findAllByDistributionIdAndDistributionStageIdAndIsDel(battleQuestionDistribution.getId(),battleQuestionDistributionStage.getId(),0);
@@ -231,7 +110,7 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 				battlePaperQuestionVo.setSeq(battleQuestionDistributionQuestion.getSeq());
 				battlePaperQuestionVo.setType(battleQuestionDistributionQuestion.getType());
 				battlePaperQuestionVo.setQuestionIndex(i+1);
-				battlePaperQuestionVo.setRoomId(battleRoom.getId());
+				battlePaperQuestionVo.setRoomId(roomId);
 				battlePaperQuestionVo.setTimeLong(10);
 				battlePaperQuestions.add(battlePaperQuestionVo);
 			}
@@ -278,24 +157,137 @@ public class BattleRoomDataManagerImp implements BattleRoomDataManager{
 	}
 
 	@Override
-	public EventManager getEventManager() {
-		
-		return eventManager;
+	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex) {
+		List<BattleStageVo> battleStageVos = battlePaper.getBattleStages();
+		for(BattleStageVo battleStageVo:battleStageVos){
+			if(battleStageVo.getStageIndex().intValue()==stageIndex.intValue()){
+				return battleStageVo.getBattlePaperSubjects();
+			}
+		}
+		return null;
 	}
 
 	@Override
-	public List<BattleRoomMemberVo> getBattleMembers(Integer... statuses) {
-		List<BattleRoomMemberVo> battleRoomMembers = getBattleMembers();
-		List<BattleRoomMemberVo> validMembers = new ArrayList<>();
+	public BattleStageVo currentStage() {
+		return battlePaper.currentStage();
+	}
+
+	@Override
+	public List<BattlePaperQuestionVo> selectQuestions() {
+		BattleStageVo battleStageVo = currentStage();
+		Map<String,List<BattlePaperQuestionVo>> battlePaperQuestionMap = battleStageVo.getBattlePaperQuestions();
 		
-		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-			for(Integer status:statuses){
-				if(battleRoomMember.getStatus().intValue()==status.intValue()){
-					validMembers.add(battleRoomMember);
-					break;
+		List<BattlePaperSubjectVo> battlePaperSubjects = battleStageVo.getBattlePaperSubjects();
+		
+		List<BattlePaperSubjectVo> selectPaperSubjects = new ArrayList<>();
+		
+		for(BattlePaperSubjectVo battlePaperSubjectVo:battlePaperSubjects){
+			if(battlePaperSubjectVo.getIsSelect().intValue()==1){
+				selectPaperSubjects.add(battlePaperSubjectVo);
+			}
+		}
+		
+		
+		List<BattlePaperQuestionVo> selectQuestions = new ArrayList<>();
+		
+		Integer questionCount = battleStageVo.getQuestionCount();
+		
+		Collections.shuffle(selectPaperSubjects);
+		
+		List<String> selectQuestionIds = new ArrayList<>();
+		
+		for(BattlePaperSubjectVo battlePaperSubjectVo:selectPaperSubjects){
+			if(selectQuestions.size()<questionCount){
+				List<BattlePaperQuestionVo> subjectBattlePaperQuestions = battlePaperQuestionMap.get(battlePaperSubjectVo.getId());
+				if(subjectBattlePaperQuestions.size()>0){
+					Collections.shuffle(subjectBattlePaperQuestions);
+					selectQuestions.add(subjectBattlePaperQuestions.get(0));
+					selectQuestionIds.add(subjectBattlePaperQuestions.get(0).getQuestionId());
 				}
 			}
 		}
-		return validMembers;
+		
+		
+		
+		if(selectQuestions.size()<questionCount){
+			Collections.shuffle(selectPaperSubjects);
+			for(BattlePaperSubjectVo battlePaperSubjectVo:selectPaperSubjects){
+				if(selectQuestions.size()<questionCount){
+					List<BattlePaperQuestionVo> subjectBattlePaperQuestions = battlePaperQuestionMap.get(battlePaperSubjectVo.getId());
+					if(subjectBattlePaperQuestions.size()>0){
+						Collections.shuffle(subjectBattlePaperQuestions);
+						if(!selectQuestionIds.contains(subjectBattlePaperQuestions.get(0).getQuestionId())){
+							selectQuestions.add(subjectBattlePaperQuestions.get(0));
+						}
+					}
+				}
+			}
+		}
+		
+		for(BattlePaperQuestionVo battlePaperQuestionVo:selectQuestions){
+			if(battlePaperQuestionVo.getType().intValue()==Question.SELECT_TYPE){
+				List<QuestionOption> questionOptions = questionOptionService.findAllByQuestionId(battlePaperQuestionVo.getQuestionId());
+				List<BattlePaperOptionVo> battlePaperOptionVos = battlePaperQuestionVo.getOptions();
+				for(QuestionOption questionOption:questionOptions){
+					BattlePaperOptionVo battlePaperOptionVo = new BattlePaperOptionVo();
+					battlePaperOptionVo.setContent(questionOption.getContent());
+					battlePaperOptionVo.setId(questionOption.getId());
+					
+					if(questionOption.getContent().equals(battlePaperQuestionVo.getRightAnswer())){
+						battlePaperOptionVo.setIsRight(1);
+					}else{
+						battlePaperOptionVo.setIsRight(0);
+					}
+					
+					battlePaperOptionVos.add(battlePaperOptionVo);
+				}
+				
+			}else if(battlePaperQuestionVo.getType().intValue()==Question.FILL_TYPE){
+				Question question = questionService.findOne(battlePaperQuestionVo.getQuestionId());
+				if(question!=null){
+					String fillWords = question.getFillWords();
+					battlePaperQuestionVo.setFillWords(fillWords);
+				}
+			}
+		}
+		
+		battleStageVo.setSelectBattlePaperQuestions(selectQuestions);
+		return selectQuestions;
 	}
+
+	@Override
+	public void nextQuestion() {
+		
+		BattleStageVo battleStageVo = currentStage();
+		int questionIndex = battleStageVo.getQuestionIndex();
+		battleStageVo.setQuestionIndex(questionIndex+1);
+		
+	}
+
+	@Override
+	public BattlePaperQuestionVo currentQuestion() {
+		BattleStageVo battleStageVo = currentStage();
+		return battleStageVo.currentQuestion();
+	}
+
+	@Override
+	public void nextStage() {
+		
+		int currentStageIndex = battlePaper.getStageIndex();
+		battlePaper.setStageIndex(currentStageIndex+1);
+		
+	}
+
+	@Override
+	public int stageCount() {
+
+		return battlePaper.getBattleStages().size();
+	}
+
+	@Override
+	public BattlePaperVo getBattlePaper() {
+
+		return battlePaper;
+	}
+
 }

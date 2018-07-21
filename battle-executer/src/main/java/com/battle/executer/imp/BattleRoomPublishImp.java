@@ -8,7 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.vo.BattlePaperQuestionVo;
@@ -26,14 +26,14 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	@Autowired
 	private MessageHandler messageHandler;
 	
-	private BattleRoomDataManager battleRoomDataManager;
+	private BattleDataManager battleRoomDataManager;
 	
 	final static Logger logger = LoggerFactory.getLogger(BattleRoomPublishImp.class);
 	
 	@Override
 	public void init(ExecuterStore executerStore) {
 		
-		this.battleRoomDataManager = executerStore.getBattleRoomDataManager();
+		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		
 	}
 	
@@ -72,7 +72,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			data.put("member", battleRoomMemberVo);
 			data.put("periodId", battleRoomVo.getPeriodId());
 			data.put("rangeGogal", battleRoomVo.getRangeGogal());
-			data.put("stageCount", battleRoomVo.getStageCount());
+			data.put("stageCount", battleRoomDataManager.stageCount());
 			data.put("members", battleRoomMemberVos);
 			List<String> userIds = new ArrayList<>();
 			MessageVo messageVo = new MessageVo();

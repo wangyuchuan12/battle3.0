@@ -1,5 +1,4 @@
 package com.battle.executer.imp;
-
 import java.util.List;
 import java.util.Map;
 
@@ -7,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
 
+import com.battle.executer.BattleQuestionManager;
 import com.battle.executer.BattleRoomConnector;
-import com.battle.executer.BattleRoomDataManager;
+import com.battle.executer.BattleDataManager;
+import com.battle.executer.BattleDataRoomManager;
 import com.battle.executer.BattleRoomExecuter;
 import com.battle.executer.BattleRoomFactory;
 import com.battle.executer.BattleRoomPublish;
@@ -16,6 +17,8 @@ import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.BattleRoomStageExecuter;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
+import com.battle.executer.questionManager.DistributionQuestionManager;
+import com.battle.executer.roomManager.DefaultRoomDataManager;
 
 @Service
 public class BattleRoomFactoryImp extends BattleRoomFactory{
@@ -28,12 +31,11 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	
 	@Override
 	public ExecuterStore init(String groupId,List<String> userIds,Integer type,Map<String, Object> data) {
-		
-		
+
 		try{
 			ExecuterStore executerStore =  super.init(groupId,userIds,type,data);
 			
-			BattleRoomDataManager battleRoomDataManager = executerStore.getBattleRoomDataManager();
+			BattleDataManager battleRoomDataManager = executerStore.getBattleDataManager();
 			
 			BattleRoomExecuter battleRoomExecuter = executerStore.getBattleRoomExecuter();
 			
@@ -60,9 +62,9 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	}
 
 	@Override
-	protected BattleRoomDataManager createBattleRoomDataManager() {
-		BattleRoomDataManager battleRoomDataManager = new BattleRoomDataManagerImp();
-		return battleRoomDataManager;
+	protected BattleDataManager createBattleDataManager() {
+		BattleDataManager battleDataManager = new BattleDataManagerImp();
+		return battleDataManager;
 	}
 
 	@Override
@@ -83,6 +85,18 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	protected ScheduledExecuter createScheduledExecuter() {
 		ScheduledExecuter scheduledExecuter = new ScheduledExecuterImp();
 		return scheduledExecuter;
+	}
+
+	@Override
+	protected BattleQuestionManager createQuestionManager() {
+		BattleQuestionManager battleQuestionManager = new DistributionQuestionManager();
+		return battleQuestionManager;
+	}
+
+	@Override
+	protected BattleDataRoomManager createBattleDataRoomManager() {
+		BattleDataRoomManager battleDataRoomManager = new DefaultRoomDataManager();
+		return battleDataRoomManager;
 	}
 
 	
