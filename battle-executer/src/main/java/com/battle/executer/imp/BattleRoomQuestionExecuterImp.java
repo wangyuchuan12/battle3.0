@@ -150,6 +150,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				wisdomCount=wisdomCount+battleRewardVo.getRewardBean();
 				account.setWisdomCount(wisdomCount);
 				accountService.update(account);
+				battleRoomMember.setBeanNum(wisdomCount.intValue());
 			}else{
 				battleRoomMember.setCnRightCount(0);
 				battleRewardVo.setStatus(BattleUserRewardVo.SUB_STATUS);
@@ -158,11 +159,15 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				Account account = accountService.fineOneSync(userInfo.getAccountId());
 				Long wisdomCount = account.getWisdomCount();
 				wisdomCount = wisdomCount - battleRewardVo.getSubBean();
+				
 				if(wisdomCount<=0){
 					wisdomCount = 0L;
+					battleRoomMember.setBeanNum(wisdomCount.intValue());
 					Map<String, Object> data = new HashMap<>();
 					data.put("member", battleRoomMember);
 					eventManager.publishEvent(Event.PUBLISH_DIE, data);
+				}else{
+					battleRoomMember.setBeanNum(wisdomCount.intValue());
 				}
 				account.setWisdomCount(wisdomCount);
 				accountService.update(account);
