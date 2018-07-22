@@ -158,7 +158,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				Account account = accountService.fineOneSync(userInfo.getAccountId());
 				Long wisdomCount = account.getWisdomCount();
 				wisdomCount = wisdomCount - battleRewardVo.getSubBean();
-				if(wisdomCount<0){
+				if(wisdomCount<=0){
 					wisdomCount = 0L;
 					Map<String, Object> data = new HashMap<>();
 					data.put("member", battleRoomMember);
