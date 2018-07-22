@@ -373,8 +373,12 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
 		}
 		
+		System.out.println("........battleRoomMembers:"+battleRoomMembers);
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 			QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
+			
+			System.out.println("........questionAnswer.getMyAnswer:"+questionAnswer.getMyAnswer());
+			System.out.println("........questionAnswer.getRightAnswer:"+battlePaperQuestion.getRightAnswer());
 			if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
 				if(questionAnswer==null||
 						CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
