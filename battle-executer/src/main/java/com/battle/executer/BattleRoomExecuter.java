@@ -33,4 +33,6 @@ public interface BattleRoomExecuter {
 	
 	public BattleRoomVo getRoom();
 
+	public boolean superLove(UserInfo userInfo);
+
 }

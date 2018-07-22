@@ -1,6 +1,8 @@
 package com.battle.executer.imp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.battle.executer.BattleDataManager;
@@ -11,9 +13,11 @@ import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.vo.BattlePaperQuestionVo;
+import com.battle.executer.vo.BattlePaperVo;
 import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
+import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerResultVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.wyc.common.domain.Account;
@@ -36,6 +40,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	
 	@Autowired
 	private WxUserInfoService userInfoService;
+	
 
 	public void init(ExecuterStore executerStore){
 		this.battleRoomDataManager = executerStore.getBattleDataManager();
@@ -51,24 +56,21 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	
 	@Override
 	public void startQuestion(){
-		
-		System.out.println(".........startQuestion");
+		EventManager eventManager = battleRoomDataManager.getEventManager();
+		eventManager.publishEvent(Event.PUBLISH_DIE, null);
 		try{
 			BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
 			if(battlePaperQuestion!=null){
-				System.out.println(".........startQuestion1");
 				battleRoomPublish.publishShowQuestion(battlePaperQuestion);
 				scheduledExecuter.schedule(new Runnable() {
 					@Override
 					public void run() {
-						startQuestion();
 						battleRoomDataManager.nextQuestion();
+						startQuestion();
 						
 					}
 				}, battlePaperQuestion.getTimeLong()+1);
 			}else{
-				System.out.println(".........startQuestion2");
-				EventManager eventManager = battleRoomDataManager.getEventManager();
 				eventManager.publishEvent(Event.SUBMIT_RESULT, null);
 			}
 		}catch(Exception e){
@@ -79,10 +81,11 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	
 	@Override
 	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer) {
-		
+		EventManager eventManager = battleRoomDataManager.getEventManager();
 		try{
 			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
 			BattlePaperQuestionVo battlePaperQuestionVo = battleRoomDataManager.currentQuestion();
+			
 			
 			List<QuestionAnswerVo> questionAnswerVos = battlePaperQuestionVo.getQuestionAnswerVos();
 	
@@ -157,6 +160,9 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				wisdomCount = wisdomCount - battleRewardVo.getSubBean();
 				if(wisdomCount<0){
 					wisdomCount = 0L;
+					Map<String, Object> data = new HashMap<>();
+					data.put("member", battleRoomMember);
+					eventManager.publishEvent(Event.PUBLISH_DIE, data);
 				}
 				account.setWisdomCount(wisdomCount);
 				accountService.update(account);

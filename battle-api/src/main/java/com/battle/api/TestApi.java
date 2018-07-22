@@ -7,20 +7,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleQuestionDistribution;
+import com.battle.domain.BattleRankMember;
 import com.battle.executer.BattleRoomConnector;
+import com.battle.rank.manager.RankManager;
 import com.battle.service.other.BattleQuestionDistributionHandleService;
 
 
 @Controller
 @RequestMapping(value="/api/test")
 public class TestApi {
-	
+
+	@Autowired
+	private RankManager rankManager;
 	@Autowired
 	private BattleQuestionDistributionHandleService battleQuestionDistributionHandleService;
 	
 	
 	@Autowired
 	private BattleRoomConnector battleRoomConnector;
+	
+	@RequestMapping(value="addBySubjectId")
+	@ResponseBody
+	@Transactional
+	public void addBySubjectId(HttpServletRequest httpServletRequest){
+		
+		String rankId = httpServletRequest.getParameter("rankId");
+		
+		String periodId = httpServletRequest.getParameter("periodId");
+		String battleSubjectId = httpServletRequest.getParameter("battleSubjectId");
+		String num = httpServletRequest.getParameter("num");
+		rankManager.addBySubjectId(rankId, periodId, battleSubjectId, Integer.parseInt(num));
+	}
+	
 	
 	@RequestMapping(value="flushDistribution")
 	@ResponseBody

@@ -20,6 +20,8 @@ import com.battle.domain.BattleDan;
 import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitUser;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.param.RoomParam;
+import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.filter.element.LoginStatusFilter;
@@ -258,7 +260,22 @@ public class BattleWaitApi {
 					}
 					
 					data.put("rewards", battleRewards);
-					battleRoomFactory.init(battleWait.getGroupId(),userIds,BattleRoomVo.DAN_TYPE,data);
+					
+					RoomParam roomParam = new RoomParam();
+					roomParam.setData(data);
+					roomParam.setGroupId(battleWait.getGroupId());
+					roomParam.setType(BattleRoomVo.DAN_TYPE);
+					
+					List<UserParam> userParams = new ArrayList<>();
+					roomParam.setUserParams(userParams);
+					
+					for(String userId:userIds){
+						UserParam userParam = new UserParam();
+						userParam.setIsRobot(0);
+						userParam.setUserId(userId);
+						userParams.add(userParam);
+					}
+					battleRoomFactory.init(roomParam);
 					
 				}
 			}, 4, TimeUnit.SECONDS);

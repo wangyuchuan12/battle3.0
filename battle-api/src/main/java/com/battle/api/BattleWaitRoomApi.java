@@ -18,6 +18,8 @@ import com.battle.domain.BattleSearchRoomReward;
 import com.battle.domain.BattleWaitRoom;
 import com.battle.domain.BattleWaitRoomMember;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.param.RoomParam;
+import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.filter.element.LoginStatusFilter;
@@ -127,7 +129,22 @@ public class BattleWaitRoomApi {
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("rewards", battleRewards);
-		battleRoomFactory.init(battleWaitRoom.getGroupId(),userIds,BattleRoomVo.ROOM_TYPE,data);
+		
+		RoomParam roomParam = new RoomParam();
+		roomParam.setData(data);
+		roomParam.setGroupId(battleWaitRoom.getGroupId());
+		roomParam.setType(BattleRoomVo.DAN_TYPE);
+		
+		List<UserParam> userParams = new ArrayList<>();
+		roomParam.setUserParams(userParams);
+		
+		for(String userId:userIds){
+			UserParam userParam = new UserParam();
+			userParam.setIsRobot(0);
+			userParam.setUserId(userId);
+			userParams.add(userParam);
+		}
+		battleRoomFactory.init(roomParam);
 		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);

@@ -20,6 +20,8 @@ public class BattlePaperSubjectVo {
 	private String selectUserImg;
 	
 	private String selectUserId;
+	
+	private String battleSubjectId;
 
 	public String getDistributionId() {
 		return distributionId;
@@ -100,5 +102,13 @@ public class BattlePaperSubjectVo {
 
 	public void setSelectUserImg(String selectUserImg) {
 		this.selectUserImg = selectUserImg;
+	}
+
+	public String getBattleSubjectId() {
+		return battleSubjectId;
+	}
+
+	public void setBattleSubjectId(String battleSubjectId) {
+		this.battleSubjectId = battleSubjectId;
 	}
 }

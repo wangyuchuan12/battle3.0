@@ -35,6 +35,22 @@ public class BattleApi {
 	private QuestionOptionService questionOptionService;
 	
 	
+	@RequestMapping(value="superLove")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo superLove(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);	
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		String id = httpServletRequest.getParameter("id");
+		
+		boolean success = battleRoomConnector.superLove(id, userInfo);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(success);
+		return resultVo;
+		
+	}
 	
 	@RequestMapping(value="takepart")
 	@ResponseBody

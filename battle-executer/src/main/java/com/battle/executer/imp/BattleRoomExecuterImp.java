@@ -15,6 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.battle.domain.UserStatus;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomExecuter;
+import com.battle.executer.BattleRoomMemberTakepart;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.Event;
@@ -40,7 +41,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	
 	private BattleRoomQuestionExecuter battleRoomQuestionExecuter;
 	
-	private BattleDataManager battleRoomDataManager;
+	private BattleDataManager battleDataManager;
 	
 	private BattleRoomPublish battleRoomPublish;
 	
@@ -52,6 +53,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	
 	@Autowired
 	private UserStatusService userStatusService;
+	
+	private BattleRoomMemberTakepart battleRoomMemberTakepart;
 
 
 	@Override
@@ -62,7 +65,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public void signOut(String userId) {
 		
-		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 			if(battleRoomMember.getUserId().equals(userId)){
 				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_OUT);
@@ -74,9 +77,10 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public void init(EventManager eventManager,ExecuterStore executerStore) {
 		this.eventManager = eventManager;
-		this.battleRoomDataManager = executerStore.getBattleDataManager();
+		this.battleDataManager = executerStore.getBattleDataManager();
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
+		this.battleRoomMemberTakepart = executerStore.getBattleRoomMemberTakepart();
 		this.startRoom();
 	}
 
@@ -104,9 +108,9 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			battleRoomPublish.publishRoomStart();
 			eventManager.publishEvent(Event.START_ROOM_CODE, null);
 			
-			List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 			
-			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+			BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 			
 			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 				UserStatus userStatus = userStatusService.findOneByUserId(battleRoomMember.getUserId());
@@ -123,16 +127,16 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	public void endRoom() {
 		
 		try{
-			BattleRoomVo battleroom = battleRoomDataManager.getBattleRoom();
+			BattleRoomVo battleroom = battleDataManager.getBattleRoom();
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();//事务定义类
 			def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 			
 			TransactionStatus transactionStatus = platformTransactionManager.getTransaction(def);
 	
-			List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 			
 			
-			List<BattleRoomRewardRecord> battleRoomRewardRecords = battleRoomDataManager.getBattleRoom().getBattleRoomRewardRecords();
+			List<BattleRoomRewardRecord> battleRoomRewardRecords = battleDataManager.getBattleRoom().getBattleRoomRewardRecords();
 			Map<Integer, BattleRoomRewardRecord> battleRoomRewardRecordMap = new HashMap<>();
 			for(BattleRoomRewardRecord battleRoomRewardRecord:battleRoomRewardRecords){
 				battleRoomRewardRecordMap.put(battleRoomRewardRecord.getRank(), battleRoomRewardRecord);
@@ -215,9 +219,9 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public synchronized void subjectSelect(String subjectId, String userId) {
 		try{
-			BattlePaperVo battlePaperVo = battleRoomDataManager.getBattlePaper();
+			BattlePaperVo battlePaperVo = battleDataManager.getBattlePaper();
 			
-			BattleRoomVo battleRoomVo = battleRoomDataManager.getBattleRoom();
+			BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
 			
 			Integer stageIndex = battlePaperVo.getStageIndex();
 			
@@ -274,11 +278,11 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	public void submitResult() {
 		
 		try{
-			BattleStageVo stageVo = battleRoomDataManager.getBattlePaper().currentStage();
+			BattleStageVo stageVo = battleDataManager.getBattlePaper().currentStage();
 			List<BattlePaperQuestionVo> battlePaperQuestions = stageVo.getSelectBattlePaperQuestions();
 			
 	
-			List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
 		
 	
 			for(BattlePaperQuestionVo battlePaperQuestion:battlePaperQuestions){
@@ -298,8 +302,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 							remainLove--;
 							if(remainLove<=0){
 								remainLove = 0;
-								
-								battleRoomPublish.publishDie(battleRoomMember);
+								battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
+								//battleRoomPublish.publishDie(battleRoomMember);
 							}
 							battleRoomMember.setRemainLove(remainLove);
 							
@@ -333,55 +337,42 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 	@Override
 	public BattleRoomMemberVo takepart(UserInfo userInfo) {
-		
-		try{
-			List<BattleRoomMemberVo> battleRoomMembers =  battleRoomDataManager.getBattleMembers();
-			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
-			BattleRoomMemberVo battleRoomMemberVo = null;
-			for(BattleRoomMemberVo thisMember:battleRoomMembers){
-				if(thisMember.getUserId().equals(userInfo.getId())){
-					battleRoomMemberVo = thisMember;
-				}
-			}
-			if(battleRoomMemberVo==null){
-				battleRoomMemberVo = new BattleRoomMemberVo();
-				battleRoomMemberVo.setAccountId(userInfo.getAccountId());
-				battleRoomMemberVo.setBattleId(battleRoom.getBattleId());
-				battleRoomMemberVo.setCnRightCount(0);
-				battleRoomMemberVo.setEndCotent("");
-				battleRoomMemberVo.setId(UUID.randomUUID().toString());
-				battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
-				battleRoomMemberVo.setIsEnd(0);
-				battleRoomMemberVo.setIsPass(0);
-				battleRoomMemberVo.setRemainLove(battleRoom.getLoveCount());
-				battleRoomMemberVo.setLimitLove(battleRoom.getLoveCount());
-				battleRoomMemberVo.setNickname(userInfo.getNickname());
-				battleRoomMemberVo.setPeriodId(battleRoom.getPeriodId());
-				battleRoomMemberVo.setProcess(0);
-				battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
-				battleRoomMemberVo.setRank(100);
-				battleRoomMemberVo.setRewardBean(0);
-				battleRoomMemberVo.setRewardLove(0);
-				battleRoomMemberVo.setRoomId(battleRoom.getId());
-				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
-				battleRoomMemberVo.setUserId(userInfo.getId());
-				battleRoomMembers.add(battleRoomMemberVo);
-			}else{
-				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
-			}
-			
-			battleRoomPublish.publishTakepart(battleRoomMemberVo);
-			return battleRoomMemberVo;
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
-		}
+		return battleRoomMemberTakepart.takepart(userInfo);
 	}
 
 	@Override
 	public BattleRoomVo getRoom() {
 		
-		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 		return battleRoom;
+	}
+
+	@Override
+	public boolean superLove(UserInfo userInfo) {
+		Account account = accountService.fineOne(userInfo.getAccountId());
+		Integer love = account.getLoveLife();
+		if(love==null||love==0){
+			return false;
+		}else{
+			BattleRoomMemberVo battleRoomMember = battleDataManager.getBattleMemberByUserId(userInfo.getId());
+			Integer remainLove = battleRoomMember.getRemainLove();
+			Integer limitLove = battleRoomMember.getLimitLove();
+			int diff = limitLove-remainLove;
+			if(diff<0||diff==0){
+				return false;
+			}
+			
+			if(diff>love){
+				battleRoomMember.setRemainLove(remainLove+love);
+				account.setLoveLife(0);
+			}else{
+				battleRoomMember.setRemainLove(limitLove);
+				account.setLoveLife(love-diff);
+			}
+			
+			accountService.update(account);
+			
+			return true;
+		}
 	}
 }

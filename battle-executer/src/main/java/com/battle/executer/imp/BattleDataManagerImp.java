@@ -100,4 +100,10 @@ public class BattleDataManagerImp implements BattleDataManager{
 	public int stageCount() {
 		return battleQuestionManager.stageCount();
 	}
+
+	@Override
+	public void clearMembers() {
+		battleDataRoomManager.clear();
+		
+	}
 }

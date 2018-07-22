@@ -1,0 +1,41 @@
+package com.battle.executer.endJudge;
+
+import java.util.List;
+
+import com.battle.executer.BattleDataManager;
+import com.battle.executer.EndJudge;
+import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleStageVo;
+
+public class DefaultEndJudge implements EndJudge{
+
+	private BattleDataManager battleDataManager;
+	@Override
+	public boolean isEnd() {
+		BattleStageVo battleStageVo = battleDataManager.currentStage();
+		if(battleStageVo!=null){
+			List<BattleRoomMemberVo> battleRoomMemberVos = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
+			int liveNum = 0;
+			for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
+				if(battleRoomMember.getRemainLove()>0){
+					liveNum++;
+				}
+			}
+			if(liveNum>1){
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			return true;
+		}
+	}
+
+	@Override
+	public void init(BattleDataManager battleDataManager) {
+		
+		this.battleDataManager = battleDataManager;
+		
+	}
+
+}

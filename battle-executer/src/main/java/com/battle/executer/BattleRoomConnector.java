@@ -59,6 +59,15 @@ public  class BattleRoomConnector{
 		}
 	}
 	
+	public boolean superLove(String roomId,UserInfo userInfo){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		if(battleRoomExecuter!=null){
+			return battleRoomExecuter.superLove(userInfo);
+		}else{
+			return false;
+		}
+	}
+	
 	public void removeExecuter(final String roomId){
 		battleRoomExecuterMap.remove(roomId);
 		//scheduledExecutorService.shutdown();

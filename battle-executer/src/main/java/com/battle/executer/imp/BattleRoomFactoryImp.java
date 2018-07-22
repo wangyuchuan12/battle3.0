@@ -1,7 +1,4 @@
 package com.battle.executer.imp;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
@@ -12,13 +9,22 @@ import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleDataRoomManager;
 import com.battle.executer.BattleRoomExecuter;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.BattleRoomMemberTakepart;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.BattleRoomStageExecuter;
+import com.battle.executer.EndJudge;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
+import com.battle.executer.endJudge.DefaultEndJudge;
+import com.battle.executer.endJudge.EndlessModeEndJudge;
+import com.battle.executer.param.RoomParam;
 import com.battle.executer.questionManager.DistributionQuestionManager;
+import com.battle.executer.questionManager.RankQuestionManager;
 import com.battle.executer.roomManager.DefaultRoomDataManager;
+import com.battle.executer.takepart.DefaultMemberTakepart;
+import com.battle.executer.takepart.RankMemberTakepart;
+import com.battle.executer.vo.BattleRoomVo;
 
 @Service
 public class BattleRoomFactoryImp extends BattleRoomFactory{
@@ -29,11 +35,13 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	@Autowired
 	private BattleRoomConnector battleRoomConnetor;
 	
+	private RoomParam roomParam;
 	@Override
-	public ExecuterStore init(String groupId,List<String> userIds,Integer type,Map<String, Object> data) {
+	public ExecuterStore init(RoomParam roomParam) {
 
+		this.roomParam = roomParam;
 		try{
-			ExecuterStore executerStore =  super.init(groupId,userIds,type,data);
+			ExecuterStore executerStore =  super.init(roomParam);
 			
 			BattleDataManager battleRoomDataManager = executerStore.getBattleDataManager();
 			
@@ -89,14 +97,45 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 
 	@Override
 	protected BattleQuestionManager createQuestionManager() {
-		BattleQuestionManager battleQuestionManager = new DistributionQuestionManager();
-		return battleQuestionManager;
+		int type = roomParam.getType();
+		if(type==BattleRoomVo.RANK_TYPE){
+			BattleQuestionManager battleQuestionManager = new RankQuestionManager();
+			return battleQuestionManager;
+		}else{
+			BattleQuestionManager battleQuestionManager = new DistributionQuestionManager();
+			return battleQuestionManager;
+		}
 	}
 
 	@Override
 	protected BattleDataRoomManager createBattleDataRoomManager() {
 		BattleDataRoomManager battleDataRoomManager = new DefaultRoomDataManager();
 		return battleDataRoomManager;
+	}
+
+	@Override
+	protected EndJudge createEndJudge() {
+		int type = roomParam.getType();
+		if(type==BattleRoomVo.RANK_TYPE){
+			EndJudge endJudge = new EndlessModeEndJudge();
+			return endJudge;
+		}else{
+			EndJudge endJudge = new DefaultEndJudge();
+			return endJudge;
+		}
+		
+	}
+
+	@Override
+	public BattleRoomMemberTakepart createBattleRoomMemberTakepart() {
+		int type = roomParam.getType();
+		if(type==BattleRoomVo.RANK_TYPE){
+			BattleRoomMemberTakepart battleRoomMemberTakepart = new RankMemberTakepart();
+			return battleRoomMemberTakepart;
+		}else{
+			BattleRoomMemberTakepart battleRoomMemberTakepart = new DefaultMemberTakepart();
+			return battleRoomMemberTakepart;
+		}
 	}
 
 	

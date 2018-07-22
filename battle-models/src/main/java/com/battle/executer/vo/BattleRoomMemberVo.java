@@ -34,8 +34,13 @@ public class BattleRoomMemberVo {
 	//如果为1表示不能允许再加进来了
 	private Integer isEnd;
 	
+	private String token;
+	
 	//结束语
 	private String endCotent;
+	
+	private Integer beanNum;
+	
 	public String getId() {
 		return id;
 	}
@@ -156,5 +161,17 @@ public class BattleRoomMemberVo {
 	public void setEndCotent(String endCotent) {
 		this.endCotent = endCotent;
 	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 	
+	public Integer getBeanNum() {
+		return beanNum;
+	}
+	public void setBeanNum(Integer beanNum) {
+		this.beanNum = beanNum;
+	}
 }

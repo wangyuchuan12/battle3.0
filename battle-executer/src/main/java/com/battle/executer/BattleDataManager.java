@@ -38,5 +38,7 @@ public interface BattleDataManager {
 	
 	public void nextStage();
 	
+	public void clearMembers();
+	
 	public void init(BattleQuestionManager battleQuestionManager,BattleDataRoomManager battleDataRoomManager);
 }

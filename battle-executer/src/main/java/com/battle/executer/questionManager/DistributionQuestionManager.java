@@ -56,12 +56,9 @@ public class DistributionQuestionManager implements BattleQuestionManager{
 		List<String> userIds = (List<String>)data.get("userIds");
 		String roomId = (String)data.get("roomId");
 		String groupId = (String)data.get("groupId");
-		
-		
-		System.out.println("..........groupId:"+groupId);
+
 		List<BattleQuestionDistribution> battleQuestionDistributions = battleQuestionDistributionService.findAllByGroupId(groupId);
 		
-		System.out.println("........battleQuestionDistributions:"+battleQuestionDistributions);
 		BattleQuestionDistribution battleQuestionDistribution;
 		
 		if(battleQuestionDistributions.size()>0){

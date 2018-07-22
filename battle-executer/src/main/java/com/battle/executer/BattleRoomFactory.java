@@ -1,5 +1,6 @@
 package com.battle.executer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import com.battle.executer.endHandle.DanBattleEndHandle;
 import com.battle.executer.endHandle.RoomBattleEndHandle;
 import com.battle.executer.imp.EventHandleImp;
+import com.battle.executer.param.RoomParam;
+import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomVo;
 
 public abstract class BattleRoomFactory {
@@ -17,7 +20,11 @@ public abstract class BattleRoomFactory {
 	@Autowired
     public AutowireCapableBeanFactory factory;
 
-	public ExecuterStore init(String groupId,List<String> userIds,Integer type, Map<String, Object> data){
+	public ExecuterStore init(RoomParam roomParam){
+		
+		List<UserParam> userParams = roomParam.getUserParams();
+		int type = roomParam.getType();
+		Map<String, Object> data = roomParam.getData();
 		final BattleDataManager battleDataManager = createBattleDataManager();
 		factory.autowireBean(battleDataManager);
 		final BattleRoomExecuter battleRoomExecuter = createBatteRoomExecuter();
@@ -38,12 +45,26 @@ public abstract class BattleRoomFactory {
 		final BattleDataRoomManager battleDataRoomManager = createBattleDataRoomManager();
 		factory.autowireBean(battleDataRoomManager);
 		
-		battleDataRoomManager.init(userIds, type, data);
+		final EndJudge endJudge = createEndJudge();
+		factory.autowireBean(endJudge);
+		
+		final BattleRoomMemberTakepart battleRoomMemberTakepart = createBattleRoomMemberTakepart();
+		factory.autowireBean(battleRoomMemberTakepart);
+		
+		battleDataRoomManager.init(userParams, type, data);
+		
+		endJudge.init(battleDataManager);
+		
+		List<String> userIds = new ArrayList<>();
+		
+		for(UserParam userParam:userParams){
+			userIds.add(userParam.getUserId());
+		}
 		
 		BattleRoomVo battleRoomVo = battleDataRoomManager.getBattleRoom();
 		
 		Map<String, Object> questionData = new HashMap<>();
-		questionData.put("groupId", groupId);
+		questionData.put("groupId", roomParam.getGroupId());
 		questionData.put("userIds", userIds);
 		questionData.put("roomId", battleRoomVo.getId());
 		
@@ -53,9 +74,11 @@ public abstract class BattleRoomFactory {
 		
 		BattleEndHandle battleEndHandle = null;
 		
-		if(type.intValue()==BattleRoomVo.DAN_TYPE){
+		if(type==BattleRoomVo.DAN_TYPE){
 			battleEndHandle = new DanBattleEndHandle();
-		}else if(type.intValue()==BattleRoomVo.ROOM_TYPE){
+		}else if(type==BattleRoomVo.ROOM_TYPE){
+			battleEndHandle = new RoomBattleEndHandle();
+		}else{
 			battleEndHandle = new RoomBattleEndHandle();
 		}
 		
@@ -110,7 +133,20 @@ public abstract class BattleRoomFactory {
 			public BattleDataRoomManager getBattleDataRoomManager() {
 				return battleDataRoomManager;
 			}
+
+			@Override
+			public EndJudge getEndJudge() {
+				return endJudge;
+			}
+
+			@Override
+			public BattleRoomMemberTakepart getBattleRoomMemberTakepart() {
+				
+				return battleRoomMemberTakepart;
+			}
 		};
+		
+		battleRoomMemberTakepart.init(executerStore);
 		
 		
 		EventHandle eventHandle = new EventHandleImp();
@@ -143,4 +179,8 @@ public abstract class BattleRoomFactory {
 	protected abstract BattleQuestionManager createQuestionManager();
 	
 	protected abstract BattleDataRoomManager createBattleDataRoomManager();
+	
+	public abstract BattleRoomMemberTakepart createBattleRoomMemberTakepart();
+	
+	protected abstract EndJudge createEndJudge();
 }

@@ -10,6 +10,8 @@ public interface EventHandle {
 	
 	public void submitResult();
 	
+	public void publishDie();
+	
 	public void roomEnd();
 	
 	public void init(ExecuterStore executerStore);

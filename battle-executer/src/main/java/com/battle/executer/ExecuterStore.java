@@ -10,4 +10,6 @@ public interface ExecuterStore {
 	public BattleEndHandle getBattleEndHandle();
 	public BattleQuestionManager getBattleQuestionManager();
 	public BattleDataRoomManager getBattleDataRoomManager();
+	public BattleRoomMemberTakepart getBattleRoomMemberTakepart();
+	public EndJudge getEndJudge();
 }

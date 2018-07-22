@@ -8,10 +8,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.executer.BattleDataRoomManager;
+import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomRewardRecord;
 import com.battle.executer.vo.BattleRoomVo;
+import com.battle.socket.WebSocketManager;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.wx.domain.UserInfo;
 
@@ -21,6 +23,9 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	
 	@Autowired
 	private WxUserInfoService wxUserInfoService;
+	
+	@Autowired
+	private WebSocketManager webSocketManager;
 
 	@Override
 	public List<BattleRoomMemberVo> getBattleMembers() {
@@ -55,11 +60,11 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	}
 
 	@Override
-	public void init(List<String> userIds,Integer type ,Map<String, Object> data) {
+	public void init(List<UserParam> userParams,Integer type ,Map<String, Object> data) {
 		
 		battleRoom = new BattleRoomVo();
 		
-		battleRoom.setNum(userIds.size());
+		battleRoom.setNum(userParams.size());
 		
 		battleRoom.setRangeGogal(1000);
 		
@@ -109,9 +114,9 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		
 		
 		battleRoom.setLoveCount(5);
-		for(String userId:userIds){
+		for(UserParam userParam:userParams){
 			BattleRoomMemberVo battleRoomMemberVo = new BattleRoomMemberVo();
-			UserInfo userInfo = wxUserInfoService.findOne(userId);
+			UserInfo userInfo = wxUserInfoService.findOne(userParam.getUserId());
 			battleRoomMemberVo.setImgUrl(userInfo.getHeadimgurl());
 			battleRoomMemberVo.setNickname(userInfo.getNickname());
 			battleRoomMemberVo.setRangeGogal(battleRoom.getRangeGogal());
@@ -119,13 +124,14 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 			battleRoomMemberVo.setLimitLove(battleRoom.getLoveCount());
 			battleRoomMemberVo.setRoomId(battleRoom.getId());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
-			battleRoomMemberVo.setUserId(userId);
+			battleRoomMemberVo.setUserId(userParam.getUserId());
 			battleRoomMemberVo.setProcess(0);
 			battleRoomMemberVo.setId(UUID.randomUUID().toString());
 			battleRoomMemberVo.setCnRightCount(0);
 			battleRoomMemberVo.setIsPass(0);
 			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
 			battleRoomMemberVo.setIsEnd(0);
+			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVos.add(battleRoomMemberVo);
 		}
 		
@@ -137,6 +143,22 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	@Override
 	public BattleRoomVo getBattleRoom() {
 		return battleRoom;
+	}
+
+	@Override
+	public void clear() {
+		List<BattleRoomMemberVo> battleRoomMembers = getBattleMembers();
+		
+		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMembers){
+			if(!webSocketManager.isOpen(battleRoomMemberVo.getToken())){
+				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_OUT);
+			}
+			int status = battleRoomMemberVo.getStatus();
+			if(status==BattleRoomMemberVo.STATUS_OUT){
+				battleRoomMembers.remove(battleRoomMemberVo);
+			}
+		}
+		
 	}
 
 }

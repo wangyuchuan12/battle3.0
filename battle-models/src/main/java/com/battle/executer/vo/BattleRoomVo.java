@@ -8,6 +8,8 @@ public class BattleRoomVo {
 	public static final Integer DAN_TYPE = 0;
 	
 	public static final Integer ROOM_TYPE = 1;
+	
+	public static final Integer RANK_TYPE = 2;
 
 	private String id;
 	

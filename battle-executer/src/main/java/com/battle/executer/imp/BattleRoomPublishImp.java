@@ -22,7 +22,6 @@ import com.battle.socket.MessageHandler;
 import com.battle.socket.MessageVo;
 
 public class BattleRoomPublishImp implements BattleRoomPublish{
-
 	@Autowired
 	private MessageHandler messageHandler;
 	
@@ -264,13 +263,15 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	}
 
 	@Override
-	public void publishDie(BattleRoomMemberVo battleRoomMember) {
+	public void publishDie(BattleRoomMemberVo battleRoomMember,Integer type) {
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.PUBLISH_DIE);
 		List<String> userIds = new ArrayList<>();
 		userIds.add(battleRoomMember.getUserId());
 		messageVo.setType(MessageVo.USERS_TYPE);
 		Map<String, Object> data = new HashMap<>();
+		data.put("type", type);
+		data.put("roomId", battleRoomMember.getRoomId());
 		messageVo.setData(data);
 		messageVo.setUserIds(userIds);
 		publishMessage(messageVo);

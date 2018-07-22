@@ -12,5 +12,6 @@
 	<classpathentry kind="src" path="/battle-executer" exported="true"/>
 	<classpathentry kind="src" path="/battle-listener" exported="true"/>
 	<classpathentry kind="src" path="/battle-room" exported="true"/>
+	<classpathentry kind="src" path="/battle-rank" exported="true"/>
 	<classpathentry sourcepath="/private/var/root/.gradle/caches/modules-2/files-2.1/javax.servlet/javax.servlet-api/3.1.0/ab3976d4574c48d22dc1abf6a9e8bd0fdf928223/javax.servlet-api-3.1.0-sources.jar" kind="lib" path="/private/var/root/.gradle/caches/modules-2/files-2.1/javax.servlet/javax.servlet-api/3.1.0/3cd63d075497751784b2fa84be59432f4905bf7c/javax.servlet-api-3.1.0.jar" exported="true"/>
 </classpath>

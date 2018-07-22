@@ -14,6 +14,8 @@ public  class Event {
 	public static final String START_QUESTIONS = "start_questions";
 	
 	public static final String SUBMIT_RESULT = "submit_result";
+	
+	public static final String PUBLISH_DIE = "publish_die";
 
 	private String code;
 	

@@ -9,7 +9,9 @@ import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerResultVo;
 
 public interface BattleRoomPublish {
-	
+
+	public static final Integer BEAN_DIE_TYPE = 0;
+	public static final Integer LOVE_DIE_TYPE = 1;
 	public void publishRoomEnd();
 	
 	public void publishMemberStatus(String userId);
@@ -30,7 +32,7 @@ public interface BattleRoomPublish {
 	
 	public void publishReward(BattleUserRewardVo battleReward);
 
-	public void publishDie(BattleRoomMemberVo battleRoomMember);
+	public void publishDie(BattleRoomMemberVo battleRoomMember,Integer type);
 
 	public void publishMembers();
 	

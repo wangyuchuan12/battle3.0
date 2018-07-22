@@ -117,6 +117,8 @@ dependencies{
 	
 	compile project(':battle-room');
 	
+	compile project(':battle-rank');
+	
 }
 
 
