@@ -57,7 +57,6 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	@Override
 	public void startQuestion(){
 		EventManager eventManager = battleRoomDataManager.getEventManager();
-		eventManager.publishEvent(Event.PUBLISH_DIE, null);
 		try{
 			BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
 			if(battlePaperQuestion!=null){
@@ -162,7 +161,11 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				
 				if(wisdomCount<=0){
 					wisdomCount = 0L;
-					
+					Map<String, Object> data = new HashMap<>();
+					data.put("member", battleRoomMember);
+					data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
+					battleRoomMember.setBeanNum(wisdomCount.intValue());
+					eventManager.publishEvent(Event.PUBLISH_DIE, data);
 				}else{
 				
 				}
@@ -170,9 +173,13 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				
 				account.setWisdomCount(wisdomCount);
 				accountService.update(account);
+				
+			}
+			
+			if(battleRoomMember.getRewardLove().intValue()<=0){
 				Map<String, Object> data = new HashMap<>();
 				data.put("member", battleRoomMember);
-				battleRoomMember.setBeanNum(wisdomCount.intValue());
+				data.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
 				eventManager.publishEvent(Event.PUBLISH_DIE, data);
 			}
 			

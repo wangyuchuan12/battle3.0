@@ -10,6 +10,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +21,7 @@ import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.PaymentVoucherService;
 import com.battle.service.other.GoodPayConfigService;
 import com.battle.service.other.PayService;
+import com.wyc.ApplicationContextProvider;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.Account;
 import com.wyc.common.domain.Good;
@@ -27,6 +29,7 @@ import com.wyc.common.domain.Order;
 import com.wyc.common.domain.PaySuccess;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.domain.vo.TransfersResultVo;
+import com.wyc.common.event.PaySuccessEvent;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.service.GoodService;
 import com.wyc.common.service.OrderService;
@@ -112,7 +115,9 @@ public class WxPayApi{
         	
         } 
         
-       
+        
+       ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+       applicationContext.publishEvent(new PaySuccessEvent(paySuccess));
  
         return null;
 	}

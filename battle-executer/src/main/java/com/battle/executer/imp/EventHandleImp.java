@@ -1,4 +1,5 @@
 package com.battle.executer.imp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,17 @@ public class EventHandleImp implements EventHandle{
 				
 				applicationContext.publishEvent(new BattleRestEvent(battleRoomDataManager.getBattleMembers()));
 				
-				eventManager.publishEvent(Event.PUBLISH_DIE, null);
+				
+				List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+				
+				for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+					if(battleRoomMember.getRemainLove()<=0){
+						Map<String, Object> publishData = new HashMap<>();
+						publishData.put("member", battleRoomMember);
+						publishData.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
+						eventManager.publishEvent(Event.PUBLISH_DIE, publishData);
+					}
+				}
 			}
 		});
 		
@@ -200,26 +211,18 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data) {
 				try{
-					
+					Integer type = (Integer)data.get("type");
 					if(data!=null&&data.get("member")!=null){
 						BattleRoomMemberVo battleRoomMember = (BattleRoomMemberVo)data.get("member");
-						if(battleRoomMember.getRemainLove()<=0){
+						if(type==BattleRoomPublish.LOVE_DIE_TYPE&&battleRoomMember.getRemainLove()<=0){
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.LOVE_DIE_TYPE);
-						}else if(battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
+						}
+						
+						if(type==BattleRoomPublish.BEAN_DIE_TYPE&&battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
 							System.out.println("...............battleRoomMember.getBeanNum:"+battleRoomMember.getBeanNum());
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
 						}
 						
-					}else{
-						List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
-						for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-							if(battleRoomMember.getRemainLove()<=0){
-								battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.LOVE_DIE_TYPE);
-							}else if(battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
-								System.out.println("...............battleRoomMember.getBeanNum2:"+battleRoomMember.getBeanNum());
-								battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
-							}
-						}
 					}
 				}catch(Exception e){
 					e.printStackTrace();
