@@ -82,6 +82,8 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 				
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
+			Account account = accountService.fineOne(userInfo.getAccountId());
+			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
 		}
 		
