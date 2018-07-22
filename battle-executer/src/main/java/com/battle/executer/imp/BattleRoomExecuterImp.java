@@ -319,7 +319,27 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 	@Override
 	public BattleRoomMemberVo takepart(UserInfo userInfo) {
-		return battleRoomMemberTakepart.takepart(userInfo);
+		BattleRoomMemberVo battleRoomMemberVo =  battleRoomMemberTakepart.takepart(userInfo);
+		
+		
+		
+		final EventManager eventManager = battleDataManager.getEventManager();
+		if(battleRoomMemberVo.getBeanNum().intValue()<=0){
+			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
+			Map<String, Object> data = new HashMap<>();
+			data.put("member", battleRoomMemberVo);
+			data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
+			eventManager.publishEvent(Event.PUBLISH_DIE, data);
+		}else if(battleRoomMemberVo.getRemainLove().intValue()<=0){
+			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
+			Map<String, Object> data = new HashMap<>();
+			data.put("member", battleRoomMemberVo);
+			data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
+			eventManager.publishEvent(Event.PUBLISH_DIE, data);
+		}
+		
+		return battleRoomMemberVo;
+		
 	}
 
 	@Override
@@ -345,9 +365,11 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			}
 			
 			if(diff>love){
+				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
 				battleRoomMember.setRemainLove(remainLove+love);
 				account.setLoveLife(0);
 			}else{
+				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
 				battleRoomMember.setRemainLove(limitLove);
 				account.setLoveLife(love-diff);
 			}

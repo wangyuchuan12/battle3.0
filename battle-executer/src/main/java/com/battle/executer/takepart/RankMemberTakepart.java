@@ -15,6 +15,8 @@ import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.service.BattleRankMemberService;
 import com.battle.service.BattleRankService;
+import com.wyc.common.domain.Account;
+import com.wyc.common.service.AccountService;
 import com.wyc.common.wx.domain.UserInfo;
 
 public class RankMemberTakepart implements BattleRoomMemberTakepart{
@@ -28,6 +30,9 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 	
 	@Autowired
 	private BattleRankMemberService battleRankMemberService;
+	
+	@Autowired
+	private AccountService accountService;
 	@Override
 	public BattleRoomMemberVo takepart(UserInfo userInfo) {
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
@@ -39,7 +44,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			}
 		}
 		if(battleRoomMemberVo==null){
-			
+			Account account = accountService.fineOne(userInfo.getAccountId());
 			
 			battleRoomMemberVo = new BattleRoomMemberVo();
 			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
@@ -63,7 +68,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
 			battleRoomMemberVo.setUserId(userInfo.getId());
 			battleRoomMemberVo.setToken(userInfo.getToken());
-			
+			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
 			if(battleRanks.size()>0){
 				BattleRank battleRank = battleRanks.get(0);

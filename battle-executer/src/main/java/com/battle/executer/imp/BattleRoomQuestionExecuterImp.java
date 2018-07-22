@@ -164,6 +164,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 					data.put("member", battleRoomMember);
 					data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
 					battleRoomMember.setBeanNum(wisdomCount.intValue());
+					battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
 					eventManager.publishEvent(Event.PUBLISH_DIE, data);
 				}else{
 				
