@@ -8,6 +8,8 @@ public interface EventHandle {
 	
 	public void startQuestions();
 	
+	public void submitResults();
+	
 	public void submitResult();
 	
 	public void publishDie();

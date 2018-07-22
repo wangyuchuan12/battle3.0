@@ -66,6 +66,10 @@ public class EventHandleImp implements EventHandle{
 		eventStartQuestions.setCode(Event.START_QUESTIONS);
 		eventManager.addEvent(eventStartQuestions);
 		
+		Event eventSubmitResults = new Event();
+		eventSubmitResults.setCode(Event.SUBMIT_RESULTS);
+		eventManager.addEvent(eventSubmitResults);
+		
 		Event eventSubmitResult = new Event();
 		eventSubmitResult.setCode(Event.SUBMIT_RESULT);
 		eventManager.addEvent(eventSubmitResult);
@@ -81,6 +85,7 @@ public class EventHandleImp implements EventHandle{
 		this.startRoomEvent();
 		this.restEndEvent();
 		this.startQuestions();
+		this.submitResults();
 		this.submitResult();
 		this.roomEnd();
 		this.publishDie();
@@ -103,24 +108,7 @@ public class EventHandleImp implements EventHandle{
 				}else{
 					battleRoomStageExecuter.startStage();
 				}
-				
-				battleRoomDataManager.clearMembers();
-				
-				ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-				
-				applicationContext.publishEvent(new BattleRestEvent(battleRoomDataManager.getBattleMembers()));
-				
-				
-				List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
-				
-				for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-					if(battleRoomMember.getRemainLove()<=0){
-						Map<String, Object> publishData = new HashMap<>();
-						publishData.put("member", battleRoomMember);
-						publishData.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
-						eventManager.publishEvent(Event.PUBLISH_DIE, publishData);
-					}
-				}
+
 			}
 		});
 		
@@ -186,13 +174,12 @@ public class EventHandleImp implements EventHandle{
 	}
 
 	@Override
-	public void submitResult() {
+	public void submitResults() {
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
-		eventManager.addCallback(Event.SUBMIT_RESULT, new EventCallback() {
+		eventManager.addCallback(Event.SUBMIT_RESULTS, new EventCallback() {
 			@Override
 			public void callback(Map<String, Object> data) {
-				battleRoomExecuter.submitResult();
-				
+				battleRoomExecuter.submitResults();
 				scheduledExecuter.schedule(new Runnable() {
 					
 					@Override
@@ -200,6 +187,22 @@ public class EventHandleImp implements EventHandle{
 						eventManager.publishEvent(Event.REST_END_CODE, null);
 					}
 				}, 5);
+			}
+		});
+	}
+	
+	
+	@Override
+	public void submitResult() {
+		final EventManager eventManager = battleRoomDataManager.getEventManager();
+		eventManager.addCallback(Event.SUBMIT_RESULT, new EventCallback() {
+			@Override
+			public void callback(Map<String, Object> data) {
+				
+				battleRoomExecuter.submitResult();
+				battleRoomDataManager.nextQuestion();
+				battleRoomQuestionExecuter.startQuestion();
+				
 			}
 		});
 	}

@@ -25,7 +25,7 @@ public interface BattleRoomExecuter {
 
 	public void startRoom();
 	
-	public void submitResult();
+	public void submitResults();
 
 	public void members();
 	
@@ -34,5 +34,7 @@ public interface BattleRoomExecuter {
 	public BattleRoomVo getRoom();
 
 	public boolean superLove(UserInfo userInfo);
+
+	public void submitResult();
 
 }

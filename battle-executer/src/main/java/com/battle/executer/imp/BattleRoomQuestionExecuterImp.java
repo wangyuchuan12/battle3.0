@@ -56,7 +56,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	
 	@Override
 	public void startQuestion(){
-		EventManager eventManager = battleRoomDataManager.getEventManager();
+		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		try{
 			BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
 			if(battlePaperQuestion!=null){
@@ -64,13 +64,12 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				scheduledExecuter.schedule(new Runnable() {
 					@Override
 					public void run() {
-						battleRoomDataManager.nextQuestion();
-						startQuestion();
+						eventManager.publishEvent(Event.SUBMIT_RESULT, null);
 						
 					}
 				}, battlePaperQuestion.getTimeLong()+1);
 			}else{
-				eventManager.publishEvent(Event.SUBMIT_RESULT, null);
+				eventManager.publishEvent(Event.SUBMIT_RESULTS, null);
 			}
 		}catch(Exception e){
 			e.printStackTrace();

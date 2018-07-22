@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -14,6 +15,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.battle.domain.UserStatus;
 import com.battle.executer.BattleDataManager;
+import com.battle.executer.BattleRestEvent;
 import com.battle.executer.BattleRoomExecuter;
 import com.battle.executer.BattleRoomMemberTakepart;
 import com.battle.executer.BattleRoomPublish;
@@ -30,6 +32,7 @@ import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.battle.service.UserStatusService;
+import com.wyc.ApplicationContextProvider;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.util.CommonUtil;
@@ -275,50 +278,29 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	}
 
 	@Override
-	public void submitResult() {
-		
+	public void submitResults() {
+
 		try{
-			BattleStageVo stageVo = battleDataManager.getBattlePaper().currentStage();
-			List<BattlePaperQuestionVo> battlePaperQuestions = stageVo.getSelectBattlePaperQuestions();
+			battleDataManager.clearMembers();
 			
-	
+			ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+			
+			applicationContext.publishEvent(new BattleRestEvent(battleDataManager.getBattleMembers()));
+			
+			
 			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
-		
-	
-			for(BattlePaperQuestionVo battlePaperQuestion:battlePaperQuestions){
-				List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
-				Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
-				for(QuestionAnswerVo questionAnswer:questionAnswers){
-					questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
+			
+			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+				if(battleRoomMember.getRemainLove()<=0){
+					Map<String, Object> publishData = new HashMap<>();
+					publishData.put("member", battleRoomMember);
+					publishData.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
+					eventManager.publishEvent(Event.PUBLISH_DIE, publishData);
 				}
-				
-				for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-					QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
-					if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
-						if(questionAnswer==null||
-								CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
-								!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
-							Integer remainLove = battleRoomMember.getRemainLove();
-							remainLove--;
-							if(remainLove<=0){
-								remainLove = 0;
-								battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
-								//battleRoomPublish.publishDie(battleRoomMember);
-							}
-							battleRoomMember.setRemainLove(remainLove);
-							
-							
-						}else{
-							Integer process = battleRoomMember.getProcess();
-							process++;
-							battleRoomMember.setProcess(process);
-						}
-					}
-				}
-				
 			}
 			
 			battleRoomPublish.publishRest();
+			battleRoomPublish.publishMembers();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -374,5 +356,46 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			
 			return true;
 		}
+	}
+
+	@Override
+	public void submitResult() {
+		
+		System.out.println("..........submitResult");
+		BattleStageVo stageVo = battleDataManager.currentStage();
+		BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
+		System.out.println("..........battlePaperQuestion:"+battlePaperQuestion);
+		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
+		List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
+		System.out.println("..........questionAnswers:"+questionAnswers);
+		Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
+		for(QuestionAnswerVo questionAnswer:questionAnswers){
+			questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
+		}
+		
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
+			if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
+				if(questionAnswer==null||
+						CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
+						!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
+					Integer remainLove = battleRoomMember.getRemainLove();
+					remainLove--;
+					if(remainLove<=0){
+						remainLove = 0;
+						battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
+						//battleRoomPublish.publishDie(battleRoomMember);
+					}
+					battleRoomMember.setRemainLove(remainLove);
+					System.out.println("........remainLove2:"+remainLove);
+					
+				}else{
+					Integer process = battleRoomMember.getProcess();
+					process++;
+					battleRoomMember.setProcess(process);
+				}
+			}
+		}
+		
 	}
 }
