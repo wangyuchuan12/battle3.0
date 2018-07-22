@@ -162,15 +162,18 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				
 				if(wisdomCount<=0){
 					wisdomCount = 0L;
-					battleRoomMember.setBeanNum(wisdomCount.intValue());
-					Map<String, Object> data = new HashMap<>();
-					data.put("member", battleRoomMember);
-					eventManager.publishEvent(Event.PUBLISH_DIE, data);
+					
 				}else{
-					battleRoomMember.setBeanNum(wisdomCount.intValue());
+				
 				}
+				
+				
 				account.setWisdomCount(wisdomCount);
 				accountService.update(account);
+				Map<String, Object> data = new HashMap<>();
+				data.put("member", battleRoomMember);
+				battleRoomMember.setBeanNum(wisdomCount.intValue());
+				eventManager.publishEvent(Event.PUBLISH_DIE, data);
 			}
 			
 			battleRoomPublish.publishReward(battleRewardVo);

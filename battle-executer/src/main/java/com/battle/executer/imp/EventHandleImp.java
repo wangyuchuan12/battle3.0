@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-
 import com.battle.executer.BattleEndHandle;
 import com.battle.executer.BattleRestEvent;
 import com.battle.executer.BattleRoomConnector;
@@ -207,6 +206,7 @@ public class EventHandleImp implements EventHandle{
 						if(battleRoomMember.getRemainLove()<=0){
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.LOVE_DIE_TYPE);
 						}else if(battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
+							System.out.println("...............battleRoomMember.getBeanNum:"+battleRoomMember.getBeanNum());
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
 						}
 						
@@ -216,6 +216,7 @@ public class EventHandleImp implements EventHandle{
 							if(battleRoomMember.getRemainLove()<=0){
 								battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.LOVE_DIE_TYPE);
 							}else if(battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
+								System.out.println("...............battleRoomMember.getBeanNum2:"+battleRoomMember.getBeanNum());
 								battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
 							}
 						}
