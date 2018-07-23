@@ -411,7 +411,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				}catch(Exception e){
 					e.printStackTrace();
 				}
-				if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
+				if(true){
 					if(questionAnswer==null||
 							CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
 							!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
