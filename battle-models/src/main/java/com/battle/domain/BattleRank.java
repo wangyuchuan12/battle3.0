@@ -37,6 +37,7 @@ public class BattleRank {
 	
 	@Column(name="subject_count")
 	private Integer subjectCount;
+
 	
 	@Column(name="time_long")
 	private Integer timeLong;
@@ -46,6 +47,9 @@ public class BattleRank {
 	
 	@Column(name="is_start")
 	private Integer isStart;
+	
+	@Column(name="sub_bean")
+	private Integer subBean;
 	
 	@Column(name = "start_date")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -169,6 +173,16 @@ public class BattleRank {
 
 	public void setIsStart(Integer isStart) {
 		this.isStart = isStart;
+	}
+	
+	
+
+	public Integer getSubBean() {
+		return subBean;
+	}
+
+	public void setSubBean(Integer subBean) {
+		this.subBean = subBean;
 	}
 
 	public DateTime getCreateAt() {

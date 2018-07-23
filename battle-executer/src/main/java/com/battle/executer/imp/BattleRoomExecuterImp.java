@@ -111,7 +111,6 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	public void startRoom() {
 		try{
 			
-			System.out.println("........................sssssskkkkkk:");
 			battleRoomPublish.publishRoomStart();
 			eventManager.publishEvent(Event.START_ROOM_CODE, null);
 			

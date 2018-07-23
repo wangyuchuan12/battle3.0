@@ -218,13 +218,17 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data) {
 				try{
 					Integer type = (Integer)data.get("type");
+					Boolean beanCheck = (Boolean)data.get("beanCheck");
+					if(beanCheck==null){
+						beanCheck = false;
+					}
 					if(data!=null&&data.get("member")!=null){
 						BattleRoomMemberVo battleRoomMember = (BattleRoomMemberVo)data.get("member");
 						if(type==BattleRoomPublish.LOVE_DIE_TYPE&&battleRoomMember.getRemainLove()<=0){
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.LOVE_DIE_TYPE);
 						}
 						
-						if(type==BattleRoomPublish.BEAN_DIE_TYPE&&battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
+						if(beanCheck&&type==BattleRoomPublish.BEAN_DIE_TYPE&&battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
 						}
 						

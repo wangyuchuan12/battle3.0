@@ -3,6 +3,7 @@ package com.battle.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -48,10 +49,13 @@ public class StartApi {
 		}
 		
 		if(battleRank!=null&&battleRank.getIsStart().intValue()==0){
+			Map<String, Object> data = new HashMap<>();
+			data.put("subBean", battleRank.getSubBean());
+			data.put("beanCheck",false);
 			RoomParam roomParam = new RoomParam();
 			roomParam.setType(BattleRoomVo.RANK_TYPE);
 			roomParam.setUserParams(new ArrayList<UserParam>());
-			roomParam.setData(new HashMap<String,Object>());
+			roomParam.setData(data);
 			roomParam.setGroupId("");
 			ExecuterStore executerStore = battleRoomFactory.init(roomParam);
 			BattleDataManager battleDataManager = executerStore.getBattleDataManager();

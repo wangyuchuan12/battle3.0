@@ -26,6 +26,20 @@ public class TestApi {
 	@Autowired
 	private BattleRoomConnector battleRoomConnector;
 	
+	
+	@RequestMapping(value="addByPeriodId")
+	@ResponseBody
+	@Transactional
+	public void addByPeriodId(HttpServletRequest httpServletRequest){
+		
+		String rankId = httpServletRequest.getParameter("rankId");
+		
+		String periodId = httpServletRequest.getParameter("periodId");
+		rankManager.addByPeriodId(rankId, periodId);
+	}
+	
+	
+	
 	@RequestMapping(value="addBySubjectId")
 	@ResponseBody
 	@Transactional

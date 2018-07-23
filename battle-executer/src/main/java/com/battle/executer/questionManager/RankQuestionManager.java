@@ -187,7 +187,7 @@ public class RankQuestionManager implements BattleQuestionManager{
 				throw new RuntimeException("battleRank无记录");
 			}
 			
-			Pageable pageable = new PageRequest(0, 20);
+			Pageable pageable = new PageRequest(0, 9);
 			List<BattleRankSubject> battleRankSubjects = battleRankSubjectService.findByRandom(pageable);
 			BattleStageVo battleStageVo = currentStage();
 			battlePaper.getBattleStages().remove(battleStageVo);

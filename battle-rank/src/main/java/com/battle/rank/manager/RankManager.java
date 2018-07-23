@@ -7,11 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.battle.domain.BattlePeriod;
 import com.battle.domain.BattleQuestion;
 import com.battle.domain.BattleRank;
 import com.battle.domain.BattleRankQuestion;
 import com.battle.domain.BattleRankSubject;
 import com.battle.domain.BattleSubject;
+import com.battle.service.BattlePeriodService;
 import com.battle.service.BattleQuestionService;
 import com.battle.service.BattleRankQuestionService;
 import com.battle.service.BattleRankService;
@@ -32,6 +34,21 @@ public class RankManager {
 	
 	@Autowired
 	private BattleRankQuestionService battleRankQuestionService;
+	
+	@Autowired
+	private BattlePeriodService battlePeriodService;
+	
+	
+	public void addByPeriodId(String rankId,String periodId){
+		BattlePeriod battlePeriod = battlePeriodService.findOne(periodId);
+		Pageable pageable = new PageRequest(0,100);
+		List<BattleSubject> battleSubjects = battleSubjectService.findAllByBattleIdAndIsDel(battlePeriod.getBattleId(), 0, pageable);
+		
+		for(BattleSubject battleSubject:battleSubjects){
+			addBySubjectId(rankId, periodId, battleSubject.getId(), 500);
+		}
+	}
+	
 	public void addBySubjectId(String rankId,String periosId,String battleSubjectId,int num){
 	
 		BattleRankSubject battleRankSubject = battleRankSubjectService.findOneByBattleSubjectId(battleSubjectId);

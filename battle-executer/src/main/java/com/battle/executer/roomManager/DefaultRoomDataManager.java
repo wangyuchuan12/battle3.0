@@ -62,6 +62,10 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	@Override
 	public void init(List<UserParam> userParams,Integer type ,Map<String, Object> data) {
 		
+		Integer subBean = (Integer)data.get("subBean");
+		if(subBean==null){
+			subBean = 0;
+		}
 		battleRoom = new BattleRoomVo();
 		
 		battleRoom.setNum(userParams.size());
@@ -88,20 +92,20 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 			}
 		}
 		
-		battleRoom.setRewardBean(10);
-		battleRoom.setRewardBean2(20);
-		battleRoom.setRewardBean3(30);
-		battleRoom.setRewardBean4(40);
-		battleRoom.setRewardBean5(50);
-		battleRoom.setRewardBean6(60);
-		battleRoom.setRewardBean7(70);
-		battleRoom.setRewardBean8(80);
-		battleRoom.setRewardBean9(90);
-		battleRoom.setRewardBean10(100);
+		battleRoom.setRewardBean(5);
+		battleRoom.setRewardBean2(15);
+		battleRoom.setRewardBean3(20);
+		battleRoom.setRewardBean4(25);
+		battleRoom.setRewardBean5(30);
+		battleRoom.setRewardBean6(35);
+		battleRoom.setRewardBean7(40);
+		battleRoom.setRewardBean8(45);
+		battleRoom.setRewardBean9(50);
+		battleRoom.setRewardBean10(60);
 		
 		battleRoom.setData(data);
 		
-		battleRoom.setSubBean(50);
+		battleRoom.setSubBean(subBean);
 		
 		battleRoom.setType(type);
 		
