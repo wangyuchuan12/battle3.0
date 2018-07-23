@@ -79,8 +79,6 @@ public class RankQuestionManager implements BattleQuestionManager{
 	@Override
 	public List<BattlePaperQuestionVo> selectQuestions() {
 		BattleStageVo battleStageVo = currentStage();
-
-		System.out.println(".............battleStageVo:"+battleStageVo);
 		List<BattlePaperSubjectVo> battlePaperSubjects = battleStageVo.getBattlePaperSubjects();
 		
 		List<String> subjectIds = new ArrayList<>();
@@ -91,7 +89,6 @@ public class RankQuestionManager implements BattleQuestionManager{
 			}
 		}
 		
-		System.out.println(".............subjectIds:"+subjectIds);
 		
 		List<BattlePaperQuestionVo> selectQuestions = new ArrayList<>();
 
@@ -105,11 +102,9 @@ public class RankQuestionManager implements BattleQuestionManager{
 		
 		Pageable pageable = new PageRequest(0, battleStageVo.getQuestionCount());
 		
-		System.out.println("...............battleStageVo.getQuestionCount:"+battleStageVo.getQuestionCount());
 		
 		List<BattleRankQuestion> battleRankQuestions = battleRankQuestionService.findAllByBattleSubjectIdIn(subjectIds,pageable);
-		
-		System.out.println(".............battleRankQuestions:"+battleRankQuestions);
+
 		for(int i=0;i<battleRankQuestions.size();i++){
 			BattleRankQuestion battleRankQuestion = battleRankQuestions.get(i);
 			BattlePaperQuestionVo battlePaperQuestionVo = new BattlePaperQuestionVo();
@@ -132,7 +127,6 @@ public class RankQuestionManager implements BattleQuestionManager{
 			selectQuestions.add(battlePaperQuestionVo);
 		}
 		
-		System.out.println(".............battleRankQuestions2:"+battleRankQuestions);
 		
 		for(BattlePaperQuestionVo battlePaperQuestionVo:selectQuestions){
 			if(battlePaperQuestionVo.getType().intValue()==Question.SELECT_TYPE){
@@ -159,8 +153,7 @@ public class RankQuestionManager implements BattleQuestionManager{
 					battlePaperQuestionVo.setFillWords(fillWords);
 				}
 			}
-			
-			System.out.println(".............battleRankQuestions3:"+battleRankQuestions);
+
 		}
 		battleStageVo.setSelectBattlePaperQuestions(selectQuestions);
 		
@@ -185,12 +178,8 @@ public class RankQuestionManager implements BattleQuestionManager{
 
 	@Override
 	public void nextStage() {
-		
-		System.out.println("................nextStage");
 		try{
 			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
-			
-			System.out.println("................battleRanks:"+battleRanks);
 			BattleRank battleRank = null;
 			if(battleRanks.size()>0){
 				battleRank = battleRanks.get(0);
@@ -209,7 +198,6 @@ public class RankQuestionManager implements BattleQuestionManager{
 			}else{
 				stageIndex = battleStageVo.getStageIndex();
 			}
-			System.out.println("................battleRanks2:"+battleRanks);
 			
 			Map<String, List<BattlePaperQuestionVo>> battlePaperQuestionMap = new HashMap<>();
 			List<BattlePaperSubjectVo> battlePaperSubjects = new ArrayList<>();
@@ -225,9 +213,6 @@ public class RankQuestionManager implements BattleQuestionManager{
 				battlePaperSubject.setStageIndex(stageIndex+1);
 				battlePaperSubject.setBattleSubjectId(battleRankSubject.getBattleSubjectId());
 				battlePaperSubjects.add(battlePaperSubject);
-				
-				
-				System.out.println("................battle");
 				
 			}
 			

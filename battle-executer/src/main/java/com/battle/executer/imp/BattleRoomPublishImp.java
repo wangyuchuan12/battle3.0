@@ -110,13 +110,16 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		List<BattlePaperSubjectVo> battlePaperSubjectVos = battleStageVo.getBattlePaperSubjects();
 		
 		for(BattlePaperSubjectVo battlePaperSubjectVo:battlePaperSubjectVos){
-			System.out.println("............battlePaperSubject222.getId:"+battlePaperSubjectVo.getId());
+
 		}
 		List<String> userIds = new ArrayList<>();
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.SHOW_SUBJECTS);
 		
 		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+		
+		System.out.println(".............publishShowSubjects.battleRoomMemberVos2:"+battleRoomDataManager.getBattleMembers());
+		System.out.println(".............publishShowSubjects.battleRoomMemberVos:"+battleRoomMemberVos);
 		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 			userIds.add(battleRoomMemberVo.getUserId());
 		}

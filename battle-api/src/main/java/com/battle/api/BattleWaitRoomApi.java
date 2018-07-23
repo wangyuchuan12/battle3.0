@@ -266,7 +266,6 @@ public class BattleWaitRoomApi {
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo toPrivite(HttpServletRequest httpServletRequest)throws Exception{
 		
-		System.out.println(".........toPrivite");
 		String id = httpServletRequest.getParameter("id");
 		
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);
@@ -298,8 +297,6 @@ public class BattleWaitRoomApi {
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public ResultVo toPublic(HttpServletRequest httpServletRequest)throws Exception{
-		
-		System.out.println(".........toPublic");
 		String id = httpServletRequest.getParameter("id");
 		
 		BattleWaitRoom battleWaitRoom = battleWaitRoomService.findOne(id);

@@ -57,8 +57,6 @@ public class UserStatusApi {
 		
 		logger.debug("isLine:{}",isLine);
 		
-		System.out.println(".....userStatuszzz:"+userStatus);
-		
 		if(userStatus!=null){
 			
 			

@@ -2,7 +2,6 @@ package com.battle.executer;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,11 @@ import com.battle.executer.vo.QuestionAnswerVo;
 import com.wyc.common.wx.domain.UserInfo;
 @Service
 public  class BattleRoomConnector{
+	
+	public BattleRoomConnector(){
+		
+		System.out.println("...........BattleRoomConnector:"+this);
+	}
 	private Map<String, BattleRoomExecuter> battleRoomExecuterMap = new ConcurrentHashMap<>();
 
 	
@@ -26,6 +30,8 @@ public  class BattleRoomConnector{
 		System.out.println("***********************...........registerExecuter........roomId:"+roomId+",battleRoomExecuter:"+battleRoomExecuter);
 		battleRoomExecuterMap.put(roomId, battleRoomExecuter);
 		
+		
+		System.out.println("...................battleRoomExecuterMap:"+battleRoomExecuterMap);
 		/*scheduledExecutorService.schedule(new Runnable() {
 			
 			@Override
@@ -51,9 +57,14 @@ public  class BattleRoomConnector{
 	}
 	
 	public BattleRoomMemberVo takepart(String roomId,UserInfo userInfo){
+		
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		
+		System.out.println(".............battleRoomExecuter:"+battleRoomExecuter+",roomId:"+roomId);
+		System.out.println("............battleRoomExecuterMap:"+battleRoomExecuterMap);
 		if(battleRoomExecuter!=null){
 			BattleRoomMemberVo battleRoomMemberVo = battleRoomExecuter.takepart(userInfo);
+			System.out.println(".............battleRoomMemberVo:"+battleRoomMemberVo);
 			return battleRoomMemberVo;
 		}else{
 			return null;
@@ -70,6 +81,8 @@ public  class BattleRoomConnector{
 	}
 	
 	public void removeExecuter(final String roomId){
+		
+		System.out.println(".......................BattleRoomConnector.remove");
 		battleRoomExecuterMap.remove(roomId);
 		//scheduledExecutorService.shutdown();
 	}

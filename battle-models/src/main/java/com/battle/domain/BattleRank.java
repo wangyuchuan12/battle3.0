@@ -44,6 +44,9 @@ public class BattleRank {
 	@Column(name="room_id")
 	private String roomId;
 	
+	@Column(name="is_start")
+	private Integer isStart;
+	
 	@Column(name = "start_date")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime startDate;
@@ -158,6 +161,14 @@ public class BattleRank {
 
 	public void setRoomId(String roomId) {
 		this.roomId = roomId;
+	}
+
+	public Integer getIsStart() {
+		return isStart;
+	}
+
+	public void setIsStart(Integer isStart) {
+		this.isStart = isStart;
 	}
 
 	public DateTime getCreateAt() {

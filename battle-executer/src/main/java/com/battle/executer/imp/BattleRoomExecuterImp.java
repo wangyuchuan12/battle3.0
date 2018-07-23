@@ -79,6 +79,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 	@Override
 	public void init(EventManager eventManager,ExecuterStore executerStore) {
+		
+		System.out.println("........123234234234");
 		this.eventManager = eventManager;
 		this.battleDataManager = executerStore.getBattleDataManager();
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
@@ -108,6 +110,8 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public void startRoom() {
 		try{
+			
+			System.out.println("........................sssssskkkkkk:");
 			battleRoomPublish.publishRoomStart();
 			eventManager.publishEvent(Event.START_ROOM_CODE, null);
 			
@@ -382,25 +386,18 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 	@Override
 	public void submitResult() {
-		
-		System.out.println("..........submitResult");
+	
 		BattleStageVo stageVo = battleDataManager.currentStage();
 		BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
-		System.out.println("..........battlePaperQuestion:"+battlePaperQuestion);
 		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
 		List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
-		System.out.println("..........questionAnswers:"+questionAnswers);
 		Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
 		for(QuestionAnswerVo questionAnswer:questionAnswers){
 			questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
 		}
 		
-		System.out.println("........battleRoomMembers:"+battleRoomMembers);
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 			QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
-			
-			System.out.println("........questionAnswer.getMyAnswer:"+questionAnswer.getMyAnswer());
-			System.out.println("........questionAnswer.getRightAnswer:"+battlePaperQuestion.getRightAnswer());
 			if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
 				if(questionAnswer==null||
 						CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
@@ -413,7 +410,6 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 						//battleRoomPublish.publishDie(battleRoomMember);
 					}
 					battleRoomMember.setRemainLove(remainLove);
-					System.out.println("........remainLove2:"+remainLove);
 					
 				}else{
 					Integer process = battleRoomMember.getProcess();

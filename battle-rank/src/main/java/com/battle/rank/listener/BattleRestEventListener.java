@@ -23,6 +23,7 @@ public class BattleRestEventListener  implements ApplicationListener<BattleRestE
 	private BattleRankMemberService battleRankMemberService;
 	@Override
 	public void onApplicationEvent(BattleRestEvent event) {
+		
 		List<BattleRoomMemberVo> battleRoomMemberVos = event.getSource();
 		
 		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);

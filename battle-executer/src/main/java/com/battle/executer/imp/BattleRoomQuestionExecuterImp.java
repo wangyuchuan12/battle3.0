@@ -176,7 +176,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				
 			}
 			
-			if(battleRoomMember.getRewardLove().intValue()<=0){
+			if(battleRoomMember.getRemainLove().intValue()<=0){
 				Map<String, Object> data = new HashMap<>();
 				data.put("member", battleRoomMember);
 				data.put("type", BattleRoomPublish.LOVE_DIE_TYPE);

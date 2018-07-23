@@ -22,6 +22,8 @@ public abstract class BattleRoomFactory {
 
 	public ExecuterStore init(RoomParam roomParam){
 		
+		
+		System.out.println("lsjdflsjflsjdflsdjflsdjfl");
 		List<UserParam> userParams = roomParam.getUserParams();
 		int type = roomParam.getType();
 		Map<String, Object> data = roomParam.getData();

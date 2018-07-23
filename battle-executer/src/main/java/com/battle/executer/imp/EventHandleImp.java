@@ -100,6 +100,8 @@ public class EventHandleImp implements EventHandle{
 			
 			@Override
 			public void callback(Map<String, Object> data) {
+				
+				System.out.println("restEndEvent");
 				battleRoomDataManager.nextStage();
 				
 				boolean isEnd = endJudge.isEnd();
@@ -121,6 +123,7 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data) {
 				try{
+					System.out.println(".............................*******************startRoomEvent");
 					battleRoomExecuter.members();
 					battleRoomStageExecuter.startStage();
 				}catch(Exception e){
@@ -222,7 +225,6 @@ public class EventHandleImp implements EventHandle{
 						}
 						
 						if(type==BattleRoomPublish.BEAN_DIE_TYPE&&battleRoomMember.getBeanNum()!=null&&battleRoomMember.getBeanNum()<=0){
-							System.out.println("...............battleRoomMember.getBeanNum:"+battleRoomMember.getBeanNum());
 							battleRoomPublish.publishDie(battleRoomMember,BattleRoomPublish.BEAN_DIE_TYPE);
 						}
 						
