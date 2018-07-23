@@ -401,6 +401,16 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 				QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
 				
 				System.out.println("................submitResult.questionAnswer:"+questionAnswer);
+				try{
+					System.out.println("................submitResult.getMyAnswer:"+questionAnswer.getMyAnswer());
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				try{
+					System.out.println("................battlePaperQuestion.getRightAnswer:"+battlePaperQuestion.getRightAnswer());
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 				if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
 					if(questionAnswer==null||
 							CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
