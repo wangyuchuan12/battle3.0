@@ -386,36 +386,44 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public void submitResult() {
 	
-		BattleStageVo stageVo = battleDataManager.currentStage();
-		BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
-		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
-		List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
-		Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
-		for(QuestionAnswerVo questionAnswer:questionAnswers){
-			questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
-		}
-		
-		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-			QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
-			if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
-				if(questionAnswer==null||
-						CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
-						!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
-					Integer remainLove = battleRoomMember.getRemainLove();
-					remainLove--;
-					if(remainLove<=0){
-						remainLove = 0;
-						battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
-						//battleRoomPublish.publishDie(battleRoomMember);
+		try{
+			System.out.println("................submitResult");
+			BattleStageVo stageVo = battleDataManager.currentStage();
+			BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
+			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
+			List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
+			Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
+			for(QuestionAnswerVo questionAnswer:questionAnswers){
+				questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
+			}
+			
+			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+				QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
+				
+				System.out.println("................submitResult.questionAnswer:"+questionAnswer);
+				if(battleRoomMember.getStatus().intValue()==BattleRoomMemberVo.STATUS_IN.intValue()){
+					if(questionAnswer==null||
+							CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
+							!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
+						Integer remainLove = battleRoomMember.getRemainLove();
+						remainLove--;
+						System.out.println("................submitResult.remainLove:"+remainLove);
+						if(remainLove<=0){
+							remainLove = 0;
+							battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
+							//battleRoomPublish.publishDie(battleRoomMember);
+						}
+						battleRoomMember.setRemainLove(remainLove);
+						
+					}else{
+						Integer process = battleRoomMember.getProcess();
+						process++;
+						battleRoomMember.setProcess(process);
 					}
-					battleRoomMember.setRemainLove(remainLove);
-					
-				}else{
-					Integer process = battleRoomMember.getProcess();
-					process++;
-					battleRoomMember.setProcess(process);
 				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
 	}
