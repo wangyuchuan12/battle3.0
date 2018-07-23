@@ -1,6 +1,7 @@
 package com.battle.executer.roomManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -153,7 +154,10 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	public void clear() {
 		List<BattleRoomMemberVo> battleRoomMembers = getBattleMembers();
 		
-		for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMembers){
+		Iterator<BattleRoomMemberVo> it = battleRoomMembers.iterator();
+		
+		while(it.hasNext()){
+			BattleRoomMemberVo battleRoomMemberVo = it.next();
 			if(!webSocketManager.isOpen(battleRoomMemberVo.getToken())){
 				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_OUT);
 			}
