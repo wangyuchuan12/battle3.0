@@ -157,13 +157,14 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		Iterator<BattleRoomMemberVo> it = battleRoomMembers.iterator();
 		
 		while(it.hasNext()){
+			System.out.println("..........新的模式");
 			BattleRoomMemberVo battleRoomMemberVo = it.next();
 			if(!webSocketManager.isOpen(battleRoomMemberVo.getToken())){
 				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_OUT);
 			}
 			int status = battleRoomMemberVo.getStatus();
 			if(status==BattleRoomMemberVo.STATUS_OUT){
-				battleRoomMembers.remove(battleRoomMemberVo);
+				it.remove();
 			}
 		}
 		
