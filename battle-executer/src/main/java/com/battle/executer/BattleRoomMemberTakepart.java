@@ -15,7 +15,7 @@ import com.wyc.common.wx.domain.UserInfo;
 
 public interface BattleRoomMemberTakepart {
 
-	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleRoomMemberTakepartException, BattleDataManagerException, BattleDataRoomManagerException, SendMessageException, PublishException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleRoomQuestionExecuterException;
+	public BattleRoomMemberVo takepart(UserInfo userInfo);
 	
-	public void init(ExecuterStore executerStore) throws BattleRoomMemberTakepartException;
+	public void init(ExecuterStore executerStore);
 }

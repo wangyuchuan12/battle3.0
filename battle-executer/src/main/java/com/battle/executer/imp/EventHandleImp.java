@@ -60,7 +60,7 @@ public class EventHandleImp implements EventHandle{
 	private BattleRoomCoolHandle battleRoomCoolHandle;
 
 	
-	public void init(ExecuterStore executerStore) throws BattleDataManagerException{
+	public void init(ExecuterStore executerStore){
 		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		this.battleRoomStageExecuter = executerStore.getBattleRoomStageExecuter();
 		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
@@ -114,22 +114,26 @@ public class EventHandleImp implements EventHandle{
 	
 	//等待结束事件
 	@Override
-	public void restEndEvent() throws BattleDataManagerException {
+	public void restEndEvent(){
 		
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.REST_END_CODE, new EventCallback() {
 			
 			@Override
-			public void callback(Map<String, Object> data) throws BattleQuestionManagerException, EndJudgeException, BattleDataManagerException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleDataRoomManagerException, BattleRoomQuestionExecuterException, PublishException, SendMessageException {
+			public void callback(Map<String, Object> data){
 				
-				System.out.println("restEndEvent");
-				battleRoomDataManager.nextStage();
-				
-				boolean isEnd = endJudge.isEnd();
-				if(isEnd){
-					eventManager.publishEvent(Event.ROOM_END_CODE, null);
-				}else{
-					battleRoomStageExecuter.startStage();
+				try{
+					System.out.println("restEndEvent");
+					battleRoomDataManager.nextStage();
+					
+					boolean isEnd = endJudge.isEnd();
+					if(isEnd){
+						eventManager.publishEvent(Event.ROOM_END_CODE, null);
+					}else{
+						battleRoomStageExecuter.startStage();
+					}
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 
 			}
@@ -138,7 +142,7 @@ public class EventHandleImp implements EventHandle{
 	}
 
 	@Override
-	public void startRoomEvent() throws BattleDataManagerException {
+	public void startRoomEvent(){
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.START_ROOM_CODE, new EventCallback() {
 			@Override
@@ -157,19 +161,23 @@ public class EventHandleImp implements EventHandle{
 	}
 
 	@Override
-	public void startQuestions() throws BattleDataManagerException {
+	public void startQuestions() {
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.START_QUESTIONS, new EventCallback() {
 			@Override
-			public void callback(Map<String, Object> data) throws BattleRoomQuestionExecuterException, BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException {
-				battleRoomQuestionExecuter.startQuestions();
+			public void callback(Map<String, Object> data){
+				try{
+					battleRoomQuestionExecuter.startQuestions();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		});
 		
 	}
 
 	@Override
-	public void roomEnd() throws BattleDataManagerException {
+	public void roomEnd(){
 		
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.ROOM_END_CODE, new EventCallback() {
@@ -198,48 +206,23 @@ public class EventHandleImp implements EventHandle{
 	}
 
 	@Override
-	public void submitResults() throws BattleDataManagerException {
+	public void submitResults(){
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.SUBMIT_RESULTS, new EventCallback() {
 			@Override
-			public void callback(Map<String, Object> data) throws BattleRoomExecuterException {
-				battleRoomExecuter.submitResults();
-				scheduledExecuter.schedule(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
+			public void callback(Map<String, Object> data){
+				try{
+					battleRoomExecuter.submitResults();
+					scheduledExecuter.schedule(new Runnable() {
+						
+						@Override
+						public void run() {
 							eventManager.publishEvent(Event.REST_END_CODE, null);
-						} catch (BattleQuestionManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (EndJudgeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleDataManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomStageExceptionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomExecuterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleDataRoomManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomQuestionExecuterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (PublishException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SendMessageException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
-					}
-				}, 5);
+					}, 5);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -247,28 +230,21 @@ public class EventHandleImp implements EventHandle{
 	
 	@Override
 	public void submitResult() {
-		EventManager eventManager;
-		try {
-			eventManager = battleRoomDataManager.getEventManager();
-			eventManager.addCallback(Event.SUBMIT_RESULT, new EventCallback() {
-				@Override
-				public void callback(Map<String, Object> data) throws BattleRoomExecuterException, BattleDataManagerException, BattleQuestionManagerException, BattleDataRoomManagerException, BattleRoomQuestionExecuterException, EndJudgeException, PublishException, SendMessageException, BattleRoomStageExceptionException {
-					
-					battleRoomExecuter.submitResult();
-					battleRoomDataManager.nextQuestion();
-					battleRoomQuestionExecuter.startQuestion();
-					
-				}
-			});
-		} catch (BattleDataManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		EventManager eventManager = battleRoomDataManager.getEventManager();
+		eventManager.addCallback(Event.SUBMIT_RESULT, new EventCallback() {
+			@Override
+			public void callback(Map<String, Object> data){
+				
+				battleRoomExecuter.submitResult();
+				battleRoomDataManager.nextQuestion();
+				battleRoomQuestionExecuter.startQuestion();
+				
+			}
+		});
 	}
 
 	@Override
-	public void publishDie() throws BattleDataManagerException {
+	public void publishDie(){
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.PUBLISH_DIE, new EventCallback() {
 			@Override
@@ -308,7 +284,7 @@ public class EventHandleImp implements EventHandle{
 	}
 
 	@Override
-	public void myInfo() throws BattleDataManagerException {
+	public void myInfo(){
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		eventManager.addCallback(Event.MY_INFO, new EventCallback() {
 			@Override

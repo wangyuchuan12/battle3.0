@@ -31,6 +31,7 @@ import com.battle.executer.exception.PublishException;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomVo;
+import com.battle.executer.vo.BattleShareRewardVo;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleRankService;
 import com.wyc.annotation.HandlerAnnotation;
@@ -62,61 +63,40 @@ public class StartApi {
 			Map<String, Object> data = new HashMap<>();
 			data.put("subBean", battleRank.getSubBean());
 			data.put("beanCheck",false);
+			
+			List<BattleShareRewardVo> battleShareRewards = new ArrayList<>();
+			
+			BattleShareRewardVo battleShareReward = new BattleShareRewardVo();
+			battleShareReward.setRewardLove(5);
+			battleShareReward.setShareNum(1);
+			
+			BattleShareRewardVo battleShareReward2 = new BattleShareRewardVo();
+			battleShareReward2.setShareNum(2);
+			battleShareReward2.setRewardLove(5);
+			
+			BattleShareRewardVo battleShareReward3 = new BattleShareRewardVo();
+			battleShareReward3.setShareNum(3);
+			battleShareReward3.setRewardLove(5);
+			battleShareRewards.add(battleShareReward);
+			battleShareRewards.add(battleShareReward2);
+			battleShareRewards.add(battleShareReward3);
+			
+			data.put("shareRewards", battleShareRewards);
+			
 			RoomParam roomParam = new RoomParam();
 			roomParam.setType(BattleRoomVo.RANK_TYPE);
 			roomParam.setUserParams(new ArrayList<UserParam>());
 			roomParam.setData(data);
 			roomParam.setGroupId("");
-			ExecuterStore executerStore = null;
-			try {
-				executerStore = battleRoomFactory.init(roomParam);
-			} catch (BattleRoomFactoryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleQuestionManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (EndJudgeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomMemberTakepartException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (PublishException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomStageExceptionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomQuestionExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ExecuterStore executerStore = battleRoomFactory.init(roomParam);
 			BattleDataManager battleDataManager = executerStore.getBattleDataManager();
 			
 
-			try {
-				BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
-				battleRank.setRoomId(battleRoomVo.getId());
-				battleRank.setIsStart(1);
-				battleRankService.update(battleRank);
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
+			battleRank.setRoomId(battleRoomVo.getId());
+			battleRank.setIsStart(1);
 			
+			battleRankService.update(battleRank);
 		}
 		
 	}

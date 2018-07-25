@@ -9,16 +9,16 @@ import com.battle.executer.vo.BattleRoomVo;
 
 public interface BattleDataRoomManager {
 	
-	public void init(List<UserParam> userParams,Integer type ,Map<String, Object> data) throws BattleDataRoomManagerException;
+	public void init(List<UserParam> userParams,Integer type ,Map<String, Object> data);
 	
-	public List<BattleRoomMemberVo> getBattleMembers() throws BattleDataRoomManagerException;
+	public List<BattleRoomMemberVo> getBattleMembers();
 	
-	public List<BattleRoomMemberVo> getBattleMembers(Integer ...statuses) throws BattleDataRoomManagerException;
+	public List<BattleRoomMemberVo> getBattleMembers(Integer ...statuses);
 	
-	public BattleRoomMemberVo getBattleMemberByUserId(String userId) throws BattleDataRoomManagerException;
+	public BattleRoomMemberVo getBattleMemberByUserId(String userId);
 	
-	public BattleRoomVo getBattleRoom() throws BattleDataRoomManagerException;
+	public BattleRoomVo getBattleRoom();
 	
-	public void clear() throws BattleDataRoomManagerException;
+	public void clear();
 	
 }

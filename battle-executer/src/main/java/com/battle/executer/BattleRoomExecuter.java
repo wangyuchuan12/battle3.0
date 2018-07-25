@@ -16,34 +16,35 @@ import com.wyc.common.wx.domain.UserInfo;
 
 public interface BattleRoomExecuter {
 
-	public void answerQuestion(QuestionAnswerVo questionAnswer) throws BattleRoomExecuterException, BattleRoomQuestionExecuterException, BattleDataManagerException;
+	public void answerQuestion(QuestionAnswerVo questionAnswer);
 	
-	public void signOut(String userId) throws BattleRoomExecuterException, BattleDataManagerException, BattleDataRoomManagerException;
+	public void signOut(String userId);
 	
-	public void subjectReady(String userId) throws BattleRoomExecuterException;
+	public void subjectReady(String userId);
 	
-	public void doDouble(String userId)  throws BattleRoomExecuterException;
+	public void doDouble(String userId);
 	
-	public void doNotDouble(String userId)  throws BattleRoomExecuterException;
+	public void doNotDouble(String userId);
 	
-	public void endRoom()  throws BattleRoomExecuterException, BattleDataManagerException, BattleDataRoomManagerException, PublishException;
+	public void endRoom();
 	
-	public void init(EventManager eventManager,ExecuterStore executerStore)  throws BattleRoomExecuterException, PublishException, BattleDataManagerException, BattleDataRoomManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException;
+	public void init(EventManager eventManager,ExecuterStore executerStore);
 
-	public void subjectSelect(String subjectId, String userId)  throws BattleRoomExecuterException;
+	public void subjectSelect(String subjectId, String userId);
 
-	public void startRoom()  throws BattleRoomExecuterException, PublishException, BattleDataManagerException, BattleDataRoomManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException;
+	public void startRoom();
 	
-	public void submitResults()  throws BattleRoomExecuterException;
+	public void submitResults();
 
-	public void members()  throws BattleRoomExecuterException;
+	public void members();
 	
-	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleRoomExecuterException, BattleRoomMemberTakepartException, BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleDataRoomManagerException;
+	public BattleRoomMemberVo takepart(UserInfo userInfo);
 	
-	public BattleRoomVo getRoom() throws BattleRoomExecuterException, BattleDataManagerException, BattleDataRoomManagerException;
+	public BattleRoomVo getRoom();
 
-	public boolean superLove(UserInfo userInfo) throws BattleRoomExecuterException, BattleDataManagerException, BattleDataRoomManagerException;
+	public boolean superLove(UserInfo userInfo);
 
-	public void submitResult() throws BattleRoomExecuterException, BattleDataManagerException, BattleQuestionManagerException, BattleDataRoomManagerException;
+	public void submitResult();
 
+	public int share(String userId);
 }

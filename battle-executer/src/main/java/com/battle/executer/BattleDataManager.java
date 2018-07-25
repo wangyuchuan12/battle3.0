@@ -14,33 +14,33 @@ import com.battle.executer.vo.BattleStageVo;
 
 public interface BattleDataManager {
 
-	public BattleRoomVo getBattleRoom() throws BattleDataManagerException, BattleDataRoomManagerException;
+	public BattleRoomVo getBattleRoom();
 	
-	public BattlePaperVo getBattlePaper() throws BattleDataManagerException, BattleQuestionManagerException;
+	public BattlePaperVo getBattlePaper();
 	
-	public List<BattleRoomMemberVo> getBattleMembers() throws BattleDataManagerException, BattleDataRoomManagerException;
+	public List<BattleRoomMemberVo> getBattleMembers();
 	
-	public List<BattleRoomMemberVo> getBattleMembers(Integer ...statuses) throws BattleDataManagerException, BattleDataRoomManagerException;
+	public List<BattleRoomMemberVo> getBattleMembers(Integer ...statuses);
 	
-	public BattleRoomMemberVo getBattleMemberByUserId(String userId) throws BattleDataManagerException, BattleDataRoomManagerException;
+	public BattleRoomMemberVo getBattleMemberByUserId(String userId);
 	
-	public EventManager getEventManager() throws BattleDataManagerException;
+	public EventManager getEventManager();
 	
-	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex) throws BattleDataManagerException, BattleQuestionManagerException;
+	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
 	
-	public BattleStageVo currentStage() throws BattleDataManagerException, BattleQuestionManagerException;
+	public BattleStageVo currentStage();
 	
-	public List<BattlePaperQuestionVo> selectQuestions() throws BattleDataManagerException, BattleQuestionManagerException;
+	public List<BattlePaperQuestionVo> selectQuestions();
 	
-	public void nextQuestion() throws BattleDataManagerException, BattleQuestionManagerException;
+	public void nextQuestion();
 	
-	public BattlePaperQuestionVo currentQuestion() throws BattleDataManagerException, BattleQuestionManagerException;
+	public BattlePaperQuestionVo currentQuestion();
 	
-	public int stageCount() throws BattleQuestionManagerException;
+	public int stageCount();
 	
-	public void nextStage() throws BattleQuestionManagerException;
+	public void nextStage();
 	
-	public void clearMembers() throws BattleDataRoomManagerException;
+	public void clearMembers();
 	
 	public void init(BattleQuestionManager battleQuestionManager,BattleDataRoomManager battleDataRoomManager);
 }

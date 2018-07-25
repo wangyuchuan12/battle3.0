@@ -57,72 +57,34 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	}
 	
 	@Override
-	public void startQuestions() throws BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException{
+	public void startQuestions() {
 		battleRoomDataManager.selectQuestions();
 		startQuestion();
 	}
 	
 	@Override
-	public void startQuestion() throws BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException{
+	public void startQuestion(){
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
-		try{
-			BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
-			if(battlePaperQuestion!=null){
-				battleRoomPublish.publishShowQuestion(battlePaperQuestion);
-				scheduledExecuter.schedule(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							eventManager.publishEvent(Event.SUBMIT_RESULT, null);
-						} catch (BattleQuestionManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (EndJudgeException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleDataManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomStageExceptionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomExecuterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleDataRoomManagerException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (BattleRoomQuestionExecuterException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (PublishException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SendMessageException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-					}
-				}, battlePaperQuestion.getTimeLong()+1);
-			}else{
-				eventManager.publishEvent(Event.SUBMIT_RESULTS, null);
-			}
-		}catch(BattleDataManagerException e){
-			throw e;
-		}catch(BattleQuestionManagerException e){
-			throw e;
-		}catch(BattleRoomStageExceptionException e){
-			throw e;
-		}catch(Exception e){
-			throw new PublishException();
+		BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
+		if(battlePaperQuestion!=null){
+			battleRoomPublish.publishShowQuestion(battlePaperQuestion);
+			scheduledExecuter.schedule(new Runnable() {
+				@Override
+				public void run() {
+					eventManager.publishEvent(Event.SUBMIT_RESULT, null);
+					
+				}
+			}, battlePaperQuestion.getTimeLong()+1);
+		}else{
+			eventManager.publishEvent(Event.SUBMIT_RESULTS, null);
 		}
 	}
 	
 	@Override
-	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer) throws BattleDataManagerException {
-		EventManager eventManager = battleRoomDataManager.getEventManager();
+	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer){
+		
 		try{
+			EventManager eventManager = battleRoomDataManager.getEventManager();
 			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
 			BattlePaperQuestionVo battlePaperQuestionVo = battleRoomDataManager.currentQuestion();
 			

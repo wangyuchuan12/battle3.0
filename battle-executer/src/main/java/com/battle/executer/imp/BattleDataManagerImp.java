@@ -25,29 +25,29 @@ public class BattleDataManagerImp implements BattleDataManager{
 	
 
 	@Override
-	public BattleRoomVo getBattleRoom() throws BattleDataRoomManagerException {
+	public BattleRoomVo getBattleRoom(){
 		
 		return battleDataRoomManager.getBattleRoom();
 	}
 
 	@Override
-	public BattlePaperVo getBattlePaper() throws BattleQuestionManagerException {
+	public BattlePaperVo getBattlePaper(){
 		return battleQuestionManager.getBattlePaper();
 	}
 
 	@Override
-	public List<BattleRoomMemberVo> getBattleMembers() throws BattleDataRoomManagerException {
+	public List<BattleRoomMemberVo> getBattleMembers(){
 		return battleDataRoomManager.getBattleMembers();
 	}
 
 
 	@Override
-	public BattleRoomMemberVo getBattleMemberByUserId(String userId) throws BattleDataRoomManagerException {
+	public BattleRoomMemberVo getBattleMemberByUserId(String userId){
 		return battleDataRoomManager.getBattleMemberByUserId(userId);
 	}
 
 	@Override
-	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex) throws BattleQuestionManagerException {
+	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex){
 		return battleQuestionManager.getPaperSubjects(stageIndex);
 	}
 
@@ -67,44 +67,44 @@ public class BattleDataManagerImp implements BattleDataManager{
 	}
 
 	@Override
-	public List<BattleRoomMemberVo> getBattleMembers(Integer... statuses) throws BattleDataRoomManagerException {
+	public List<BattleRoomMemberVo> getBattleMembers(Integer... statuses){
 		return battleDataRoomManager.getBattleMembers(statuses);
 	}
 
 
 	@Override
-	public List<BattlePaperQuestionVo> selectQuestions() throws BattleQuestionManagerException {
+	public List<BattlePaperQuestionVo> selectQuestions(){
 		
 		return battleQuestionManager.selectQuestions();
 	}
 
 	@Override
-	public void nextStage() throws BattleQuestionManagerException {
+	public void nextStage(){
 		battleQuestionManager.nextStage();
 	}
 
 	@Override
-	public BattleStageVo currentStage() throws BattleQuestionManagerException {
+	public BattleStageVo currentStage(){
 		return battleQuestionManager.currentStage();
 	}
 
 	@Override
-	public void nextQuestion() throws BattleQuestionManagerException {
+	public void nextQuestion(){
 		battleQuestionManager.nextQuestion();
 	}
 
 	@Override
-	public BattlePaperQuestionVo currentQuestion() throws BattleQuestionManagerException {
+	public BattlePaperQuestionVo currentQuestion(){
 		return battleQuestionManager.currentQuestion();
 	}
 
 	@Override
-	public int stageCount() throws BattleQuestionManagerException {
+	public int stageCount(){
 		return battleQuestionManager.stageCount();
 	}
 
 	@Override
-	public void clearMembers() throws BattleDataRoomManagerException {
+	public void clearMembers(){
 		battleDataRoomManager.clear();
 		
 	}

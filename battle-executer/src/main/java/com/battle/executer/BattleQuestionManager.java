@@ -11,21 +11,21 @@ import com.battle.executer.vo.BattleStageVo;
 
 public interface BattleQuestionManager {
 
-	public void init(Map<String, Object> data)throws BattleQuestionManagerException;
+	public void init(Map<String, Object> data);
 	
-	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex) throws BattleQuestionManagerException;
+	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
 	
-	public BattleStageVo currentStage() throws BattleQuestionManagerException;
+	public BattleStageVo currentStage();
 	
-	public List<BattlePaperQuestionVo> selectQuestions() throws BattleQuestionManagerException;
+	public List<BattlePaperQuestionVo> selectQuestions();
 	
-	public void nextQuestion() throws BattleQuestionManagerException;
+	public void nextQuestion();
 	
-	public BattlePaperQuestionVo currentQuestion() throws BattleQuestionManagerException;
+	public BattlePaperQuestionVo currentQuestion();
 	
-	public void nextStage() throws BattleQuestionManagerException;
+	public void nextStage();
 	
-	public int stageCount() throws BattleQuestionManagerException;
+	public int stageCount();
 	
-	public BattlePaperVo getBattlePaper() throws BattleQuestionManagerException;
+	public BattlePaperVo getBattlePaper();
 }

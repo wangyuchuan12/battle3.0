@@ -45,6 +45,8 @@ public class BattleRoomMemberVo {
 	
 	private Integer isOut;
 	
+	private Integer shareNum;
+	
 	private BattleRoomCoolMemberVo battleRoomCoolMemberVo;
 	
 	public String getId() {
@@ -198,4 +200,11 @@ public class BattleRoomMemberVo {
 	public void setIsOut(Integer isOut) {
 		this.isOut = isOut;
 	}
+	public Integer getShareNum() {
+		return shareNum;
+	}
+	public void setShareNum(Integer shareNum) {
+		this.shareNum = shareNum;
+	}
+	
 }

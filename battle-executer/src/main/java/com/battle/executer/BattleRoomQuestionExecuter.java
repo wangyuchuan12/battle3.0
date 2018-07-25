@@ -12,13 +12,13 @@ import com.battle.executer.vo.QuestionAnswerVo;
 
 public interface BattleRoomQuestionExecuter {
 	
-	public void init(ExecuterStore executerStore)throws BattleRoomQuestionExecuterException;
+	public void init(ExecuterStore executerStore);
 	
-	public void roomEnd()throws BattleRoomQuestionExecuterException;
+	public void roomEnd();
 	
-	public void startQuestions() throws BattleRoomQuestionExecuterException, BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException;
+	public void startQuestions();
 	
-	public void startQuestion() throws BattleRoomQuestionExecuterException, BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException;
+	public void startQuestion();
 	
-	public void answerQuestion(QuestionAnswerVo questionAnswer) throws BattleRoomQuestionExecuterException, BattleDataManagerException;
+	public void answerQuestion(QuestionAnswerVo questionAnswer);
 }

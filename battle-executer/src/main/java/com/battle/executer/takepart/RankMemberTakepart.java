@@ -56,7 +56,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 	
 	private ScheduledExecuter scheduledExecuter;
 	@Override
-	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException, SendMessageException, PublishException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleRoomQuestionExecuterException {
+	public BattleRoomMemberVo takepart(UserInfo userInfo){
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
 		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 		BattleRoomMemberVo battleRoomMemberVo = null;
@@ -91,6 +91,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setUserId(userInfo.getId());
 			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVo.setPreClear(0);
+			battleRoomMemberVo.setShareNum(0);
 			battleRoomMemberVo.setIsOut(0);
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			
@@ -111,6 +112,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 					battleRoomMemberVo.setRemainLove(battleRankMember.getLoveCount());
 					battleRoomMemberVo.setLimitLove(battleRankMember.getLoveLimit());
 					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
+					battleRoomMemberVo.setShareNum(0);
 					battleRoomMemberVo.setIsOut(0);
 				}
 			}
@@ -120,6 +122,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			Account account = accountService.fineOne(userInfo.getAccountId());
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
+			battleRoomMemberVo.setShareNum(0);
 			battleRoomMemberVo.setIsOut(0);
 		}
 		

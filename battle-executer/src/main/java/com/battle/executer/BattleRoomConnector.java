@@ -61,13 +61,7 @@ public  class BattleRoomConnector{
 			List<BattleRoomMemberVo> battleRoomMembers = null;
 			try {
 				battleRoomMembers = battleRoomExecuter.getRoom().getMembers();
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -87,25 +81,7 @@ public  class BattleRoomConnector{
 			BattleRoomMemberVo battleRoomMemberVo = null;
 			try {
 				battleRoomMemberVo = battleRoomExecuter.takepart(userInfo);
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomMemberTakepartException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleQuestionManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (EndJudgeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleRoomStageExceptionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -121,13 +97,7 @@ public  class BattleRoomConnector{
 		if(battleRoomExecuter!=null){
 			try {
 				return battleRoomExecuter.superLove(userInfo);
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
+			}catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -149,25 +119,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		try {
 			battleRoomExecuter.startRoom();
-		} catch (BattleRoomExecuterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PublishException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleDataManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleDataRoomManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleQuestionManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EndJudgeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleRoomStageExceptionException e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -177,13 +129,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(questionAnswer.getRoomId());
 		try {
 			battleRoomExecuter.answerQuestion(questionAnswer);
-		} catch (BattleRoomExecuterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleRoomQuestionExecuterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleDataManagerException e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -195,13 +141,7 @@ public  class BattleRoomConnector{
 		if(battleRoomExecuter!=null){
 			try {
 				battleRoomExecuter.signOut(userId);
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
+			}catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -212,7 +152,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		try {
 			battleRoomExecuter.subjectReady(userId);
-		} catch (BattleRoomExecuterException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -224,7 +164,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		try {
 			battleRoomExecuter.doDouble(userId);
-		} catch (BattleRoomExecuterException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -236,7 +176,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		try {
 			battleRoomExecuter.doNotDouble(userId);
-		} catch (BattleRoomExecuterException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -247,16 +187,7 @@ public  class BattleRoomConnector{
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		try {
 			battleRoomExecuter.endRoom();
-		} catch (BattleRoomExecuterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleDataManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BattleDataRoomManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PublishException e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -277,13 +208,7 @@ public  class BattleRoomConnector{
 		if(battleRoomExecuter!=null){
 			try {
 				return battleRoomExecuter.getRoom();
-			} catch (BattleRoomExecuterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (BattleDataRoomManagerException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -301,9 +226,22 @@ public  class BattleRoomConnector{
 		
 		try {
 			battleRoomExecuter.subjectSelect(subjectId,userId);
-		} catch (BattleRoomExecuterException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public int share(String roomId , String userId){
+		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
+		
+		try {
+			return battleRoomExecuter.share(userId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

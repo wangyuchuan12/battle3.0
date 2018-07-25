@@ -24,31 +24,25 @@ public class DanBattleEndHandle implements BattleEndHandle{
 	@Autowired
 	private BattleDanService battleDanService;
 	@Override
-	public void end(BattleDataManager battleRoomDataManager) throws BattleDataManagerException, BattleEndHandleException {
+	public void end(BattleDataManager battleRoomDataManager){
 		
 	
-		try{
-			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
-			
-			Map<String, Object> data = battleRoom.getData();
-			
-			String danId = data.get("danId").toString();
-			
-			BattleDan battleDan = battleDanService.findOne(danId);
-			List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
-			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-				if(battleRoomMember.getIsPass().intValue()==1){
-					BattleAccountResult battleAccountResult = battleAccountResultService.findOneByUserId(battleRoomMember.getUserId());
-					if(battleAccountResult.getLevel().intValue()<=battleDan.getLevel().intValue()){
-						battleAccountResult.setLevel(battleDan.getLevel()+1);
-						battleAccountResultService.update(battleAccountResult);
-					}
+		BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
+		
+		Map<String, Object> data = battleRoom.getData();
+		
+		String danId = data.get("danId").toString();
+		
+		BattleDan battleDan = battleDanService.findOne(danId);
+		List<BattleRoomMemberVo> battleRoomMembers = battleRoomDataManager.getBattleMembers();
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			if(battleRoomMember.getIsPass().intValue()==1){
+				BattleAccountResult battleAccountResult = battleAccountResultService.findOneByUserId(battleRoomMember.getUserId());
+				if(battleAccountResult.getLevel().intValue()<=battleDan.getLevel().intValue()){
+					battleAccountResult.setLevel(battleDan.getLevel()+1);
+					battleAccountResultService.update(battleAccountResult);
 				}
 			}
-		}catch(BattleDataManagerException e){
-			throw e;
-		}catch(Exception e){
-			throw new BattleEndHandleException(e);
 		}
 		
 	}

@@ -14,30 +14,24 @@ public class DefaultEndJudge implements EndJudge{
 
 	private BattleDataManager battleDataManager;
 	@Override
-	public boolean isEnd() throws BattleDataManagerException, EndJudgeException {
+	public boolean isEnd(){
 		
-		try{
-			BattleStageVo battleStageVo = battleDataManager.currentStage();
-			if(battleStageVo!=null){
-				List<BattleRoomMemberVo> battleRoomMemberVos = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
-				int liveNum = 0;
-				for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
-					if(battleRoomMember.getRemainLove()>0){
-						liveNum++;
-					}
+		BattleStageVo battleStageVo = battleDataManager.currentStage();
+		if(battleStageVo!=null){
+			List<BattleRoomMemberVo> battleRoomMemberVos = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN);
+			int liveNum = 0;
+			for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
+				if(battleRoomMember.getRemainLove()>0){
+					liveNum++;
 				}
-				if(liveNum>1){
-					return false;
-				}else{
-					return true;
-				}
+			}
+			if(liveNum>1){
+				return false;
 			}else{
 				return true;
 			}
-		}catch(BattleDataManagerException e){
-			throw e;
-		}catch(Exception e){
-			throw new EndJudgeException();
+		}else{
+			return true;
 		}
 	}
 

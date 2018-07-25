@@ -5,6 +5,6 @@ import com.battle.executer.exception.BattleEndHandleException;
 
 public interface BattleEndHandle {
 
-	public void end(BattleDataManager battleRoomDataManager)throws BattleEndHandleException, BattleDataManagerException;
+	public void end(BattleDataManager battleRoomDataManager);
 	
 }

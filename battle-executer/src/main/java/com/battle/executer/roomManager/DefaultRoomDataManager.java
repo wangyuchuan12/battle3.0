@@ -13,7 +13,9 @@ import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomRewardRecord;
+import com.battle.executer.vo.BattleRoomShareRewardVo;
 import com.battle.executer.vo.BattleRoomVo;
+import com.battle.executer.vo.BattleShareRewardVo;
 import com.battle.socket.WebSocketManager;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.wx.domain.UserInfo;
@@ -77,6 +79,13 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		if(data!=null&&data.get("rewards")!=null){
 			battleRewards = (List<BattleRewardVo>)data.get("rewards");
 		}
+		
+		List<BattleShareRewardVo> battleShareRewardVos = null;
+		if(data!=null&&data.get("shareRewards")!=null){
+			battleShareRewardVos = (List<BattleShareRewardVo>) data.get("shareRewards");
+		}
+		
+		List<BattleRoomShareRewardVo> battleRoomShareRewards = new ArrayList<>();
 		List<BattleRoomRewardRecord> battleRoomRewardRecords = new ArrayList<>();
 		
 		if(battleRewards!=null){
@@ -91,6 +100,17 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 				battleRoomRewardRecords.add(battleRoomRewardRecord);
 				
 			}
+		}
+		
+		if(battleShareRewardVos!=null){
+			for(BattleShareRewardVo battleShareRewardVo:battleShareRewardVos){
+				BattleRoomShareRewardVo battleRoomShareRewardVo = new BattleRoomShareRewardVo();
+				battleRoomShareRewardVo.setId(UUID.randomUUID().toString());
+				battleRoomShareRewardVo.setRewardLove(battleShareRewardVo.getRewardLove());
+				battleRoomShareRewardVo.setShareNum(battleShareRewardVo.getShareNum());
+				battleRoomShareRewards.add(battleRoomShareRewardVo);
+			}
+			
 		}
 		
 		battleRoom.setRewardBean(5);
@@ -112,6 +132,7 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		
 		battleRoom.setId(UUID.randomUUID().toString());
 		
+		battleRoom.setBattleRoomShareRewards(battleRoomShareRewards);
 		
 		battleRoom.setBattleRoomRewardRecords(battleRoomRewardRecords);
 		
@@ -139,6 +160,7 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVo.setPreClear(0);
 			battleRoomMemberVo.setIsOut(0);
+			battleRoomMemberVo.setShareNum(0);
 			battleRoomMemberVos.add(battleRoomMemberVo);
 		}
 		

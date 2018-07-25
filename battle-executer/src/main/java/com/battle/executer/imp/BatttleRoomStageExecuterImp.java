@@ -29,7 +29,7 @@ public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 	private ScheduledExecuter scheduledExecuter;
 	
 	@Override
-	public void init(ExecuterStore executerStore) throws BattleDataManagerException{
+	public void init(ExecuterStore executerStore) {
 		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
 		this.eventManager = executerStore.getBattleDataManager().getEventManager();
@@ -47,36 +47,7 @@ public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 			scheduledExecuter.schedule(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						eventManager.publishEvent(Event.START_QUESTIONS, null);
-					} catch (BattleQuestionManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (EndJudgeException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleDataManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomStageExceptionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomExecuterException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleDataRoomManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomQuestionExecuterException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (PublishException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SendMessageException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					eventManager.publishEvent(Event.START_QUESTIONS, null);
 				}
 			}, battleStageVo.getTimeLong());
 		}catch(Exception e){

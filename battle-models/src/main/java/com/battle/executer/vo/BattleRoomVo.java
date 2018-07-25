@@ -25,6 +25,8 @@ public class BattleRoomVo {
 	
 	private List<BattleRoomRewardRecord> battleRoomRewardRecords;
 	
+	private List<BattleRoomShareRewardVo> battleRoomShareRewards;
+	
 	private Integer type;
 	
 	private Map<String, Object> data;
@@ -221,5 +223,12 @@ public class BattleRoomVo {
 	public void setLoveCount(Integer loveCount) {
 		this.loveCount = loveCount;
 	}
-	
+
+	public List<BattleRoomShareRewardVo> getBattleRoomShareRewards() {
+		return battleRoomShareRewards;
+	}
+
+	public void setBattleRoomShareRewards(List<BattleRoomShareRewardVo> battleRoomShareRewards) {
+		this.battleRoomShareRewards = battleRoomShareRewards;
+	}
 }

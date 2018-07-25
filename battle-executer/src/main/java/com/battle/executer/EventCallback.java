@@ -14,5 +14,5 @@ import com.battle.executer.exception.PublishException;
 
 public interface EventCallback {
 
-	public void callback(Map<String, Object> data) throws BattleQuestionManagerException, EndJudgeException, BattleDataManagerException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleDataRoomManagerException, BattleRoomQuestionExecuterException, PublishException, SendMessageException;
+	public void callback(Map<String, Object> data) ;
 }

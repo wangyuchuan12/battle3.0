@@ -30,7 +30,7 @@ public abstract class BattleRoomFactory {
 	@Autowired
     public AutowireCapableBeanFactory factory;
 
-	public ExecuterStore init(RoomParam roomParam)throws BattleRoomFactoryException, BattleDataRoomManagerException, BattleQuestionManagerException, BattleRoomExecuterException, BattleDataManagerException, EndJudgeException, BattleRoomMemberTakepartException, PublishException, BattleRoomStageExceptionException, BattleRoomQuestionExecuterException{
+	public ExecuterStore init(RoomParam roomParam){
 		
 	
 		List<UserParam> userParams = roomParam.getUserParams();

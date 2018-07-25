@@ -42,7 +42,7 @@ public class EventManager {
 		eventCallbacks.add(callback);
 	}
 	
-	public void publishEvent(String code,Map<String, Object> data) throws BattleQuestionManagerException, EndJudgeException, BattleDataManagerException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleDataRoomManagerException, BattleRoomQuestionExecuterException, PublishException, SendMessageException{
+	public void publishEvent(String code,Map<String, Object> data){
 		Event eventL = null;
 		for(Event event:events){
 			if(event.getCode().equals(code)){

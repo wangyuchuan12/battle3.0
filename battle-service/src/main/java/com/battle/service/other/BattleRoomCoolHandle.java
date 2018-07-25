@@ -80,7 +80,7 @@ public class BattleRoomCoolHandle {
 			
 		}
 		
-		System.out.println("..........after.schedule:"+battleMemberLoveCool.getSchedule()+",id:"+battleMemberLoveCool.getId());
+		System.out.println("..........after.schedule:"+battleMemberLoveCool.getSchedule()+",id:"+battleMemberLoveCool.getId()+",loveCount:"+battleMemberLoveCool.getLoveCount());
 		
 		return battleMemberLoveCool;
 	}

@@ -5,7 +5,7 @@ import com.battle.executer.exception.EndJudgeException;
 
 public interface EndJudge {
 
-	public boolean isEnd()throws EndJudgeException, BattleDataManagerException;
+	public boolean isEnd();
 	
-	public void init(BattleDataManager battleDataManager) throws EndJudgeException;
+	public void init(BattleDataManager battleDataManager);
 }

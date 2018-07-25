@@ -285,39 +285,7 @@ public class BattleWaitApi {
 						userParam.setUserId(userId);
 						userParams.add(userParam);
 					}
-					try {
-						battleRoomFactory.init(roomParam);
-					} catch (BattleRoomFactoryException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleDataRoomManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleQuestionManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomExecuterException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleDataManagerException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (EndJudgeException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomMemberTakepartException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (PublishException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomStageExceptionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (BattleRoomQuestionExecuterException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					battleRoomFactory.init(roomParam);
 					
 				}
 			}, 4, TimeUnit.SECONDS);

@@ -220,4 +220,30 @@ public class BattleApi {
 		return resultVo;
 	}
 	
+	
+	@RequestMapping(value="share")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo share(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		String roomId = httpServletRequest.getParameter("roomId");
+		
+		int loveNum = battleRoomConnector.share(roomId, userInfo.getId());
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("num", loveNum);
+		if(loveNum>0){
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(true);
+			resultVo.setData(data);
+			return resultVo;
+		}else{
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			resultVo.setData(data);
+			return resultVo;
+		}
+	}
 }

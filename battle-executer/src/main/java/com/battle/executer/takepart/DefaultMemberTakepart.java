@@ -26,7 +26,7 @@ public class DefaultMemberTakepart implements BattleRoomMemberTakepart{
 	@Autowired
 	private AccountService accountService;
 	@Override
-	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException {
+	public BattleRoomMemberVo takepart(UserInfo userInfo) {
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
 		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 		BattleRoomMemberVo battleRoomMemberVo = null;
@@ -62,6 +62,7 @@ public class DefaultMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setPreClear(0);
 			battleRoomMemberVo.setIsOut(0);
+			battleRoomMemberVo.setShareNum(0);
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
