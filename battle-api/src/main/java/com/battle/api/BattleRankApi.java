@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleRank;
 import com.battle.domain.BattleRankMember;
+import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleRankMemberService;
 import com.battle.service.BattleRankService;
+import com.battle.service.other.BattleRoomCoolHandle;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.session.SessionManager;
@@ -36,6 +39,90 @@ public class BattleRankApi {
 	
 	@Autowired
 	private BattleRankMemberService battleRankMemberService;
+	
+	@Autowired
+	private BattleRoomCoolHandle battleRoomCoolHandle;
+	
+	
+	
+	@RequestMapping(value="bInfo")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo bInfo(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+		
+		
+		BattleRank battleRank = null;
+		
+		if(battleRanks==null||battleRanks.size()==0){
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			return resultVo;
+		}else{
+			battleRank = battleRanks.get(0);
+		}
+		
+		BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRank.getRoomId(), userInfo.getId());
+		
+		battleRoomCoolMemberVo = battleRoomCoolHandle.filterMember(battleRoomCoolMemberVo);
+		
+		Map<String, Object> data = new HashMap<>();
+		
+		BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
+		if(battleRankMember!=null){
+			long rank = battleRankMemberService.rank(battleRank.getId(), battleRankMember.getProcess());
+			long diff = battleRank.getEndTime().getMillis()-new DateTime().getMillis();
+			data.put("rank", rank);
+			data.put("diff", diff);
+			data.put("process", battleRankMember.getProcess());
+		}
+		
+		
+		data.put("cool", battleRoomCoolMemberVo);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(data);
+		
+		return resultVo;
+	}
+	
+	
+	
+	@RequestMapping(value="loveCool")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo loveCool(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+		
+		
+		BattleRank battleRank = null;
+		
+		if(battleRanks==null||battleRanks.size()==0){
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			return resultVo;
+		}else{
+			battleRank = battleRanks.get(0);
+		}
+		
+		BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRank.getRoomId(), userInfo.getId());
+		
+		battleRoomCoolMemberVo = battleRoomCoolHandle.filterMember(battleRoomCoolMemberVo);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(battleRoomCoolMemberVo);
+		
+		return resultVo;
+		
+	}
 
 	@RequestMapping(value="info")
 	@ResponseBody

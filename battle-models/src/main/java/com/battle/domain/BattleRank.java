@@ -51,6 +51,10 @@ public class BattleRank {
 	@Column(name="sub_bean")
 	private Integer subBean;
 	
+	@Column(name="end_time")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime endTime;
+	
 	@Column(name = "start_date")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime startDate;
@@ -183,6 +187,14 @@ public class BattleRank {
 
 	public void setSubBean(Integer subBean) {
 		this.subBean = subBean;
+	}
+
+	public DateTime getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(DateTime endTime) {
+		this.endTime = endTime;
 	}
 
 	public DateTime getCreateAt() {

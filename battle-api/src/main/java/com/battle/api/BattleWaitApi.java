@@ -20,6 +20,16 @@ import com.battle.domain.BattleDan;
 import com.battle.domain.BattleWait;
 import com.battle.domain.BattleWaitUser;
 import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomFactoryException;
+import com.battle.executer.exception.BattleRoomMemberTakepartException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRewardVo;
@@ -275,7 +285,39 @@ public class BattleWaitApi {
 						userParam.setUserId(userId);
 						userParams.add(userParam);
 					}
-					battleRoomFactory.init(roomParam);
+					try {
+						battleRoomFactory.init(roomParam);
+					} catch (BattleRoomFactoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleDataRoomManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleQuestionManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomExecuterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleDataManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (EndJudgeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomMemberTakepartException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (PublishException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomStageExceptionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomQuestionExecuterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 				}
 			}, 4, TimeUnit.SECONDS);

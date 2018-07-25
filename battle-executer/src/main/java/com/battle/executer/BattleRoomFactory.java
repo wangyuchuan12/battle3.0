@@ -10,6 +10,16 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.battle.executer.endHandle.DanBattleEndHandle;
 import com.battle.executer.endHandle.RoomBattleEndHandle;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomFactoryException;
+import com.battle.executer.exception.BattleRoomMemberTakepartException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.imp.EventHandleImp;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.param.UserParam;
@@ -20,10 +30,9 @@ public abstract class BattleRoomFactory {
 	@Autowired
     public AutowireCapableBeanFactory factory;
 
-	public ExecuterStore init(RoomParam roomParam){
+	public ExecuterStore init(RoomParam roomParam)throws BattleRoomFactoryException, BattleDataRoomManagerException, BattleQuestionManagerException, BattleRoomExecuterException, BattleDataManagerException, EndJudgeException, BattleRoomMemberTakepartException, PublishException, BattleRoomStageExceptionException, BattleRoomQuestionExecuterException{
 		
-		
-		System.out.println("lsjdflsjflsjdflsdjflsdjfl");
+	
 		List<UserParam> userParams = roomParam.getUserParams();
 		int type = roomParam.getType();
 		Map<String, Object> data = roomParam.getData();

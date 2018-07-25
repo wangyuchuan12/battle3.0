@@ -39,7 +39,7 @@ public synchronized void sendMessage(MessageVo messageVo) throws SendMessageExce
 		if(messageVo.getType()==MessageVo.USERS_TYPE){
 			List<String> userIds = messageVo.getUserIds();
 			for(String userId:userIds){
-				System.out.println("........sendMesssage:"+userId);
+				System.out.println("........sendMesssage:"+userId+",code:"+messageVo.getCode());
 				UserStatus userStatus = userStatusService.findOneByUserId(userId);
 				if(userStatus==null){
 					

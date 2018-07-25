@@ -1,4 +1,5 @@
 package com.battle.executer.imp;
+import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomStageExecuter;
@@ -6,6 +7,14 @@ import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattleStageVo;
 
 public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
@@ -20,7 +29,7 @@ public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 	private ScheduledExecuter scheduledExecuter;
 	
 	@Override
-	public void init(ExecuterStore executerStore){
+	public void init(ExecuterStore executerStore) throws BattleDataManagerException{
 		this.battleRoomDataManager = executerStore.getBattleDataManager();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
 		this.eventManager = executerStore.getBattleDataManager().getEventManager();
@@ -38,7 +47,36 @@ public class BatttleRoomStageExecuterImp implements BattleRoomStageExecuter{
 			scheduledExecuter.schedule(new Runnable() {
 				@Override
 				public void run() {
-					eventManager.publishEvent(Event.START_QUESTIONS, null);
+					try {
+						eventManager.publishEvent(Event.START_QUESTIONS, null);
+					} catch (BattleQuestionManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (EndJudgeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleDataManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomStageExceptionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomExecuterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleDataRoomManagerException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BattleRoomQuestionExecuterException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (PublishException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SendMessageException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}, battleStageVo.getTimeLong());
 		}catch(Exception e){

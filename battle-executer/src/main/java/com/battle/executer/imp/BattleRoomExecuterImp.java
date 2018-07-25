@@ -23,15 +23,26 @@ import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomMemberTakepartException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
+import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomRewardRecord;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.battle.service.UserStatusService;
+import com.battle.service.other.BattleRoomCoolHandle;
 import com.wyc.ApplicationContextProvider;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
@@ -58,35 +69,61 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	private UserStatusService userStatusService;
 	
 	private BattleRoomMemberTakepart battleRoomMemberTakepart;
+	
+	@Autowired
+	private BattleRoomCoolHandle battleRoomCoolHandle;
 
 
 	@Override
-	public void answerQuestion(QuestionAnswerVo questionAnswer) {
+	public void answerQuestion(QuestionAnswerVo questionAnswer) throws BattleRoomQuestionExecuterException, BattleDataManagerException {
 		battleRoomQuestionExecuter.answerQuestion(questionAnswer);
 	}
 
 	@Override
-	public void signOut(String userId) {
+	public void signOut(String userId) throws BattleDataManagerException, BattleDataRoomManagerException, BattleRoomExecuterException {
 		
-		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
-		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-			if(battleRoomMember.getUserId().equals(userId)){
-				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_OUT);
+		try{
+			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
+			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+				if(battleRoomMember.getUserId().equals(userId)){
+					battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_OUT);
+				}
 			}
+		}catch(BattleDataManagerException battleDataManagerException){
+			throw battleDataManagerException;
+		}catch(BattleDataRoomManagerException battleDataRoomManagerException){
+			throw battleDataRoomManagerException;
+		}catch(Exception e){
+			throw new BattleRoomExecuterException(e);
 		}
 		
 	}
 
 	@Override
-	public void init(EventManager eventManager,ExecuterStore executerStore) {
+	public void init(EventManager eventManager,ExecuterStore executerStore) throws PublishException, BattleDataManagerException, BattleDataRoomManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException {
 		
-		System.out.println("........123234234234");
-		this.eventManager = eventManager;
-		this.battleDataManager = executerStore.getBattleDataManager();
-		this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
-		this.battleRoomPublish = executerStore.getBattleRoomPublish();
-		this.battleRoomMemberTakepart = executerStore.getBattleRoomMemberTakepart();
-		this.startRoom();
+		try{
+			this.eventManager = eventManager;
+			this.battleDataManager = executerStore.getBattleDataManager();
+			this.battleRoomQuestionExecuter = executerStore.getBattleQuestionExecuter();
+			this.battleRoomPublish = executerStore.getBattleRoomPublish();
+			this.battleRoomMemberTakepart = executerStore.getBattleRoomMemberTakepart();
+			this.startRoom();
+		}catch(PublishException publishException){
+			throw publishException;
+		}catch(BattleDataManagerException battleDataManagerException){
+			throw battleDataManagerException;
+		}catch(BattleDataRoomManagerException battleDataRoomManagerException){
+			throw battleDataRoomManagerException;
+		}catch(BattleQuestionManagerException battleQuestionManagerException){
+			throw battleQuestionManagerException;
+		}catch(EndJudgeException endJudgeException){
+			throw endJudgeException;
+		}catch(BattleRoomStageExceptionException battleRoomStageExceptionException){
+			
+		}catch(Exception e){
+			throw new BattleRoomExecuterException(e);
+		}
 	}
 
 	@Override
@@ -108,30 +145,42 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	}
 
 	@Override
-	public void startRoom() {
-		try{
-			
-			battleRoomPublish.publishRoomStart();
-			eventManager.publishEvent(Event.START_ROOM_CODE, null);
-			
-			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
-			
-			BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
-			
-			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-				UserStatus userStatus = userStatusService.findOneByUserId(battleRoomMember.getUserId());
-				userStatus.setRoomId(battleRoom.getId());
-				userStatus.setStatus(UserStatus.IN_STATUS);
-				userStatusService.update(userStatus);
+	public void startRoom() throws PublishException, BattleDataManagerException, BattleDataRoomManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException {
+			try{
+				battleRoomPublish.publishRoomStart();
+				eventManager.publishEvent(Event.START_ROOM_CODE, null);
+				
+				List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+				
+				BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
+				
+				for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+					UserStatus userStatus = userStatusService.findOneByUserId(battleRoomMember.getUserId());
+					userStatus.setRoomId(battleRoom.getId());
+					userStatus.setStatus(UserStatus.IN_STATUS);
+					userStatusService.update(userStatus);
+				}
+			}catch(PublishException publishException){
+				throw publishException;
+			}catch(BattleDataManagerException battleDataManagerException){
+				throw battleDataManagerException;
+			}catch(BattleDataRoomManagerException battleDataRoomManagerException){
+				throw battleDataRoomManagerException;
+			}catch(BattleQuestionManagerException battleQuestionManagerException){
+				throw battleQuestionManagerException;
+			}catch(EndJudgeException endJudgeException){
+				throw endJudgeException;
+			}catch(BattleRoomStageExceptionException battleRoomStageExceptionException){
+				throw battleRoomStageExceptionException;
+			}catch(Exception e){
+				throw new BattleRoomExecuterException(e);
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+	
 	}
 
 	@Override
-	public void endRoom() {
-		
+	public void endRoom() throws BattleDataManagerException, BattleDataRoomManagerException, PublishException, BattleRoomExecuterException {
+
 		try{
 			BattleRoomVo battleroom = battleDataManager.getBattleRoom();
 			DefaultTransactionDefinition def = new DefaultTransactionDefinition();//事务定义类
@@ -216,14 +265,20 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			battleRoomPublish.publishRoomEnd();
 			
 			platformTransactionManager.commit(transactionStatus);
+		}catch(BattleDataManagerException battleDataManagerException){
+			throw battleDataManagerException;
+		}catch(BattleDataRoomManagerException battleDataRoomManagerException){
+			throw battleDataRoomManagerException;
+		}catch(PublishException publishException){
+			throw publishException;
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new BattleRoomExecuterException(e);
 		}
 		
 	}
 
 	@Override
-	public synchronized void subjectSelect(String subjectId, String userId) {
+	public synchronized void subjectSelect(String subjectId, String userId) throws BattleRoomExecuterException {
 		try{
 			BattlePaperVo battlePaperVo = battleDataManager.getBattlePaper();
 			
@@ -276,13 +331,14 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			
 			battleRoomPublish.publishShowSubjectStatus(battlePaperSubject);
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new BattleRoomExecuterException(e);
 		}
 	}
 
 	@Override
-	public void submitResults() {
+	public void submitResults() throws BattleRoomExecuterException {
 
+		System.out.println("............submitResults");
 		try{
 			battleDataManager.clearMembers();
 			
@@ -299,142 +355,181 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 					publishData.put("member", battleRoomMember);
 					publishData.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
 					eventManager.publishEvent(Event.PUBLISH_DIE, publishData);
+					
+					
+					EventManager eventManager = battleDataManager.getEventManager();
+					Map<String, Object> data = new HashMap<>();
+					data.put("myInfo", battleRoomMember);
+					eventManager.publishEvent(Event.MY_INFO, data);
 				}
 			}
+			
+			
 			
 			battleRoomPublish.publishRest();
 			battleRoomPublish.publishMembers();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new BattleRoomExecuterException(e);
 		}
 		
 	}
 
 	@Override
-	public void members() {
+	public void members() throws BattleRoomExecuterException {
 		try{
 			battleRoomPublish.publishMembers();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new BattleRoomExecuterException(e);
 		}
 		
 	}
 
 	@Override
-	public BattleRoomMemberVo takepart(UserInfo userInfo) {
-		BattleRoomMemberVo battleRoomMemberVo =  battleRoomMemberTakepart.takepart(userInfo);
-		
-		
-		
-		final EventManager eventManager = battleDataManager.getEventManager();
-		if(battleRoomMemberVo.getBeanNum().intValue()<=0){
-			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
-			Map<String, Object> data = new HashMap<>();
-			data.put("member", battleRoomMemberVo);
-			data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
-			eventManager.publishEvent(Event.PUBLISH_DIE, data);
-		}else if(battleRoomMemberVo.getRemainLove().intValue()<=0){
-			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
-			Map<String, Object> data = new HashMap<>();
-			data.put("member", battleRoomMemberVo);
-			data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
-			eventManager.publishEvent(Event.PUBLISH_DIE, data);
-		}
-		
-		return battleRoomMemberVo;
-		
-	}
-
-	@Override
-	public BattleRoomVo getRoom() {
-		
-		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
-		return battleRoom;
-	}
-
-	@Override
-	public boolean superLove(UserInfo userInfo) {
-		Account account = accountService.fineOne(userInfo.getAccountId());
-		Integer love = account.getLoveLife();
-		if(love==null||love==0){
-			return false;
-		}else{
-			BattleRoomMemberVo battleRoomMember = battleDataManager.getBattleMemberByUserId(userInfo.getId());
-			Integer remainLove = battleRoomMember.getRemainLove();
-			Integer limitLove = battleRoomMember.getLimitLove();
-			int diff = limitLove-remainLove;
-			if(diff<0||diff==0){
-				return false;
-			}
-			
-			if(diff>love){
-				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
-				battleRoomMember.setRemainLove(remainLove+love);
-				account.setLoveLife(0);
-			}else{
-				battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
-				battleRoomMember.setRemainLove(limitLove);
-				account.setLoveLife(love-diff);
-			}
-			
-			accountService.update(account);
-			
-			return true;
-		}
-	}
-
-	@Override
-	public void submitResult() {
-	
+	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleRoomMemberTakepartException, BattleDataManagerException, BattleDataRoomManagerException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException {
 		try{
-			System.out.println("................submitResult");
-			BattleStageVo stageVo = battleDataManager.currentStage();
-			BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
-			List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
-			List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
-			Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
-			for(QuestionAnswerVo questionAnswer:questionAnswers){
-				questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
+			BattleRoomMemberVo battleRoomMemberVo =  battleRoomMemberTakepart.takepart(userInfo);
+			final EventManager eventManager = battleDataManager.getEventManager();
+			if(battleRoomMemberVo.getBeanNum().intValue()<=0){
+				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
+				Map<String, Object> data = new HashMap<>();
+				data.put("member", battleRoomMemberVo);
+				data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
+				eventManager.publishEvent(Event.PUBLISH_DIE, data);
+			}else if(battleRoomMemberVo.getRemainLove().intValue()<=0){
+				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_DIE);
+				Map<String, Object> data = new HashMap<>();
+				data.put("member", battleRoomMemberVo);
+				data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
+				eventManager.publishEvent(Event.PUBLISH_DIE, data);
 			}
 			
-			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
-				QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
+			return battleRoomMemberVo;
+		}catch(BattleRoomMemberTakepartException e){
+			throw e;
+		}catch(BattleDataManagerException e){
+			throw e;
+		}
+		catch(BattleDataRoomManagerException e){
+			throw e;
+		}catch(BattleQuestionManagerException e){
+			throw e;
+		}catch(EndJudgeException e){
+			throw e;
+		}catch(BattleRoomStageExceptionException e){
+			throw e;
+		}catch(Exception e){
+			throw new BattleRoomExecuterException(e);
+		}
+		
+	}
+
+	@Override
+	public BattleRoomVo getRoom() throws BattleDataManagerException, BattleDataRoomManagerException, BattleRoomExecuterException {
+		
+		try{
+			BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
+			return battleRoom;
+		}catch(BattleDataManagerException e){
+			throw e;
+		}catch(BattleDataRoomManagerException e){
+			throw e;
+		}catch(Exception e){
+			throw new BattleRoomExecuterException(e);
+		}
+	}
+
+	@Override
+	public boolean superLove(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException, BattleRoomExecuterException {
+		
+		try{
+			Account account = accountService.fineOne(userInfo.getAccountId());
+			Integer love = account.getLoveLife();
+			if(love==null||love==0){
+				return false;
+			}else{
+				BattleRoomMemberVo battleRoomMember = battleDataManager.getBattleMemberByUserId(userInfo.getId());
+				Integer remainLove = battleRoomMember.getRemainLove();
+				Integer limitLove = battleRoomMember.getLimitLove();
+				int diff = limitLove-remainLove;
+				if(diff<0||diff==0){
+					return false;
+				}
 				
-				System.out.println("................submitResult.questionAnswer:"+questionAnswer);
-				try{
-					System.out.println("................submitResult.getMyAnswer:"+questionAnswer.getMyAnswer());
-				}catch(Exception e){
-					e.printStackTrace();
+				if(diff>love){
+					battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
+					battleRoomMember.setRemainLove(remainLove+love);
+					account.setLoveLife(0);
+				}else{
+					battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_IN);
+					battleRoomMember.setRemainLove(limitLove);
+					account.setLoveLife(love-diff);
 				}
-				try{
-					System.out.println("................battlePaperQuestion.getRightAnswer:"+battlePaperQuestion.getRightAnswer());
-				}catch(Exception e){
-					e.printStackTrace();
+				
+				accountService.update(account);
+				
+				
+				return true;
+			}
+		}catch(BattleDataManagerException e){
+			throw e;
+		}catch(BattleDataRoomManagerException e){
+			throw e;
+		}catch(Exception e){
+			throw new BattleRoomExecuterException(e);
+		}
+	}
+
+	@Override
+	public void submitResult() throws BattleDataManagerException, BattleQuestionManagerException, BattleDataRoomManagerException, BattleRoomExecuterException {
+	
+			try{
+				BattleStageVo stageVo = battleDataManager.currentStage();
+				BattlePaperQuestionVo battlePaperQuestion = stageVo.currentQuestion();
+				List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
+				List<QuestionAnswerVo> questionAnswers = battlePaperQuestion.getQuestionAnswerVos();
+				Map<String,QuestionAnswerVo> questionAnswerMap = new HashMap<>();
+				for(QuestionAnswerVo questionAnswer:questionAnswers){
+					questionAnswerMap.put(questionAnswer.getUserId(), questionAnswer);
 				}
-				if(true){
-					if(questionAnswer==null||
-							CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
-							!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
-						Integer remainLove = battleRoomMember.getRemainLove();
-						remainLove--;
-						System.out.println("................submitResult.remainLove:"+remainLove);
-						if(remainLove<=0){
-							remainLove = 0;
-							battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
-							//battleRoomPublish.publishDie(battleRoomMember);
+				
+				for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+					QuestionAnswerVo questionAnswer = questionAnswerMap.get(battleRoomMember.getUserId());
+					
+					if(true){
+						if(questionAnswer==null||
+								CommonUtil.isEmpty(questionAnswer.getMyAnswer())||
+								!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
+							Integer remainLove = battleRoomMember.getRemainLove();
+							remainLove--;
+							if(remainLove<=0){
+								remainLove = 0;
+								battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
+								
+							}
+							battleRoomMember.setRemainLove(remainLove);
+					
+							EventManager eventManager = battleDataManager.getEventManager();
+							Map<String, Object> data = new HashMap<>();
+							data.put("myInfo", battleRoomMember);
+							eventManager.publishEvent(Event.MY_INFO, data);
+							
+						}else{
+							Integer process = battleRoomMember.getProcess();
+							process++;
+							battleRoomMember.setProcess(process);
 						}
-						battleRoomMember.setRemainLove(remainLove);
-						
-					}else{
-						Integer process = battleRoomMember.getProcess();
-						process++;
-						battleRoomMember.setProcess(process);
 					}
 				}
+			}catch(BattleDataManagerException e){
+				throw e;
+			}catch(BattleQuestionManagerException e){
+				throw e;
+			}catch(BattleDataRoomManagerException e){
+				throw e;
+			}catch(Exception e){
+				throw new BattleRoomExecuterException(e);
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+
 		
 	}
 }

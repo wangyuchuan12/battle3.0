@@ -41,6 +41,10 @@ public class BattleRoomMemberVo {
 	
 	private Integer beanNum;
 	
+	private Integer preClear;
+	
+	private BattleRoomCoolMemberVo battleRoomCoolMemberVo;
+	
 	public String getId() {
 		return id;
 	}
@@ -173,5 +177,17 @@ public class BattleRoomMemberVo {
 	}
 	public void setBeanNum(Integer beanNum) {
 		this.beanNum = beanNum;
+	}
+	public BattleRoomCoolMemberVo getBattleRoomCoolMemberVo() {
+		return battleRoomCoolMemberVo;
+	}
+	public void setBattleRoomCoolMemberVo(BattleRoomCoolMemberVo battleRoomCoolMemberVo) {
+		this.battleRoomCoolMemberVo = battleRoomCoolMemberVo;
+	}
+	public Integer getPreClear() {
+		return preClear;
+	}
+	public void setPreClear(Integer preClear) {
+		this.preClear = preClear;
 	}
 }

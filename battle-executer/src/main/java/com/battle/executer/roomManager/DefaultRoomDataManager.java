@@ -137,6 +137,7 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 			battleRoomMemberVo.setAccountId(userInfo.getAccountId());
 			battleRoomMemberVo.setIsEnd(0);
 			battleRoomMemberVo.setToken(userInfo.getToken());
+			battleRoomMemberVo.setPreClear(0);
 			battleRoomMemberVos.add(battleRoomMemberVo);
 		}
 		
@@ -163,8 +164,12 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 				battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_OUT);
 			}
 			int status = battleRoomMemberVo.getStatus();
-			if(status==BattleRoomMemberVo.STATUS_OUT){
+			if(battleRoomMemberVo.getPreClear()==1){
 				it.remove();
+			}
+			
+			if(status==BattleRoomMemberVo.STATUS_OUT){
+				battleRoomMemberVo.setPreClear(1);
 			}
 		}
 		

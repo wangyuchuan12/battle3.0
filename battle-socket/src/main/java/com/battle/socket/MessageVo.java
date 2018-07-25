@@ -8,6 +8,10 @@ public class MessageVo {
 	public final static int ROOM_TYPE = 1;
 	public final static int USERS_TYPE = 2;
 	
+	public final static String PUBLISH_COOL = "publishCool";
+	
+	public final static String PUBLISH_MY_INFO = "publishMyInfo";
+	
 	
 	public final static String SHOW_SUBJECTS = "showSubjects";
 	

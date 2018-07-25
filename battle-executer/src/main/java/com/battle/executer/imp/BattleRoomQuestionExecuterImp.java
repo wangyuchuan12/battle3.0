@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.BattleRoomQuestionExecuter;
@@ -12,12 +14,18 @@ import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
-import com.battle.executer.vo.BattlePaperVo;
 import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
-import com.battle.executer.vo.BattleStageVo;
 import com.battle.executer.vo.QuestionAnswerResultVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.wyc.common.domain.Account;
@@ -49,13 +57,13 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	}
 	
 	@Override
-	public void startQuestions(){
+	public void startQuestions() throws BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException{
 		battleRoomDataManager.selectQuestions();
 		startQuestion();
 	}
 	
 	@Override
-	public void startQuestion(){
+	public void startQuestion() throws BattleDataManagerException, BattleQuestionManagerException, EndJudgeException, PublishException, BattleDataRoomManagerException, SendMessageException, BattleRoomStageExceptionException{
 		final EventManager eventManager = battleRoomDataManager.getEventManager();
 		try{
 			BattlePaperQuestionVo battlePaperQuestion = battleRoomDataManager.currentQuestion();
@@ -64,21 +72,55 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				scheduledExecuter.schedule(new Runnable() {
 					@Override
 					public void run() {
-						eventManager.publishEvent(Event.SUBMIT_RESULT, null);
+						try {
+							eventManager.publishEvent(Event.SUBMIT_RESULT, null);
+						} catch (BattleQuestionManagerException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (EndJudgeException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (BattleDataManagerException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (BattleRoomStageExceptionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (BattleRoomExecuterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (BattleDataRoomManagerException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (BattleRoomQuestionExecuterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (PublishException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SendMessageException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						
 					}
 				}, battlePaperQuestion.getTimeLong()+1);
 			}else{
 				eventManager.publishEvent(Event.SUBMIT_RESULTS, null);
 			}
+		}catch(BattleDataManagerException e){
+			throw e;
+		}catch(BattleQuestionManagerException e){
+			throw e;
+		}catch(BattleRoomStageExceptionException e){
+			throw e;
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new PublishException();
 		}
-		
 	}
 	
 	@Override
-	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer) {
+	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer) throws BattleDataManagerException {
 		EventManager eventManager = battleRoomDataManager.getEventManager();
 		try{
 			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();

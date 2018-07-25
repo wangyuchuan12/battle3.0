@@ -4,6 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.battle.exception.SendMessageException;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
+
 public class EventManager {
 	private List<Event> events = new ArrayList<>();
 	public void addEvent(Event eventL){
@@ -32,7 +42,7 @@ public class EventManager {
 		eventCallbacks.add(callback);
 	}
 	
-	public void publishEvent(String code,Map<String, Object> data){
+	public void publishEvent(String code,Map<String, Object> data) throws BattleQuestionManagerException, EndJudgeException, BattleDataManagerException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleDataRoomManagerException, BattleRoomQuestionExecuterException, PublishException, SendMessageException{
 		Event eventL = null;
 		for(Event event:events){
 			if(event.getCode().equals(code)){

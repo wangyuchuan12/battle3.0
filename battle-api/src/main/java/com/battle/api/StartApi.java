@@ -18,6 +18,16 @@ import com.battle.domain.BattleRank;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomFactory;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomFactoryException;
+import com.battle.executer.exception.BattleRoomMemberTakepartException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomVo;
@@ -57,13 +67,56 @@ public class StartApi {
 			roomParam.setUserParams(new ArrayList<UserParam>());
 			roomParam.setData(data);
 			roomParam.setGroupId("");
-			ExecuterStore executerStore = battleRoomFactory.init(roomParam);
+			ExecuterStore executerStore = null;
+			try {
+				executerStore = battleRoomFactory.init(roomParam);
+			} catch (BattleRoomFactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleDataRoomManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleQuestionManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleRoomExecuterException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleDataManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (EndJudgeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleRoomMemberTakepartException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (PublishException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleRoomStageExceptionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleRoomQuestionExecuterException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			BattleDataManager battleDataManager = executerStore.getBattleDataManager();
 			
-			BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
-			battleRank.setRoomId(battleRoomVo.getId());
-			battleRank.setIsStart(1);
-			battleRankService.update(battleRank);
+
+			try {
+				BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
+				battleRank.setRoomId(battleRoomVo.getId());
+				battleRank.setIsStart(1);
+				battleRankService.update(battleRank);
+			} catch (BattleDataManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (BattleDataRoomManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 	}

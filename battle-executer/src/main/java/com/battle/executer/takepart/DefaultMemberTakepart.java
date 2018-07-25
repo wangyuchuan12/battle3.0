@@ -9,6 +9,8 @@ import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomMemberTakepart;
 import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.wyc.common.domain.Account;
@@ -24,7 +26,7 @@ public class DefaultMemberTakepart implements BattleRoomMemberTakepart{
 	@Autowired
 	private AccountService accountService;
 	@Override
-	public BattleRoomMemberVo takepart(UserInfo userInfo) {
+	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException {
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
 		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 		BattleRoomMemberVo battleRoomMemberVo = null;
@@ -58,6 +60,7 @@ public class DefaultMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setUserId(userInfo.getId());
 			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
+			battleRoomMemberVo.setPreClear(0);
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);

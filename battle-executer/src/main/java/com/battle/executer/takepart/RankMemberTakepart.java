@@ -1,20 +1,36 @@
 package com.battle.executer.takepart;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.battle.domain.BattleRank;
 import com.battle.domain.BattleRankMember;
+import com.battle.domain.BattleRoomCoolMember;
+import com.battle.exception.SendMessageException;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomMemberTakepart;
 import com.battle.executer.BattleRoomPublish;
+import com.battle.executer.Event;
+import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
+import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.service.BattleRankMemberService;
 import com.battle.service.BattleRankService;
+import com.battle.service.other.BattleRoomCoolHandle;
 import com.wyc.common.domain.Account;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.wx.domain.UserInfo;
@@ -33,8 +49,11 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private BattleRoomCoolHandle battleRoomCoolHandle;
 	@Override
-	public BattleRoomMemberVo takepart(UserInfo userInfo) {
+	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException, SendMessageException, PublishException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleRoomQuestionExecuterException {
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
 		BattleRoomVo battleRoom = battleDataManager.getBattleRoom();
 		BattleRoomMemberVo battleRoomMemberVo = null;
@@ -68,7 +87,18 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
 			battleRoomMemberVo.setUserId(userInfo.getId());
 			battleRoomMemberVo.setToken(userInfo.getToken());
+			battleRoomMemberVo.setPreClear(0);
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
+			
+			BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRoom.getId(), userInfo.getId());
+			
+			if(battleRoomCoolMemberVo==null){
+				battleRoomCoolMemberVo = battleRoomCoolHandle.createBattleRoomCoolMember(battleRoom.getId(), userInfo.getId(), battleRoomMemberVo.getRemainLove());
+			}
+			
+			battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
+			
+			
 			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
 			if(battleRanks.size()>0){
 				BattleRank battleRank = battleRanks.get(0);
@@ -88,6 +118,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 		}
 		
 		battleRoomPublish.publishTakepart(battleRoomMemberVo);
+		battleRoomPublish.publishLoveCool(battleRoomMemberVo);
 		return battleRoomMemberVo;
 	}
 

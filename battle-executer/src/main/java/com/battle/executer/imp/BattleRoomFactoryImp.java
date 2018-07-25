@@ -18,6 +18,16 @@ import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.endJudge.DefaultEndJudge;
 import com.battle.executer.endJudge.EndlessModeEndJudge;
+import com.battle.executer.exception.BattleDataManagerException;
+import com.battle.executer.exception.BattleDataRoomManagerException;
+import com.battle.executer.exception.BattleQuestionManagerException;
+import com.battle.executer.exception.BattleRoomExecuterException;
+import com.battle.executer.exception.BattleRoomFactoryException;
+import com.battle.executer.exception.BattleRoomMemberTakepartException;
+import com.battle.executer.exception.BattleRoomQuestionExecuterException;
+import com.battle.executer.exception.BattleRoomStageExceptionException;
+import com.battle.executer.exception.EndJudgeException;
+import com.battle.executer.exception.PublishException;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.questionManager.DistributionQuestionManager;
 import com.battle.executer.questionManager.RankQuestionManager;
@@ -37,10 +47,10 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 	
 	private RoomParam roomParam;
 	@Override
-	public ExecuterStore init(RoomParam roomParam) {
+	public ExecuterStore init(RoomParam roomParam) throws BattleRoomFactoryException, BattleDataRoomManagerException, BattleQuestionManagerException, BattleRoomExecuterException, BattleDataManagerException, EndJudgeException, BattleRoomMemberTakepartException, PublishException, BattleRoomStageExceptionException, BattleRoomQuestionExecuterException {
 
-		this.roomParam = roomParam;
 		try{
+			this.roomParam = roomParam;
 			ExecuterStore executerStore =  super.init(roomParam);
 			
 			BattleDataManager battleRoomDataManager = executerStore.getBattleDataManager();
@@ -49,10 +59,29 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 			
 			battleRoomConnetor.registerExecuter(battleRoomDataManager.getBattleRoom().getId(), battleRoomExecuter);
 			return executerStore;
+		}catch(BattleRoomFactoryException e){
+			throw e;
+		}catch(BattleDataRoomManagerException e){
+			throw e;
+		}catch(BattleQuestionManagerException e){
+			throw e;
+		}catch(BattleRoomExecuterException e){
+			throw e;
+		}catch(BattleDataManagerException e){
+			throw e;
+		}catch(EndJudgeException e){
+			throw e;
+		}catch(BattleRoomMemberTakepartException e){
+			throw e;
+		}catch(PublishException e){
+			throw e;
+		}catch(BattleRoomStageExceptionException e){
+			throw e;
+		}catch(BattleRoomQuestionExecuterException e){
+			throw e;
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new BattleRoomFactoryException();
 		}
-		return null;
 	}
 	
 	@Override
