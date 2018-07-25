@@ -80,7 +80,7 @@ public class BattleRoomFactoryImp extends BattleRoomFactory{
 		}catch(BattleRoomQuestionExecuterException e){
 			throw e;
 		}catch(Exception e){
-			throw new BattleRoomFactoryException();
+			throw new BattleRoomFactoryException(e);
 		}
 	}
 	

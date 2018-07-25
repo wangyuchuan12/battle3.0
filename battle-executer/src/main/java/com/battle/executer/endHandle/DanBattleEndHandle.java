@@ -48,7 +48,7 @@ public class DanBattleEndHandle implements BattleEndHandle{
 		}catch(BattleDataManagerException e){
 			throw e;
 		}catch(Exception e){
-			throw new BattleEndHandleException();
+			throw new BattleEndHandleException(e);
 		}
 		
 	}

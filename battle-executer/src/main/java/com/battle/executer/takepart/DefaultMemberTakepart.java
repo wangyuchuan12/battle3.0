@@ -61,9 +61,11 @@ public class DefaultMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setPreClear(0);
+			battleRoomMemberVo.setIsOut(0);
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
+			battleRoomMemberVo.setIsOut(0);
 		}
 		
 		battleRoomPublish.publishTakepart(battleRoomMemberVo);

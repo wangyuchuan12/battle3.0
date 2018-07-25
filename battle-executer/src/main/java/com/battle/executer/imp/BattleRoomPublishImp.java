@@ -160,6 +160,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 			
 			for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
+				
 				userIds.add(battleRoomMemberVo.getUserId());
 			}
 			
@@ -232,6 +233,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
 			List<String> userIds = new ArrayList<>();
 			for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
+				System.out.println("............battleRoomMemberVo.status:"+battleRoomMemberVo.getStatus());
 				userIds.add(battleRoomMemberVo.getUserId());
 			}
 			MessageVo messageVo = new MessageVo();
@@ -392,8 +394,20 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		}
 	}
 	
-	private void publishMessage(MessageVo messageVo) throws SendMessageException{
-		messageHandler.sendMessage(messageVo);
+	private void publishMessage(MessageVo messageVo) throws SendMessageException, BattleDataManagerException, BattleDataRoomManagerException{
+		
+		List<String> userIds = messageVo.getUserIds();
+		
+		if(userIds==null||userIds.size()==0){
+			return;
+		}
+		
+		for(String userId:userIds){
+			BattleRoomMemberVo battleRoomMemberVo =	battleRoomDataManager.getBattleMemberByUserId(userId);
+			if(battleRoomMemberVo.getIsOut()==0){
+				messageHandler.sendMessage(messageVo);
+			}
+		}
 	}
 
 	@Override

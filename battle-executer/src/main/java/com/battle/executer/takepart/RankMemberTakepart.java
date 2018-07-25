@@ -17,6 +17,7 @@ import com.battle.executer.BattleRoomPublish;
 import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
+import com.battle.executer.ScheduledExecuter;
 import com.battle.executer.exception.BattleDataManagerException;
 import com.battle.executer.exception.BattleDataRoomManagerException;
 import com.battle.executer.exception.BattleQuestionManagerException;
@@ -52,6 +53,8 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 	
 	@Autowired
 	private BattleRoomCoolHandle battleRoomCoolHandle;
+	
+	private ScheduledExecuter scheduledExecuter;
 	@Override
 	public BattleRoomMemberVo takepart(UserInfo userInfo) throws BattleDataManagerException, BattleDataRoomManagerException, SendMessageException, PublishException, BattleQuestionManagerException, EndJudgeException, BattleRoomStageExceptionException, BattleRoomExecuterException, BattleRoomQuestionExecuterException {
 		List<BattleRoomMemberVo> battleRoomMembers =  battleDataManager.getBattleMembers();
@@ -88,6 +91,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setUserId(userInfo.getId());
 			battleRoomMemberVo.setToken(userInfo.getToken());
 			battleRoomMemberVo.setPreClear(0);
+			battleRoomMemberVo.setIsOut(0);
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			
 			BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRoom.getId(), userInfo.getId());
@@ -107,6 +111,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 					battleRoomMemberVo.setRemainLove(battleRankMember.getLoveCount());
 					battleRoomMemberVo.setLimitLove(battleRankMember.getLoveLimit());
 					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
+					battleRoomMemberVo.setIsOut(0);
 				}
 			}
 				
@@ -115,10 +120,30 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			Account account = accountService.fineOne(userInfo.getAccountId());
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
+			battleRoomMemberVo.setIsOut(0);
 		}
 		
-		battleRoomPublish.publishTakepart(battleRoomMemberVo);
-		battleRoomPublish.publishLoveCool(battleRoomMemberVo);
+		final BattleRoomMemberVo thisMember = battleRoomMemberVo;
+		scheduledExecuter.schedule(new Runnable() {
+			@Override
+			public void run() {
+				try{
+					if(thisMember.getRemainLove().intValue()<=0){
+						
+						EventManager eventManager = battleDataManager.getEventManager();
+						Map<String, Object> data = new HashMap<>();
+						data.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
+						data.put("member", thisMember);
+						eventManager.publishEvent(Event.PUBLISH_DIE, data);
+					}
+					battleRoomPublish.publishTakepart(thisMember);
+					battleRoomPublish.publishLoveCool(thisMember);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}, 2000);
+		
 		return battleRoomMemberVo;
 	}
 
@@ -127,6 +152,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 		
 		this.battleDataManager = executerStore.getBattleDataManager();
 		this.battleRoomPublish = executerStore.getBattleRoomPublish();
+		this.scheduledExecuter = executerStore.getScheduledExecuter();
 		
 	}
 

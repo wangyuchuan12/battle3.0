@@ -43,6 +43,8 @@ public class BattleRoomMemberVo {
 	
 	private Integer preClear;
 	
+	private Integer isOut;
+	
 	private BattleRoomCoolMemberVo battleRoomCoolMemberVo;
 	
 	public String getId() {
@@ -189,5 +191,11 @@ public class BattleRoomMemberVo {
 	}
 	public void setPreClear(Integer preClear) {
 		this.preClear = preClear;
+	}
+	public Integer getIsOut() {
+		return isOut;
+	}
+	public void setIsOut(Integer isOut) {
+		this.isOut = isOut;
 	}
 }

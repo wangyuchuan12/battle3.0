@@ -87,6 +87,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 				if(battleRoomMember.getUserId().equals(userId)){
 					battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_OUT);
+					battleRoomMember.setIsOut(1);
 				}
 			}
 		}catch(BattleDataManagerException battleDataManagerException){
