@@ -2,6 +2,7 @@ package com.battle.executer.imp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -195,6 +196,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 	@Override
 	public void publishDoAnswer(QuestionAnswerResultVo questionAnswerResultVo){
 		
+		System.out.println(".................publishDoAnswer");
 		List<String> userIds = new ArrayList<>();
 		MessageVo messageVo = new MessageVo();
 		messageVo.setCode(MessageVo.PUBLISH_DO_ANSWER);
@@ -302,12 +304,16 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 				return;
 			}
 			
+			List<String> loveUserIds = new ArrayList<>();
 			for(String userId:userIds){
 				BattleRoomMemberVo battleRoomMemberVo =	battleRoomDataManager.getBattleMemberByUserId(userId);
 				if(battleRoomMemberVo.getIsOut()==0){
-					messageHandler.sendMessage(messageVo);
+					loveUserIds.add(userId);
 				}
 			}
+			
+			messageVo.setUserIds(loveUserIds);
+			messageHandler.sendMessage(messageVo);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

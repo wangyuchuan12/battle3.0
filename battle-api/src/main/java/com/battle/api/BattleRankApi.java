@@ -146,7 +146,7 @@ public class BattleRankApi {
 	
 		Order order = new Order(Direction.DESC, "process");
 		Sort sort = new Sort(order);
-		Pageable pageable = new PageRequest(0, 20, sort);
+		Pageable pageable = new PageRequest(0, 100, sort);
 		Page<BattleRankMember> battleRankMemberPage = battleRankMemberService.findAllByRankId(battleRank.getId(),pageable);
 		List<BattleRankMember> battleRankMembers = battleRankMemberPage.getContent();
 		Map<String, Object> data = new HashMap<>();

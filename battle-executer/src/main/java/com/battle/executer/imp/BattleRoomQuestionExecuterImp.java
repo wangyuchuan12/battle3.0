@@ -83,6 +83,7 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 	@Override
 	public synchronized void answerQuestion(QuestionAnswerVo questionAnswer){
 		
+		System.out.println("************************answerQuestion");
 		try{
 			EventManager eventManager = battleRoomDataManager.getEventManager();
 			BattleRoomVo battleRoom = battleRoomDataManager.getBattleRoom();
@@ -107,6 +108,8 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 					isRight = 1;
 				}
 			}
+			
+			System.out.println("*************************publishDoAnswer");
 			questionAnswerResultVo.setIsRight(isRight);
 			battleRoomPublish.publishDoAnswer(questionAnswerResultVo);
 			BattleRoomMemberVo battleRoomMember = battleRoomDataManager.getBattleMemberByUserId(questionAnswer.getUserId());
@@ -187,6 +190,8 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 				eventManager.publishEvent(Event.PUBLISH_DIE, data);
 			}
 			
+			
+			System.out.println("*************************publishReward");
 			battleRoomPublish.publishReward(battleRewardVo);
 		}catch(Exception e){
 			e.printStackTrace();
