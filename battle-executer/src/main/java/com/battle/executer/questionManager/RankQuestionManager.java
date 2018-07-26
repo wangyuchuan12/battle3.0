@@ -151,6 +151,7 @@ public class RankQuestionManager implements BattleQuestionManager{
 				if(question!=null){
 					String fillWords = question.getFillWords();
 					battlePaperQuestionVo.setFillWords(fillWords);
+					battlePaperQuestionVo.setRightAnswer(question.getAnswer());
 				}
 			}
 

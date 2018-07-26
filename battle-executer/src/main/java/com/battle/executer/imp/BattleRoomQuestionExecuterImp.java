@@ -103,6 +103,8 @@ public class BattleRoomQuestionExecuterImp implements BattleRoomQuestionExecuter
 			
 			Integer isRight = 0;
 			
+			System.out.println("......myAnswer:"+questionAnswer.getMyAnswer()+",rightAnswer:"+battlePaperQuestionVo.getRightAnswer());
+			
 			if(CommonUtil.isNotEmpty(questionAnswer.getMyAnswer())){
 				if(questionAnswer.getMyAnswer().equals(battlePaperQuestionVo.getRightAnswer())){
 					isRight = 1;

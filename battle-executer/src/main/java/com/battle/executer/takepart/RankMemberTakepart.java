@@ -99,12 +99,15 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			
 			if(battleRoomCoolMemberVo==null){
 				battleRoomCoolMemberVo = battleRoomCoolHandle.createBattleRoomCoolMember(battleRoom.getId(), userInfo.getId(), battleRoomMemberVo.getRemainLove());
+			}else{
+				battleRoomCoolMemberVo = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMemberVo);
+				battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
 			}
 			
 			battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
 			
 			
-			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+			/*List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
 			if(battleRanks.size()>0){
 				BattleRank battleRank = battleRanks.get(0);
 				BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
@@ -115,7 +118,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 					battleRoomMemberVo.setShareNum(0);
 					battleRoomMemberVo.setIsOut(0);
 				}
-			}
+			}*/
 				
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
