@@ -95,6 +95,20 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setIsOut(0);
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			
+			
+			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+			if(battleRanks.size()>0){
+				BattleRank battleRank = battleRanks.get(0);
+				BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
+				if(battleRankMember!=null){
+					battleRoomMemberVo.setRemainLove(battleRankMember.getLoveCount());
+					battleRoomMemberVo.setLimitLove(battleRankMember.getLoveLimit());
+					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
+					battleRoomMemberVo.setShareNum(0);
+					battleRoomMemberVo.setIsOut(0);
+				}
+			}
+			
 			BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRoom.getId(), userInfo.getId());
 			
 			if(battleRoomCoolMemberVo==null){
@@ -107,18 +121,7 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
 			
 			
-			/*List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
-			if(battleRanks.size()>0){
-				BattleRank battleRank = battleRanks.get(0);
-				BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
-				if(battleRankMember!=null){
-					battleRoomMemberVo.setRemainLove(battleRankMember.getLoveCount());
-					battleRoomMemberVo.setLimitLove(battleRankMember.getLoveLimit());
-					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
-					battleRoomMemberVo.setShareNum(0);
-					battleRoomMemberVo.setIsOut(0);
-				}
-			}*/
+			
 				
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
