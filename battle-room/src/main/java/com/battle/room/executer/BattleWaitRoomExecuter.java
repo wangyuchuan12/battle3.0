@@ -267,6 +267,7 @@ public class BattleWaitRoomExecuter {
 		int num = 0;
 		for(BattleWaitRoomMemberVo battleWaitRoomMember:battleWaitRoomMembers){
 			if(battleWaitRoomMember.getStatus().intValue()==BattleWaitRoomMember.READY_STATUS){
+				System.out.println("...............roomId:"+battleWaitRoomMember.getRoomId());
 				num++;
 			}
 		}
