@@ -109,21 +109,6 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 				}
 			}
 			
-			BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRoom.getId(), userInfo.getId());
-			
-			if(battleRoomCoolMemberVo==null){
-				battleRoomCoolMemberVo = battleRoomCoolHandle.createBattleRoomCoolMember(battleRoom.getId(), userInfo.getId(), battleRoomMemberVo.getRemainLove());
-			}else{
-				battleRoomCoolMemberVo = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMemberVo);
-				battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
-			}
-			
-			
-			System.out.println("..................battleRoomCoolMemberVo.getLoveCount:"+battleRoomCoolMemberVo.getLoveCount());
-			battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
-			
-			
-			
 				
 			battleRoomMembers.add(battleRoomMemberVo);
 		}else{
@@ -133,6 +118,21 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setShareNum(0);
 			battleRoomMemberVo.setIsOut(0);
 		}
+		
+		BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRoom.getId(), userInfo.getId());
+		
+		if(battleRoomCoolMemberVo==null){
+			battleRoomCoolMemberVo = battleRoomCoolHandle.createBattleRoomCoolMember(battleRoom.getId(), 
+					userInfo.getId(), 
+					battleRoomMemberVo.getRemainLove(),
+					battleRoomMemberVo.getLimitLove());
+		}else{
+			battleRoomCoolMemberVo = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMemberVo);
+			battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
+		}
+		
+		battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
+		
 		
 		final BattleRoomMemberVo thisMember = battleRoomMemberVo;
 		scheduledExecuter.schedule(new Runnable() {

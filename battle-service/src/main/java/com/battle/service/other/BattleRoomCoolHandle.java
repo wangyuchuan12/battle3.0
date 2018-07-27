@@ -106,11 +106,11 @@ public class BattleRoomCoolHandle {
 		return battleRoomCoolMemberVo;
 	}
 	
-	public BattleRoomCoolMemberVo createBattleRoomCoolMember(String roomId,String userId,Integer loveCount){
+	public BattleRoomCoolMemberVo createBattleRoomCoolMember(String roomId,String userId,Integer loveCount,Integer lovelimit){
 		BattleRoomCoolMember battleRoomCoolMember = new BattleRoomCoolMember();
 		battleRoomCoolMember.setCoolLoveSeq(0);
 		battleRoomCoolMember.setLoveCount(loveCount);
-		battleRoomCoolMember.setLoveLimit(loveCount);
+		battleRoomCoolMember.setLoveLimit(lovelimit);
 		battleRoomCoolMember.setMillisec(1000);
 		battleRoomCoolMember.setRoomId(roomId);
 		battleRoomCoolMember.setSchedule(0);
