@@ -118,6 +118,8 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 				battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
 			}
 			
+			
+			System.out.println("..................battleRoomCoolMemberVo.getLoveCount:"+battleRoomCoolMemberVo.getLoveCount());
 			battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);
 			
 			
