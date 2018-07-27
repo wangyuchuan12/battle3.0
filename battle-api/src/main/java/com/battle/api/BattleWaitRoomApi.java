@@ -93,6 +93,8 @@ public class BattleWaitRoomApi {
 		try {
 			battleWaitRoomConnector.start(id);
 		} catch (BattleWaitRoomStartException e) {
+			
+			e.printStackTrace();
 			ResultVo resultVo = new ResultVo();
 			
 			resultVo.setSuccess(false);

@@ -268,7 +268,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			}
 		}
 		
-		if(battlePaperSubject.getIsSelect()==1){
+		if(battlePaperSubject==null||battlePaperSubject.getIsSelect()==1){
 			return;
 		}
 		
