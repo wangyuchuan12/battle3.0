@@ -186,9 +186,9 @@ public class EventHandleImp implements EventHandle{
 				
 				try{
 					battleRoomExecuter.endRoom();
-					battleEndHandle.end(battleRoomDataManager);
 					scheduledExecuter.shutdown();
 					battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());
+					battleEndHandle.end(battleRoomDataManager);
 					battleRoomQuestionExecuter.roomEnd();
 	
 					battleRoomDataManager = null;

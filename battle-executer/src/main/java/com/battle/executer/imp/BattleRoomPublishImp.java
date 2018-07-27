@@ -307,7 +307,7 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 			List<String> loveUserIds = new ArrayList<>();
 			for(String userId:userIds){
 				BattleRoomMemberVo battleRoomMemberVo =	battleRoomDataManager.getBattleMemberByUserId(userId);
-				if(battleRoomMemberVo.getIsOut()==0){
+				if(battleRoomMemberVo!=null&&battleRoomMemberVo.getIsOut()==0){
 					loveUserIds.add(userId);
 				}
 			}

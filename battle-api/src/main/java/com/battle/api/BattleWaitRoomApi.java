@@ -133,7 +133,7 @@ public class BattleWaitRoomApi {
 		RoomParam roomParam = new RoomParam();
 		roomParam.setData(data);
 		roomParam.setGroupId(battleWaitRoom.getGroupId());
-		roomParam.setType(BattleRoomVo.DAN_TYPE);
+		roomParam.setType(BattleRoomVo.ROOM_TYPE);
 		
 		List<UserParam> userParams = new ArrayList<>();
 		roomParam.setUserParams(userParams);
