@@ -6,19 +6,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.battle.domain.UserFriend;
 import com.battle.domain.UserStatus;
 import com.battle.executer.BattleRoomConnector;
 import com.battle.filter.element.LoginStatusFilter;
+import com.battle.service.UserFrendService;
 import com.battle.service.UserStatusService;
 import com.battle.socket.WebSocketManager;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
+import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.session.SessionManager;
 import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
@@ -35,6 +40,7 @@ public class UserStatusApi {
 	
 	@Autowired
 	private UserStatusService userStatusService;
+	
 	
 	final static Logger logger = LoggerFactory.getLogger(UserStatusApi.class);
 	
@@ -74,8 +80,8 @@ public class UserStatusApi {
 			}
 		}
 		
-		
 		data.put("isProgress", isProgress);
+		data.put("userId", userInfo.getId());
 	
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
