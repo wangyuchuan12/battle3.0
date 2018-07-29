@@ -1,5 +1,5 @@
 #org.springsource.ide.eclipse.gradle.core.preferences.GradleProjectPreferences
-#Sat Jul 21 11:29:09 CST 2018
-build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;battle-action;battle-api;battle-common;battle-dao;battle-executer;battle-filter;battle-handle;battle-listener;battle-manager;battle-models;battle-rank;battle-room;battle-service;battle-socket;
+#Sat Jul 28 19:22:12 CST 2018
+build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;battle-action;battle-api;battle-common;battle-dao;battle-executer;battle-filter;battle-handle;battle-listener;battle-manager;battle-models;battle-personal-space;battle-rank;battle-room;battle-service;battle-socket;
 org.springsource.ide.eclipse.gradle.linkedresources=
 org.springsource.ide.eclipse.gradle.rootprojectloc=
