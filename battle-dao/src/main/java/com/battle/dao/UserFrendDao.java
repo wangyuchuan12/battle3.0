@@ -12,4 +12,6 @@ public interface UserFrendDao extends CrudRepository<UserFriend, String>{
 
 	List<UserFriend> findAllByUserId(String userId);
 
+	List<UserFriend> findAllByFriendUserId(String userId);
+
 }

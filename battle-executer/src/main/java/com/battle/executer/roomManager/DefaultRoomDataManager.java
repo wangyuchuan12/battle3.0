@@ -18,6 +18,7 @@ import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleShareRewardVo;
 import com.battle.socket.WebSocketManager;
 import com.wyc.common.service.WxUserInfoService;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
 
 public class DefaultRoomDataManager implements BattleDataRoomManager{
@@ -136,6 +137,13 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		
 		battleRoom.setBattleRoomRewardRecords(battleRoomRewardRecords);
 		
+		battleRoom.setIsStop(0);
+		
+		if(CommonUtil.isNotEmpty(data.get("rankId"))){
+			battleRoom.setRankId(data.get("rankId").toString());
+		}
+		
+		
 		List<BattleRoomMemberVo> battleRoomMemberVos = new ArrayList<>();
 		
 		
@@ -197,6 +205,11 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 			}
 		}
 		
+	}
+
+	@Override
+	public String getRankId() {
+		return battleRoom.getRankId();
 	}
 
 }

@@ -14,6 +14,7 @@ public class BattleRoomCoolHandle {
 	private BattleRoomMemberCoolService battleRoomMemberCoolService;
 	
 	public BattleRoomCoolMemberVo filterMember(BattleRoomCoolMemberVo battleMemberLoveCool){
+		
 		if(battleMemberLoveCool==null){
 			return null;
 		}
@@ -44,18 +45,14 @@ public class BattleRoomCoolHandle {
 			
 			Long differ = nowDatetime.getMillis()-startDatetime.getMillis();
 			
-			System.out.println(".......now.mills:"+nowDatetime.getMillis()+",startMill:"+startDatetime.getMillis());
 			
 			Long schedule = (differ/millisec)*unit+battleMemberLoveCool.getSchedule();
 			
-			System.out.println("..........before.schedule:"+schedule);
 			
 			long time = schedule/upperLimit;
 			
 			schedule = schedule - upperLimit*time;
 			
-			
-			System.out.println("..........schedule:"+schedule+",differ:"+differ+",millisec:"+millisec+",unit:"+unit+",time:"+time);
 			
 			Long loveCount2 = time+loveCount;
 			

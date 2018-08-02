@@ -35,4 +35,8 @@ public class UserFrendService {
 		
 		return userFrendDao.findAllByUserId(userId);
 	}
+
+	public List<UserFriend> findAllByFriendUserId(String userId) {
+		return userFrendDao.findAllByFriendUserId(userId);
+	}
 }

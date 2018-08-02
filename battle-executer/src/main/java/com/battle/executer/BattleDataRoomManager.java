@@ -20,5 +20,7 @@ public interface BattleDataRoomManager {
 	public BattleRoomVo getBattleRoom();
 	
 	public void clear();
+
+	public String getRankId();
 	
 }

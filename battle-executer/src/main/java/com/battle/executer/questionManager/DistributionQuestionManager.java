@@ -17,6 +17,7 @@ import com.battle.domain.BattleQuestionDistributionStage;
 import com.battle.domain.BattleQuestionDistributionSubject;
 import com.battle.domain.Question;
 import com.battle.domain.QuestionOption;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleQuestionManager;
 import com.battle.executer.vo.BattlePaperOptionVo;
 import com.battle.executer.vo.BattlePaperQuestionVo;
@@ -52,10 +53,11 @@ public class DistributionQuestionManager implements BattleQuestionManager{
 	@Autowired
 	private QuestionService questionService;
 	@Override
-	public void init(Map<String, Object> data) {
-		List<String> userIds = (List<String>)data.get("userIds");
-		String roomId = (String)data.get("roomId");
-		String groupId = (String)data.get("groupId");
+	public void init(BattleDataManager battleDataManager) {
+		List<String> userIds = new ArrayList<>();
+	
+		String roomId = battleDataManager.getBattleRoom().getId();
+		String groupId = battleDataManager.getBattleRoom().getGroupId();
 
 		List<BattleQuestionDistribution> battleQuestionDistributions = battleQuestionDistributionService.findAllByGroupId(groupId);
 		

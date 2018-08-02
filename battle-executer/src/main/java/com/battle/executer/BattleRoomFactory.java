@@ -24,6 +24,7 @@ import com.battle.executer.imp.EventHandleImp;
 import com.battle.executer.param.RoomParam;
 import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomVo;
+import com.wyc.common.util.CommonUtil;
 
 public abstract class BattleRoomFactory {
 	
@@ -64,6 +65,10 @@ public abstract class BattleRoomFactory {
 		
 		battleDataRoomManager.init(userParams, type, data);
 		
+		BattleRoomVo battleRoom = battleDataRoomManager.getBattleRoom();
+		
+		battleRoom.setGroupId(roomParam.getGroupId());
+		
 		endJudge.init(battleDataManager);
 		
 		List<String> userIds = new ArrayList<>();
@@ -74,14 +79,20 @@ public abstract class BattleRoomFactory {
 		
 		BattleRoomVo battleRoomVo = battleDataRoomManager.getBattleRoom();
 		
-		Map<String, Object> questionData = new HashMap<>();
+		if(CommonUtil.isNotEmpty(data.get("roomId"))){
+			battleRoomVo.setId(data.get("roomId").toString());
+		}
+		
+		/*Map<String, Object> questionData = new HashMap<>();
 		questionData.put("groupId", roomParam.getGroupId());
 		questionData.put("userIds", userIds);
-		questionData.put("roomId", battleRoomVo.getId());
+		questionData.put("roomId", battleRoomVo.getId());*/
 		
-		battleQuestionManager.init(questionData);
+		
 	
 		battleDataManager.init(battleQuestionManager,battleDataRoomManager);
+		
+		battleQuestionManager.init(battleDataManager);
 		
 		BattleEndHandle battleEndHandle = null;
 		

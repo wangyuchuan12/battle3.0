@@ -42,5 +42,7 @@ public interface BattleDataManager {
 	
 	public void clearMembers();
 	
+	public String getRankId();
+	
 	public void init(BattleQuestionManager battleQuestionManager,BattleDataRoomManager battleDataRoomManager);
 }

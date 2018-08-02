@@ -14,6 +14,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.battle.domain.UserStatus;
+import com.battle.event.vo.TakepartEvent;
+import com.battle.event.vo.TakepartVo;
 import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRestEvent;
 import com.battle.executer.BattleRoomExecuter;
@@ -286,9 +288,16 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 
 		battleDataManager.clearMembers();
 		
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE);
+		if(battleRoomMemberVos.size()==0){
+			Map<String, Object> data = new HashMap<>();
+			eventManager.publishEvent(Event.ROOM_END_CODE, data);
+		}
+		
 		ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 		
-		applicationContext.publishEvent(new BattleRestEvent(battleDataManager.getBattleMembers()));
+
+		applicationContext.publishEvent(new BattleRestEvent(battleDataManager.getBattleRoom()));
 		
 		
 		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
@@ -337,6 +346,12 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 			data.put("type", BattleRoomPublish.BEAN_DIE_TYPE);
 			eventManager.publishEvent(Event.PUBLISH_DIE, data);
 		}
+		
+		TakepartVo takepartVo = new TakepartVo();
+		takepartVo.setRankId(battleDataManager.getRankId());
+		takepartVo.setRoomId(battleDataManager.getBattleRoom().getId());
+		takepartVo.setUserId(userInfo.getId());
+		ApplicationContextProvider.getApplicationContext().publishEvent(new TakepartEvent(takepartVo));
 		
 		return battleRoomMemberVo;
 		

@@ -18,14 +18,6 @@ import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
 import com.battle.executer.ScheduledExecuter;
-import com.battle.executer.exception.BattleDataManagerException;
-import com.battle.executer.exception.BattleDataRoomManagerException;
-import com.battle.executer.exception.BattleQuestionManagerException;
-import com.battle.executer.exception.BattleRoomExecuterException;
-import com.battle.executer.exception.BattleRoomQuestionExecuterException;
-import com.battle.executer.exception.BattleRoomStageExceptionException;
-import com.battle.executer.exception.EndJudgeException;
-import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
@@ -96,13 +88,10 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			
 			
-			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
-			if(battleRanks.size()>0){
-				BattleRank battleRank = battleRanks.get(0);
+			BattleRank battleRank = battleRankService.findOne(battleDataManager.getRankId());
+			if(battleRank!=null){
 				BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
 				if(battleRankMember!=null){
-					battleRoomMemberVo.setRemainLove(battleRankMember.getLoveCount());
-					battleRoomMemberVo.setLimitLove(battleRankMember.getLoveLimit());
 					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
 					battleRoomMemberVo.setShareNum(0);
 					battleRoomMemberVo.setIsOut(0);
@@ -129,6 +118,11 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 		}else{
 			battleRoomCoolMemberVo = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMemberVo);
 			battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
+		}
+		
+		if(battleRoomCoolMemberVo!=null){
+			battleRoomMemberVo.setRemainLove(battleRoomCoolMemberVo.getLoveCount());
+			battleRoomMemberVo.setLimitLove(battleRoomCoolMemberVo.getLoveLimit());
 		}
 		
 		battleRoomMemberVo.setBattleRoomCoolMemberVo(battleRoomCoolMemberVo);

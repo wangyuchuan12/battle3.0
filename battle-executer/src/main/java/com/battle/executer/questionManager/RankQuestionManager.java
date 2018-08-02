@@ -16,6 +16,7 @@ import com.battle.domain.BattleRankQuestion;
 import com.battle.domain.BattleRankSubject;
 import com.battle.domain.Question;
 import com.battle.domain.QuestionOption;
+import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleQuestionManager;
 import com.battle.executer.vo.BattlePaperOptionVo;
 import com.battle.executer.vo.BattlePaperQuestionVo;
@@ -49,9 +50,12 @@ public class RankQuestionManager implements BattleQuestionManager{
 	
 
 	private String roomId;
+	
+	private String rankId;
 	@Override
-	public void init(Map<String, Object> data) {
-		roomId = (String)data.get("roomId");
+	public void init(BattleDataManager battleDataManager) {
+		roomId = battleDataManager.getBattleRoom().getId();
+		rankId = battleDataManager.getRankId();
 		battlePaper = new BattlePaperVo();
 		battlePaper.setBattlePaperQuestions(new ArrayList<BattlePaperQuestionVo>());
 		battlePaper.setBattleStages(new ArrayList<BattleStageVo>());
@@ -180,13 +184,8 @@ public class RankQuestionManager implements BattleQuestionManager{
 	@Override
 	public void nextStage() {
 		try{
-			List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
-			BattleRank battleRank = null;
-			if(battleRanks.size()>0){
-				battleRank = battleRanks.get(0);
-			}else{
-				throw new RuntimeException("battleRank无记录");
-			}
+			BattleRank battleRank = battleRankService.findOne(rankId);
+			
 			
 			Pageable pageable = new PageRequest(0, 9);
 			List<BattleRankSubject> battleRankSubjects = battleRankSubjectService.findByRandom(pageable);

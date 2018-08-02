@@ -32,6 +32,7 @@ import com.battle.executer.exception.EndJudgeException;
 import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
+import com.battle.executer.vo.BattleRoomVo;
 import com.battle.service.other.BattleRoomCoolHandle;
 import com.wyc.ApplicationContextProvider;
 
@@ -123,14 +124,15 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data){
 				
 				try{
-					System.out.println("restEndEvent");
-					battleRoomDataManager.nextStage();
-					
-					boolean isEnd = endJudge.isEnd();
-					if(isEnd){
-						eventManager.publishEvent(Event.ROOM_END_CODE, null);
-					}else{
-						battleRoomStageExecuter.startStage();
+					if(battleRoomDataManager!=null){
+						battleRoomDataManager.nextStage();
+						
+						boolean isEnd = endJudge.isEnd();
+						if(isEnd){
+							eventManager.publishEvent(Event.ROOM_END_CODE, null);
+						}else{
+							battleRoomStageExecuter.startStage();
+						}
 					}
 				}catch(Exception e){
 					e.printStackTrace();
@@ -148,7 +150,6 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data) {
 				try{
-					System.out.println(".............................*******************startRoomEvent");
 					battleRoomExecuter.members();
 					battleRoomStageExecuter.startStage();
 				}catch(Exception e){
@@ -185,6 +186,9 @@ public class EventHandleImp implements EventHandle{
 			public void callback(Map<String, Object> data) {
 				
 				try{
+					
+					BattleRoomVo battleRoomVo = battleRoomDataManager.getBattleRoom();
+					battleRoomVo.setIsStop(1);
 					battleRoomExecuter.endRoom();
 					scheduledExecuter.shutdown();
 					battleRoomConnector.removeExecuter(battleRoomDataManager.getBattleRoom().getId());

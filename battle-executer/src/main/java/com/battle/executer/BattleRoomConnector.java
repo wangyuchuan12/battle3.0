@@ -19,6 +19,7 @@ import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.QuestionAnswerVo;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
 @Service
 public  class BattleRoomConnector{
@@ -75,8 +76,6 @@ public  class BattleRoomConnector{
 		
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		
-		System.out.println(".............battleRoomExecuter:"+battleRoomExecuter+",roomId:"+roomId);
-		System.out.println("............battleRoomExecuterMap:"+battleRoomExecuterMap);
 		if(battleRoomExecuter!=null){
 			BattleRoomMemberVo battleRoomMemberVo = null;
 			try {
@@ -85,7 +84,6 @@ public  class BattleRoomConnector{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(".............battleRoomMemberVo:"+battleRoomMemberVo);
 			return battleRoomMemberVo;
 		}else{
 			return null;
@@ -204,6 +202,9 @@ public  class BattleRoomConnector{
 	}
 	
 	public BattleRoomVo getRoom(String roomId){
+		if(CommonUtil.isEmpty(roomId)){
+			return null;
+		}
 		BattleRoomExecuter battleRoomExecuter = battleRoomExecuterMap.get(roomId);
 		if(battleRoomExecuter!=null){
 			try {

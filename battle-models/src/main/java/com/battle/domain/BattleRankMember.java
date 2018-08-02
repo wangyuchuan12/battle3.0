@@ -31,12 +31,6 @@ public class BattleRankMember {
 	@Column
 	private Integer process;
 	
-	@Column(name="love_count")
-	private Integer loveCount;
-	
-	@Column(name="love_limit")
-	private Integer loveLimit;
-	
 	@Column
 	private String nickname;
 	
@@ -96,25 +90,7 @@ public class BattleRankMember {
 
 	public void setProcess(Integer process) {
 		this.process = process;
-	}
-
-	public Integer getLoveCount() {
-		return loveCount;
-	}
-
-	public void setLoveCount(Integer loveCount) {
-		this.loveCount = loveCount;
-	}
-
-	public Integer getLoveLimit() {
-		return loveLimit;
-	}
-
-	public void setLoveLimit(Integer loveLimit) {
-		this.loveLimit = loveLimit;
-	}
-	
-	
+	}	
 
 	public String getNickname() {
 		return nickname;

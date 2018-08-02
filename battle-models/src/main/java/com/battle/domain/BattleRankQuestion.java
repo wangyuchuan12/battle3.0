@@ -89,6 +89,10 @@ public class BattleRankQuestion {
 	@ParamAnnotation
 	private Integer isDel;
 	
+	
+	@Column(name="rank_id")
+	private String rankId;
+	
 	@ParamAnnotation
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -229,6 +233,15 @@ public class BattleRankQuestion {
 
 	public void setFillWords(String fillWords) {
 		this.fillWords = fillWords;
+	}
+	
+
+	public String getRankId() {
+		return rankId;
+	}
+
+	public void setRankId(String rankId) {
+		this.rankId = rankId;
 	}
 
 	public DateTime getCreateAt() {

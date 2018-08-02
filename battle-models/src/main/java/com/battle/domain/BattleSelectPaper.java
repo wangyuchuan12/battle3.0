@@ -9,11 +9,10 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wyc.annotation.ParamAnnotation;
 
 @Entity
-@Table(name="battle_rank_subject")
-public class BattleRankSubject {
+@Table(name="battle_select_paper")
+public class BattleSelectPaper {
 	@Id
 	private String id;
 	
@@ -23,23 +22,17 @@ public class BattleRankSubject {
 	@Column(name="img_url")
 	private String imgUrl;
 	
+	@Column(name="z_index")
+	private Integer index;
 	
-	@Column(name="battle_subject_id")
-	private String battleSubjectId;
+	@Column(name="battle_id")
+	private String battleId;
 	
-	@Column(name="is_del")
-	private Integer isDel;
-	
-	@Column(name="rank_id")
-	private String rankId;
-	
-	@ParamAnnotation
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
     private DateTime createAt;
 	
-	@ParamAnnotation
     @Column(name = "update_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -69,29 +62,20 @@ public class BattleRankSubject {
 		this.imgUrl = imgUrl;
 	}
 
-
-	public String getBattleSubjectId() {
-		return battleSubjectId;
+	public Integer getIndex() {
+		return index;
 	}
 
-	public void setBattleSubjectId(String battleSubjectId) {
-		this.battleSubjectId = battleSubjectId;
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
-	public Integer getIsDel() {
-		return isDel;
+	public String getBattleId() {
+		return battleId;
 	}
 
-	public void setIsDel(Integer isDel) {
-		this.isDel = isDel;
-	}
-	
-	public String getRankId() {
-		return rankId;
-	}
-
-	public void setRankId(String rankId) {
-		this.rankId = rankId;
+	public void setBattleId(String battleId) {
+		this.battleId = battleId;
 	}
 
 	public DateTime getCreateAt() {

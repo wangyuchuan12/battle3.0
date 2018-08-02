@@ -108,4 +108,9 @@ public class BattleDataManagerImp implements BattleDataManager{
 		battleDataRoomManager.clear();
 		
 	}
+
+	@Override
+	public String getRankId() {
+		return battleDataRoomManager.getRankId();
+	}
 }

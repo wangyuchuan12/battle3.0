@@ -51,13 +51,9 @@ public class StartApi {
 	@Transactional
 	public void startRank(HttpServletRequest httpServletRequest) {
 		
-		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+		String rankId = httpServletRequest.getParameter("rankId");
 		
-		BattleRank battleRank = null;
-		
-		if(battleRanks.size()>0){
-			battleRank = battleRanks.get(0);	
-		}
+		BattleRank battleRank = battleRankService.findOne(rankId);
 		
 		if(battleRank!=null&&battleRank.getIsStart().intValue()==0){
 			Map<String, Object> data = new HashMap<>();

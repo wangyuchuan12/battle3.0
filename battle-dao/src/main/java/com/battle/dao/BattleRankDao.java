@@ -10,4 +10,6 @@ public interface BattleRankDao extends CrudRepository<BattleRank, String>{
 
 	List<BattleRank> findAllByIsDefault(int isDefault);
 
+	List<BattleRank> findAllByOwnerUserId(String ownerUserId);
+
 }

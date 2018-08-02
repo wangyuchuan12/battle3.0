@@ -16,6 +16,9 @@ import com.wyc.annotation.ParamEntityAnnotation;
 @Entity
 @Table(name="personal_space")
 public class PersonalSpace {
+	
+	public static final Integer FREND_TYPE = 0;
+	public static final Integer RANK_TYPE = 1;
 	@Id
 	private String id;
 
@@ -26,10 +29,16 @@ public class PersonalSpace {
 	private String userId;
 	
 	@Column(name="img_num")
-	private String imgNum;
+	private int imgNum;
 	
 	@Column(name="is_public")
 	private Integer isPublic;
+	
+	@Column(name="is_root")
+	private Integer isRoot;
+	
+	@Column
+	private Integer type;
 	
 	@Column
 	private String img1;
@@ -57,6 +66,21 @@ public class PersonalSpace {
 	
 	@Column
 	private String img9;
+	
+	@Column(name="is_del")
+	private Integer isDel;
+	
+	@Column
+	private String name;
+	
+	@Column
+	private String detail;
+	
+	
+	@ParamAnnotation
+	@Column(name = "activity_time")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime activityTime;
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -95,11 +119,11 @@ public class PersonalSpace {
 	}
 	
 
-	public String getImgNum() {
+	public int getImgNum() {
 		return imgNum;
 	}
 
-	public void setImgNum(String imgNum) {
+	public void setImgNum(int imgNum) {
 		this.imgNum = imgNum;
 	}
 
@@ -182,6 +206,59 @@ public class PersonalSpace {
 
 	public void setIsPublic(Integer isPublic) {
 		this.isPublic = isPublic;
+	}
+	
+	
+
+	public Integer getIsDel() {
+		return isDel;
+	}
+
+	public void setIsDel(Integer isDel) {
+		this.isDel = isDel;
+	}
+
+	public DateTime getActivityTime() {
+		return activityTime;
+	}
+
+	public void setActivityTime(DateTime activityTime) {
+		this.activityTime = activityTime;
+	}
+
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+	
+	public Integer getIsRoot() {
+		return isRoot;
+	}
+
+	public void setIsRoot(Integer isRoot) {
+		this.isRoot = isRoot;
 	}
 
 	public DateTime getCreateAt() {

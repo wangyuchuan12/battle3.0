@@ -51,6 +51,10 @@ public class BattleRank {
 	@Column(name="sub_bean")
 	private Integer subBean;
 	
+	
+	@Column(name="owner_user_id")
+	private String ownerUserId;
+	
 	@Column(name="end_time")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime endTime;
@@ -59,9 +63,6 @@ public class BattleRank {
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime startDate;
 	 
-	@Column(name = "end_date")
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime endDate;
 	
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -113,13 +114,6 @@ public class BattleRank {
 		this.startDate = startDate;
 	}
 
-	public DateTime getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(DateTime endDate) {
-		this.endDate = endDate;
-	}
 	
 	public Integer getStageIndex() {
 		return stageIndex;
@@ -195,6 +189,14 @@ public class BattleRank {
 
 	public void setEndTime(DateTime endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getOwnerUserId() {
+		return ownerUserId;
+	}
+
+	public void setOwnerUserId(String ownerUserId) {
+		this.ownerUserId = ownerUserId;
 	}
 
 	public DateTime getCreateAt() {

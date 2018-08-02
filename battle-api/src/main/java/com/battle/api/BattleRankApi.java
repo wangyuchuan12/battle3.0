@@ -20,7 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleRank;
 import com.battle.domain.BattleRankMember;
+import com.battle.executer.BattleDataManager;
+import com.battle.executer.BattleRoomConnector;
+import com.battle.executer.BattleRoomFactory;
+import com.battle.executer.ExecuterStore;
+import com.battle.executer.param.RoomParam;
+import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomCoolMemberVo;
+import com.battle.executer.vo.BattleRoomVo;
+import com.battle.executer.vo.BattleShareRewardVo;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleRankMemberService;
 import com.battle.service.BattleRankService;
@@ -44,6 +52,12 @@ public class BattleRankApi {
 	private BattleRoomCoolHandle battleRoomCoolHandle;
 	
 	
+	@Autowired
+	private BattleRoomFactory battleRoomFactory;
+	
+	@Autowired
+	private BattleRoomConnector battleRoomConnector;
+	
 	
 	@RequestMapping(value="bInfo")
 	@ResponseBody
@@ -52,18 +66,10 @@ public class BattleRankApi {
 	public ResultVo bInfo(HttpServletRequest httpServletRequest)throws Exception{
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
 		
+		String rankId = httpServletRequest.getParameter("rankId");
 		
-		BattleRank battleRank = null;
-		
-		if(battleRanks==null||battleRanks.size()==0){
-			ResultVo resultVo = new ResultVo();
-			resultVo.setSuccess(false);
-			return resultVo;
-		}else{
-			battleRank = battleRanks.get(0);
-		}
+		BattleRank battleRank = battleRankService.findOne(rankId);
 		
 		BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRank.getRoomId(), userInfo.getId());
 		
@@ -99,19 +105,9 @@ public class BattleRankApi {
 	public ResultVo loveCool(HttpServletRequest httpServletRequest)throws Exception{
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+		String rankId = httpServletRequest.getParameter("rankId");
 		
-		
-		BattleRank battleRank = null;
-		
-		if(battleRanks==null||battleRanks.size()==0){
-			ResultVo resultVo = new ResultVo();
-			resultVo.setSuccess(false);
-			return resultVo;
-		}else{
-			battleRank = battleRanks.get(0);
-		}
-		
+		BattleRank battleRank = battleRankService.findOne(rankId);
 		BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomCoolHandle.getCoolMember(battleRank.getRoomId(), userInfo.getId());
 		
 		battleRoomCoolMemberVo = battleRoomCoolHandle.filterMember(battleRoomCoolMemberVo);
@@ -123,6 +119,70 @@ public class BattleRankApi {
 		return resultVo;
 		
 	}
+	
+	
+	@RequestMapping(value="startRoom")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo startRoom(HttpServletRequest httpServletRequest)throws Exception{
+		
+		String rankId = httpServletRequest.getParameter("rankId");
+		
+		BattleRank battleRank = battleRankService.findOne(rankId);
+		
+		BattleRoomVo battleRoomVo = battleRoomConnector.getRoom(battleRank.getRoomId());
+		
+		if(battleRoomVo==null||battleRoomVo.getIsStop().intValue()==1){
+			Map<String, Object> data = new HashMap<>();
+			data.put("subBean", battleRank.getSubBean());
+			data.put("beanCheck",false);
+			
+			List<BattleShareRewardVo> battleShareRewards = new ArrayList<>();
+			
+			BattleShareRewardVo battleShareReward = new BattleShareRewardVo();
+			battleShareReward.setRewardLove(5);
+			battleShareReward.setShareNum(1);
+			
+			BattleShareRewardVo battleShareReward2 = new BattleShareRewardVo();
+			battleShareReward2.setShareNum(2);
+			battleShareReward2.setRewardLove(5);
+			
+			BattleShareRewardVo battleShareReward3 = new BattleShareRewardVo();
+			battleShareReward3.setShareNum(3);
+			battleShareReward3.setRewardLove(5);
+			battleShareRewards.add(battleShareReward);
+			battleShareRewards.add(battleShareReward2);
+			battleShareRewards.add(battleShareReward3);
+			
+			data.put("shareRewards", battleShareRewards);
+			data.put("rankId", rankId);
+			data.put("roomId", battleRank.getRoomId());
+			
+			
+			RoomParam roomParam = new RoomParam();
+			roomParam.setType(BattleRoomVo.RANK_TYPE);
+			roomParam.setUserParams(new ArrayList<UserParam>());
+			roomParam.setData(data);
+			roomParam.setGroupId("");
+			
+			
+			ExecuterStore executerStore = battleRoomFactory.init(roomParam);
+			BattleDataManager battleDataManager = executerStore.getBattleDataManager();
+			
+
+			battleRoomVo = battleDataManager.getBattleRoom();
+			battleRank.setRoomId(battleRoomVo.getId());
+			battleRank.setIsStart(1);
+			
+			battleRankService.update(battleRank);
+		}
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(battleRoomVo);
+		return resultVo;
+	}
 
 	@RequestMapping(value="info")
 	@ResponseBody
@@ -131,18 +191,9 @@ public class BattleRankApi {
 	public ResultVo info(HttpServletRequest httpServletRequest)throws Exception{
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		List<BattleRank> battleRanks = battleRankService.findAllByIsDefault(1);
+		String rankId = httpServletRequest.getParameter("rankId");
 		
-		
-		BattleRank battleRank = null;
-		
-		if(battleRanks==null||battleRanks.size()==0){
-			ResultVo resultVo = new ResultVo();
-			resultVo.setSuccess(false);
-			return resultVo;
-		}else{
-			battleRank = battleRanks.get(0);
-		}
+		BattleRank battleRank = battleRankService.findOne(rankId);
 	
 		Order order = new Order(Direction.DESC, "process");
 		Sort sort = new Sort(order);

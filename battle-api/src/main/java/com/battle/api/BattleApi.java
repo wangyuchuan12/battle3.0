@@ -1,33 +1,20 @@
 package com.battle.api;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.battle.domain.BattleRank;
 import com.battle.domain.Question;
 import com.battle.domain.QuestionOption;
-import com.battle.executer.BattleDataManager;
 import com.battle.executer.BattleRoomConnector;
-import com.battle.executer.BattleRoomFactory;
-import com.battle.executer.ExecuterStore;
-import com.battle.executer.param.RoomParam;
-import com.battle.executer.param.UserParam;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.QuestionAnswerVo;
 import com.battle.filter.element.LoginStatusFilter;
-import com.battle.service.BattleRankService;
 import com.battle.service.QuestionOptionService;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;

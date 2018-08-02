@@ -38,6 +38,8 @@ public class RankManager {
 	@Autowired
 	private BattlePeriodService battlePeriodService;
 	
+	@Autowired
+	private BattleRankService battleRankService;
 	
 	public void addByPeriodId(String rankId,String periodId){
 		BattlePeriod battlePeriod = battlePeriodService.findOne(periodId);
@@ -51,6 +53,12 @@ public class RankManager {
 	
 	public void addBySubjectId(String rankId,String periosId,String battleSubjectId,int num){
 	
+		
+		BattleRank battleRank = battleRankService.findOne(rankId);
+		
+		if(battleRank==null){
+			throw new RuntimeException();
+		}
 		BattleRankSubject battleRankSubject = battleRankSubjectService.findOneByBattleSubjectId(battleSubjectId);
 		BattleSubject battleSubject = battleSubjectService.findOne(battleSubjectId);
 		if(battleRankSubject==null){
@@ -59,6 +67,7 @@ public class RankManager {
 			battleRankSubject.setImgUrl(battleSubject.getImgUrl());
 			battleRankSubject.setIsDel(0);
 			battleRankSubject.setName(battleSubject.getName());
+			battleRankSubject.setRankId(rankId);
 			battleRankSubjectService.add(battleRankSubject);
 		}
 		
@@ -80,6 +89,7 @@ public class RankManager {
 			battleRankQuestion.setRightAnswer(battleQuestion.getRightAnswer());
 			battleRankQuestion.setSeq(battleQuestion.getSeq());
 			battleRankQuestion.setType(battleQuestion.getType());
+			battleRankQuestion.setRankId(rankId);
 			battleRankQuestionService.add(battleRankQuestion);
 		}
 	}

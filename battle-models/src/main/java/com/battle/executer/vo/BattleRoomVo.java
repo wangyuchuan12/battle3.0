@@ -21,6 +21,8 @@ public class BattleRoomVo {
 	
 	private String periodId;
 	
+	private String rankId;
+	
 	private List<BattleRoomMemberVo> members;
 	
 	private List<BattleRoomRewardRecord> battleRoomRewardRecords;
@@ -31,7 +33,11 @@ public class BattleRoomVo {
 	
 	private Map<String, Object> data;
 	
+	private Integer isStop;
+	
 	private Integer loveCount;
+	
+	private String groupId;
 	
 	private Integer rewardBean;
 	
@@ -231,4 +237,29 @@ public class BattleRoomVo {
 	public void setBattleRoomShareRewards(List<BattleRoomShareRewardVo> battleRoomShareRewards) {
 		this.battleRoomShareRewards = battleRoomShareRewards;
 	}
+
+	public Integer getIsStop() {
+		return isStop;
+	}
+
+	public void setIsStop(Integer isStop) {
+		this.isStop = isStop;
+	}
+
+	public String getRankId() {
+		return rankId;
+	}
+
+	public void setRankId(String rankId) {
+		this.rankId = rankId;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
+
 }

@@ -11,7 +11,7 @@ import com.battle.executer.vo.BattleStageVo;
 
 public interface BattleQuestionManager {
 
-	public void init(Map<String, Object> data);
+	public void init(BattleDataManager battleDataManager);
 	
 	public List<BattlePaperSubjectVo> getPaperSubjects(Integer stageIndex);
 	

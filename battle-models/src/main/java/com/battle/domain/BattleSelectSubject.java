@@ -9,13 +9,15 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wyc.annotation.ParamAnnotation;
 
 @Entity
-@Table(name="battle_rank_subject")
-public class BattleRankSubject {
+@Table(name="battle_select_subject")
+public class BattleSelectSubject {
 	@Id
 	private String id;
+	
+	@Column(name="paper_id")
+	private String paperId;
 	
 	@Column
 	private String name;
@@ -23,23 +25,26 @@ public class BattleRankSubject {
 	@Column(name="img_url")
 	private String imgUrl;
 	
+	@Column(name="subject_id")
+	private String subjectId;
 	
-	@Column(name="battle_subject_id")
-	private String battleSubjectId;
+	@Column(name="z_index")
+	private Integer index;
 	
 	@Column(name="is_del")
 	private Integer isDel;
 	
-	@Column(name="rank_id")
-	private String rankId;
+	@Column(name="period_id")
+	private String periodId;
 	
-	@ParamAnnotation
+	@Column
+	private Integer num;
+	
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
     private DateTime createAt;
 	
-	@ParamAnnotation
     @Column(name = "update_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -51,6 +56,14 @@ public class BattleRankSubject {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getPaperId() {
+		return paperId;
+	}
+
+	public void setPaperId(String paperId) {
+		this.paperId = paperId;
 	}
 
 	public String getName() {
@@ -69,13 +82,20 @@ public class BattleRankSubject {
 		this.imgUrl = imgUrl;
 	}
 
-
-	public String getBattleSubjectId() {
-		return battleSubjectId;
+	public String getSubjectId() {
+		return subjectId;
 	}
 
-	public void setBattleSubjectId(String battleSubjectId) {
-		this.battleSubjectId = battleSubjectId;
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 
 	public Integer getIsDel() {
@@ -85,13 +105,21 @@ public class BattleRankSubject {
 	public void setIsDel(Integer isDel) {
 		this.isDel = isDel;
 	}
-	
-	public String getRankId() {
-		return rankId;
+
+	public String getPeriodId() {
+		return periodId;
 	}
 
-	public void setRankId(String rankId) {
-		this.rankId = rankId;
+	public void setPeriodId(String periodId) {
+		this.periodId = periodId;
+	}
+
+	public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
 	}
 
 	public DateTime getCreateAt() {
