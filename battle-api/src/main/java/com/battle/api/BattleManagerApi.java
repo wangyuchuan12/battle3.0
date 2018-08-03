@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleRank;
+import com.battle.domain.BattleRankMember;
 import com.battle.domain.BattleSelectSubject;
 import com.battle.domain.PersonalSpace;
 import com.battle.domain.UserFriend;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.rank.manager.RankManager;
+import com.battle.rank.service.BattleRankHandleService;
 import com.battle.service.BattleRankService;
 import com.battle.service.BattleSelectSubjectService;
 import com.battle.service.PersonalSpaceService;
@@ -44,6 +46,9 @@ public class BattleManagerApi {
 	
 	@Autowired
 	private UserFrendService userFrendService;
+	
+	@Autowired
+	private BattleRankHandleService battleRankHandleService;
 	
 	
 	@RequestMapping(value="info")
@@ -94,6 +99,8 @@ public class BattleManagerApi {
 		battleRank.setTimeLong(10);
 		battleRank.setOwnerUserId(userInfo.getId());
 		battleRankService.add(battleRank);
+		
+		battleRankHandleService.takepart(battleRank.getId(), userInfo.getId());
 		Integer num = 100;
 		String[] subjectIdArray = subjectIds.split(",");
 		
@@ -135,6 +142,8 @@ public class BattleManagerApi {
 			personalSpace2.setUserId(userFriend.getUserId());
 			personalSpace2.setIsRoot(0);
 			personalSpaceService.add(personalSpace2);
+			
+			battleRankHandleService.takepart(battleRank.getId(), userFriend.getUserId());
 		}
 		
 		

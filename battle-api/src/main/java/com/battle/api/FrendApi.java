@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.battle.domain.PersonalSpace;
 import com.battle.domain.UserFriend;
 import com.battle.filter.element.LoginStatusFilter;
+import com.battle.rank.service.BattleRankHandleService;
 import com.battle.service.PersonalSpaceService;
 import com.battle.service.UserFrendService;
 import com.wyc.annotation.HandlerAnnotation;
@@ -36,6 +37,9 @@ public class FrendApi {
 	
 	@Autowired
 	private PersonalSpaceService personalSpaceService;
+	
+	@Autowired
+	private BattleRankHandleService battleRankHandleService;
 	@RequestMapping(value="registerFrend")
 	@ResponseBody
 	@Transactional
@@ -123,7 +127,9 @@ public class FrendApi {
 				userFrendService.add(userFriend2);
 				
 				
-				List<PersonalSpace> personalSpaces = personalSpaceService.findAllByIsRootAndUserId(0,userInfo.getId());
+				List<PersonalSpace> personalSpaces = personalSpaceService.findAllByIsRootAndUserId(1,userInfo.getId());
+				
+				System.out.println("............personalSpaces:"+personalSpaces);
 				for(PersonalSpace personalSpace:personalSpaces){
 					PersonalSpace personalSpace2 = new PersonalSpace();
 					personalSpace2.setUserId(frendUserInfo.getId());
@@ -135,8 +141,27 @@ public class FrendApi {
 					personalSpace2.setRankId(personalSpace.getRankId());
 					personalSpace2.setIsRoot(0);
 					personalSpaceService.add(personalSpace2);
+					
+					battleRankHandleService.takepart(personalSpace.getRankId(), frendUserInfo.getId());
 				}
 				
+				
+				List<PersonalSpace> frendPersonSpaces = personalSpaceService.findAllByIsRootAndUserId(1,frendUserInfo.getId());
+				
+				for(PersonalSpace personalSpace:frendPersonSpaces){
+					PersonalSpace personalSpace2 = new PersonalSpace();
+					personalSpace2.setUserId(userInfo.getId());
+					personalSpace2.setImg1(frendUserInfo.getHeadimgurl());
+					personalSpace2.setImgNum(1);
+					personalSpace2.setIsDel(0);
+					personalSpace2.setType(PersonalSpace.RANK_TYPE);
+					personalSpace2.setName(personalSpace.getName());
+					personalSpace2.setRankId(personalSpace.getRankId());
+					personalSpace2.setIsRoot(0);
+					personalSpaceService.add(personalSpace2);
+					
+					battleRankHandleService.takepart(personalSpace.getRankId(), userInfo.getId());
+				}
 			}
 		}
 		

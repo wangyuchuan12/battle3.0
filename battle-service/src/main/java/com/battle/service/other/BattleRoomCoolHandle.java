@@ -114,7 +114,7 @@ public class BattleRoomCoolHandle {
 		battleRoomCoolMember.setStartDatetime(new DateTime());
 		battleRoomCoolMember.setStatus(BattleRoomCoolMember.STATUS_IN);
 		battleRoomCoolMember.setUnit(1);
-		battleRoomCoolMember.setUpperLimit(100);
+		battleRoomCoolMember.setUpperLimit(3000);
 		battleRoomCoolMember.setUserId(userId);
 		
 		battleRoomMemberCoolService.add(battleRoomCoolMember);
