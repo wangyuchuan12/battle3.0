@@ -93,8 +93,14 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 				BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(), userInfo.getId());
 				if(battleRankMember!=null){
 					battleRoomMemberVo.setProcess(battleRankMember.getProcess());
-					battleRoomMemberVo.setShareNum(0);
+
 					battleRoomMemberVo.setIsOut(0);
+					if(battleRankMember.getShareNum()==null){
+						battleRoomMemberVo.setShareNum(0);
+					}else{
+						battleRoomMemberVo.setShareNum(battleRankMember.getShareNum());
+					}
+					
 				}
 			}
 			
@@ -104,7 +110,6 @@ public class RankMemberTakepart implements BattleRoomMemberTakepart{
 			Account account = accountService.fineOne(userInfo.getAccountId());
 			battleRoomMemberVo.setBeanNum(account.getWisdomCount().intValue());
 			battleRoomMemberVo.setStatus(BattleRoomMemberVo.STATUS_IN);
-			battleRoomMemberVo.setShareNum(0);
 			battleRoomMemberVo.setIsOut(0);
 		}
 		

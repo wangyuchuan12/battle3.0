@@ -54,7 +54,7 @@ public class BattleRestEventListener  implements ApplicationListener<BattleRestE
 						battleRankMember.setRankId(battleRank.getId());
 						battleRankMember.setUserId(battleRoomMemberVo.getUserId());
 						battleRankMember.setNickname(battleRoomMemberVo.getNickname());
-						
+						battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
 						
 						battleRankMemberService.add(battleRankMember);
 					}else{
@@ -62,6 +62,7 @@ public class BattleRestEventListener  implements ApplicationListener<BattleRestE
 						battleRankMember.setHeadImg(battleRoomMemberVo.getImgUrl());
 						battleRankMember.setProcess(battleRoomMemberVo.getProcess());
 						battleRankMember.setNickname(battleRoomMemberVo.getNickname());
+						battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
 						battleRankMemberService.update(battleRankMember);
 					}
 					

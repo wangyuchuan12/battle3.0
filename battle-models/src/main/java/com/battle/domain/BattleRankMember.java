@@ -34,6 +34,9 @@ public class BattleRankMember {
 	@Column
 	private String nickname;
 	
+	@Column(name="share_num")
+	private Integer shareNum;
+	
 	@Column(name = "create_at")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     @JsonIgnore
@@ -98,6 +101,14 @@ public class BattleRankMember {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+	
+	public Integer getShareNum() {
+		return shareNum;
+	}
+
+	public void setShareNum(Integer shareNum) {
+		this.shareNum = shareNum;
 	}
 
 	public DateTime getCreateAt() {

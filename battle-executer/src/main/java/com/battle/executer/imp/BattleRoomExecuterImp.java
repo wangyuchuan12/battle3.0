@@ -443,7 +443,10 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	@Override
 	public int share(String userId) {
 		BattleRoomMemberVo battleRoomMember = battleDataManager.getBattleMemberByUserId(userId);
-		int shareNum = battleRoomMember.getShareNum();
+		Integer shareNum = battleRoomMember.getShareNum();
+		if(shareNum==null){
+			shareNum = 0;
+		}
 		shareNum++;
 		BattleRoomVo battleRoomVo = battleDataManager.getBattleRoom();
 		List<BattleRoomShareRewardVo> battleRoomShareRewards = battleRoomVo.getBattleRoomShareRewards();
