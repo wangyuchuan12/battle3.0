@@ -32,6 +32,8 @@ public class MessageVo {
 	
 	public final static String PUBLISH_MEMBERS = "publish_members";
 	
+	public final static String PUBLISH_GOODS = "publish_goods";
+	
 	public final static String PUBLISH_BATTLE_WAIT_ROOM= "publish_battle_wait_room";
 	
 	public final static String WAIT_ROOM_MEMBER_STATUS_CODE= "waitRoomMemberStatusCode";

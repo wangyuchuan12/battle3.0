@@ -47,4 +47,6 @@ public interface BattleRoomPublish {
 	
 	public void publishLoveCool(BattleRoomMemberVo battleRoomMember);
 	
+	public void publishGoods();
+	
 }

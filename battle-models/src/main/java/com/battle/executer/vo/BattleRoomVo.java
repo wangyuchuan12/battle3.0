@@ -29,6 +29,8 @@ public class BattleRoomVo {
 	
 	private List<BattleRoomShareRewardVo> battleRoomShareRewards;
 	
+	private List<BattleRankGoodVo> battleRankGood;
+	
 	private Integer type;
 	
 	private Map<String, Object> data;
@@ -262,4 +264,11 @@ public class BattleRoomVo {
 		this.groupId = groupId;
 	}
 
+	public List<BattleRankGoodVo> getBattleRankGood() {
+		return battleRankGood;
+	}
+
+	public void setBattleRankGood(List<BattleRankGoodVo> battleRankGood) {
+		this.battleRankGood = battleRankGood;
+	}
 }

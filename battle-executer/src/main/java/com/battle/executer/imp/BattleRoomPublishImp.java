@@ -20,6 +20,7 @@ import com.battle.executer.exception.BattleQuestionManagerException;
 import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
+import com.battle.executer.vo.BattleRankGoodVo;
 import com.battle.executer.vo.BattleRoomCoolMemberVo;
 import com.battle.executer.vo.BattleUserRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
@@ -387,8 +388,6 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		Map<String, Object> data = new HashMap<>();
 		
 		BattleRoomCoolMemberVo battleRoomCoolMember = battleRoomMember.getBattleRoomCoolMemberVo();
-		
-		System.out.println("......id:"+battleRoomCoolMember.getId()+".........publishMyInfo:"+battleRoomCoolMember.getSchedule());
 
 		data.put("cool",battleRoomCoolMember);
 		
@@ -398,6 +397,33 @@ public class BattleRoomPublishImp implements BattleRoomPublish{
 		
 		
 		publishMessage(messageVo);
+		
+	}
+
+	@Override
+	public void publishGoods() {
+		
+		List<BattleRankGoodVo> battleRankGoods = battleRoomDataManager.getGoods();
+		
+		
+		System.out.println("********************************battleRankGoods:"+battleRankGoods);
+		
+		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomDataManager.getBattleMembers(BattleRoomMemberVo.STATUS_IN,BattleRoomMemberVo.STATUS_DIE,BattleRoomMemberVo.STATUS_COMPLETE);
+		for(BattleRoomMemberVo battleRoomMember:battleRoomMemberVos){
+			List<String> userIds = new ArrayList<>();
+			userIds.add(battleRoomMember.getUserId());
+			
+			MessageVo messageVo = new MessageVo();
+			messageVo.setCode(MessageVo.PUBLISH_GOODS);
+			messageVo.setType(MessageVo.USERS_TYPE);
+			
+			messageVo.setUserIds(userIds);
+			Map<String, Object> data = new HashMap<>();
+			data.put("goods", battleRankGoods);
+			messageVo.setData(data);
+			
+			publishMessage(messageVo);
+		}
 		
 	}
 }

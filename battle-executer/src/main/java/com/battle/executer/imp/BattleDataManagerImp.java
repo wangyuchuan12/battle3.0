@@ -9,6 +9,7 @@ import com.battle.executer.exception.BattleQuestionManagerException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
+import com.battle.executer.vo.BattleRankGoodVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
@@ -112,5 +113,11 @@ public class BattleDataManagerImp implements BattleDataManager{
 	@Override
 	public String getRankId() {
 		return battleDataRoomManager.getRankId();
+	}
+
+	@Override
+	public List<BattleRankGoodVo> getGoods() {
+		BattleRoomVo battleRoomVo = battleDataRoomManager.getBattleRoom();
+		return battleRoomVo.getBattleRankGood();
 	}
 }

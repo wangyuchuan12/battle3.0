@@ -8,6 +8,7 @@ import com.battle.executer.exception.BattleQuestionManagerException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
+import com.battle.executer.vo.BattleRankGoodVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleStageVo;
@@ -43,6 +44,8 @@ public interface BattleDataManager {
 	public void clearMembers();
 	
 	public String getRankId();
+	
+	public List<BattleRankGoodVo> getGoods();
 	
 	public void init(BattleQuestionManager battleQuestionManager,BattleDataRoomManager battleDataRoomManager);
 }

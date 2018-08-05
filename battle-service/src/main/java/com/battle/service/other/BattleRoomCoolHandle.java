@@ -19,9 +19,7 @@ public class BattleRoomCoolHandle {
 			return null;
 		}
 		
-		if(battleMemberLoveCool.getStatus()!=BattleRoomCoolMember.STATUS_IN){
-			battleMemberLoveCool.setStartDatetime(new DateTime());
-		}
+		
 		
 		Integer loveCount = battleMemberLoveCool.getLoveCount();
 		
@@ -77,6 +75,10 @@ public class BattleRoomCoolHandle {
 			
 		}
 		
+		if(battleMemberLoveCool.getStatus()!=BattleRoomCoolMember.STATUS_IN){
+			battleMemberLoveCool.setStartDatetime(new DateTime());
+		}
+		
 		
 		System.out.println("..........after.schedule:"+battleMemberLoveCool.getSchedule()+",id:"+battleMemberLoveCool.getId()+",loveCount:"+battleMemberLoveCool.getLoveCount());
 		
@@ -114,7 +116,7 @@ public class BattleRoomCoolHandle {
 		battleRoomCoolMember.setStartDatetime(new DateTime());
 		battleRoomCoolMember.setStatus(BattleRoomCoolMember.STATUS_IN);
 		battleRoomCoolMember.setUnit(1);
-		battleRoomCoolMember.setUpperLimit(3000);
+		battleRoomCoolMember.setUpperLimit(1800);
 		battleRoomCoolMember.setUserId(userId);
 		
 		battleRoomMemberCoolService.add(battleRoomCoolMember);

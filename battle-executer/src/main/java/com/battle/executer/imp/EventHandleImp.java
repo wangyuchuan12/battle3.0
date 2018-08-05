@@ -103,6 +103,10 @@ public class EventHandleImp implements EventHandle{
 		myInfo.setCode(Event.MY_INFO);
 		eventManager.addEvent(myInfo);
 		
+		Event goods = new Event();
+		goods.setCode(Event.PUBLISH_GOODS);
+		eventManager.addEvent(goods);
+		
 		this.startRoomEvent();
 		this.restEndEvent();
 		this.startQuestions();
@@ -111,8 +115,24 @@ public class EventHandleImp implements EventHandle{
 		this.roomEnd();
 		this.publishDie();
 		this.myInfo();
+		this.goods();
 	}
 	
+	private void goods() {
+		
+		final EventManager eventManager = battleRoomDataManager.getEventManager();
+		eventManager.addCallback(Event.PUBLISH_GOODS, new EventCallback() {
+			
+			@Override
+			public void callback(Map<String, Object> data){
+				
+				battleRoomPublish.publishGoods();
+
+			}
+		});
+		
+	}
+
 	//等待结束事件
 	@Override
 	public void restEndEvent(){
@@ -150,7 +170,7 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data) {
 				try{
-					battleRoomExecuter.members();
+					battleRoomExecuter.roomInfo();
 					battleRoomStageExecuter.startStage();
 				}catch(Exception e){
 					e.printStackTrace();
@@ -216,6 +236,8 @@ public class EventHandleImp implements EventHandle{
 			@Override
 			public void callback(Map<String, Object> data){
 				try{
+					
+					eventManager.publishEvent(Event.PUBLISH_GOODS, null);
 					battleRoomExecuter.submitResults();
 					scheduledExecuter.schedule(new Runnable() {
 						
@@ -298,7 +320,6 @@ public class EventHandleImp implements EventHandle{
 					
 					BattleRoomCoolMemberVo battleRoomCoolMember = battleRoomMember.getBattleRoomCoolMemberVo();
 					if(battleRoomCoolMember!=null){
-						battleRoomCoolMember.setLoveCount(battleRoomMember.getRemainLove());
 						battleRoomCoolMember = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMember);
 						battleRoomMember.setRemainLove(battleRoomCoolMember.getLoveCount());
 					}

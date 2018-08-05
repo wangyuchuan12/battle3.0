@@ -8,14 +8,18 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.battle.domain.BattleRank;
+import com.battle.domain.BattleRankGood;
 import com.battle.executer.BattleDataRoomManager;
 import com.battle.executer.param.UserParam;
+import com.battle.executer.vo.BattleRankGoodVo;
 import com.battle.executer.vo.BattleRewardVo;
 import com.battle.executer.vo.BattleRoomMemberVo;
 import com.battle.executer.vo.BattleRoomRewardRecord;
 import com.battle.executer.vo.BattleRoomShareRewardVo;
 import com.battle.executer.vo.BattleRoomVo;
 import com.battle.executer.vo.BattleShareRewardVo;
+import com.battle.service.BattleRankGoodService;
 import com.battle.socket.WebSocketManager;
 import com.wyc.common.service.WxUserInfoService;
 import com.wyc.common.util.CommonUtil;
@@ -30,6 +34,9 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 	
 	@Autowired
 	private WebSocketManager webSocketManager;
+	
+	@Autowired
+	private BattleRankGoodService battleRankGoodService;
 
 	@Override
 	public List<BattleRoomMemberVo> getBattleMembers() {
@@ -141,6 +148,23 @@ public class DefaultRoomDataManager implements BattleDataRoomManager{
 		
 		if(CommonUtil.isNotEmpty(data.get("rankId"))){
 			battleRoom.setRankId(data.get("rankId").toString());
+			
+			List<BattleRankGood> battleRankGoods = battleRankGoodService.findAllByRankId(data.get("rankId").toString());
+			
+			List<BattleRankGoodVo> battleRankGoodVos = new ArrayList<>();
+			
+			for(BattleRankGood battleRankGood:battleRankGoods){
+				BattleRankGoodVo battleRankGoodVo = new BattleRankGoodVo();
+				battleRankGoodVo.setAmount(battleRankGood.getAmount());
+				battleRankGoodVo.setId(battleRankGood.getId());
+				battleRankGoodVo.setIndex(battleRankGood.getIndex());
+				battleRankGoodVo.setNum(battleRankGood.getNum());
+				battleRankGoodVo.setRankId(battleRankGood.getRankId());
+				battleRankGoodVo.setType(battleRankGood.getType());
+				battleRankGoodVos.add(battleRankGoodVo);
+			}
+			
+			battleRoom.setBattleRankGood(battleRankGoodVos);
 		}
 		
 		

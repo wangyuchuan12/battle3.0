@@ -36,7 +36,7 @@ public interface BattleRoomExecuter {
 	
 	public void submitResults();
 
-	public void members();
+	public void roomInfo();
 	
 	public BattleRoomMemberVo takepart(UserInfo userInfo);
 	

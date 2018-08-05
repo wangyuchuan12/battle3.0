@@ -4,8 +4,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,15 +23,6 @@ import com.battle.executer.BattleRoomQuestionExecuter;
 import com.battle.executer.Event;
 import com.battle.executer.EventManager;
 import com.battle.executer.ExecuterStore;
-import com.battle.executer.exception.BattleDataManagerException;
-import com.battle.executer.exception.BattleDataRoomManagerException;
-import com.battle.executer.exception.BattleQuestionManagerException;
-import com.battle.executer.exception.BattleRoomExecuterException;
-import com.battle.executer.exception.BattleRoomMemberTakepartException;
-import com.battle.executer.exception.BattleRoomQuestionExecuterException;
-import com.battle.executer.exception.BattleRoomStageExceptionException;
-import com.battle.executer.exception.EndJudgeException;
-import com.battle.executer.exception.PublishException;
 import com.battle.executer.vo.BattlePaperQuestionVo;
 import com.battle.executer.vo.BattlePaperSubjectVo;
 import com.battle.executer.vo.BattlePaperVo;
@@ -303,17 +292,15 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
 		
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
+			EventManager eventManager = battleDataManager.getEventManager();
+			Map<String, Object> data = new HashMap<>();
+			data.put("myInfo", battleRoomMember);
+			eventManager.publishEvent(Event.MY_INFO, data);
 			if(battleRoomMember.getRemainLove()<=0){
 				Map<String, Object> publishData = new HashMap<>();
 				publishData.put("member", battleRoomMember);
 				publishData.put("type", BattleRoomPublish.LOVE_DIE_TYPE);
 				eventManager.publishEvent(Event.PUBLISH_DIE, publishData);
-				
-				
-				EventManager eventManager = battleDataManager.getEventManager();
-				Map<String, Object> data = new HashMap<>();
-				data.put("myInfo", battleRoomMember);
-				eventManager.publishEvent(Event.MY_INFO, data);
 			}
 		}
 		
@@ -325,7 +312,7 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 	}
 
 	@Override
-	public void members() {
+	public void roomInfo() {
 		battleRoomPublish.publishMembers();
 	}
 
@@ -417,17 +404,28 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 						!questionAnswer.getMyAnswer().equals(battlePaperQuestion.getRightAnswer())){
 					Integer remainLove = battleRoomMember.getRemainLove();
 					remainLove--;
-					if(remainLove<=0){
-						remainLove = 0;
-						battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
-						
-					}
+				
 					battleRoomMember.setRemainLove(remainLove);
+					
+					BattleRoomCoolMemberVo battleRoomCoolMemberVo = battleRoomMember.getBattleRoomCoolMemberVo();
+					
+					if(battleRoomCoolMemberVo!=null){
+						battleRoomCoolMemberVo.setLoveCount(remainLove);
+					}
 			
 					EventManager eventManager = battleDataManager.getEventManager();
 					Map<String, Object> data = new HashMap<>();
 					data.put("myInfo", battleRoomMember);
 					eventManager.publishEvent(Event.MY_INFO, data);
+					
+					if(battleRoomMember.getRemainLove()<=0){
+						battleRoomMember.setStatus(BattleRoomMemberVo.STATUS_DIE);
+						battleRoomMember.setRemainLove(0);
+						if(battleRoomCoolMemberVo!=null){
+							battleRoomCoolMemberVo.setLoveCount(0);
+						}
+						
+					}
 					
 				}else{
 					Integer process = battleRoomMember.getProcess();
@@ -455,7 +453,6 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 		}
 		for(BattleRoomShareRewardVo battleRoomShareReward:battleRoomShareRewards){
 			
-			System.out.println("battleRoomShareReward.getShareNum:"+battleRoomShareReward.getShareNum()+",shareNum:"+shareNum);
 			if(battleRoomShareReward.getShareNum().intValue()==shareNum){
 				int remainLove = battleRoomMember.getRemainLove();
 				int limitLove = battleRoomMember.getLimitLove();

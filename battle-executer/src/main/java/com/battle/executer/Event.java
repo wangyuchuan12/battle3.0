@@ -19,6 +19,8 @@ public  class Event {
 	
 	public static final String PUBLISH_DIE = "publish_die";
 	
+	public static final String PUBLISH_GOODS = "publish_goods";
+	
 	public static final String MY_INFO = "my_info";
 
 	private String code;

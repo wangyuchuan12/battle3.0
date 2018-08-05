@@ -59,6 +59,9 @@ public class BattleRoomMemberVo {
 		return remainLove;
 	}
 	public void setRemainLove(Integer remainLove) {
+		if(battleRoomCoolMemberVo!=null){
+			battleRoomCoolMemberVo.setLoveCount(remainLove);
+		}
 		this.remainLove = remainLove;
 	}
 	public Integer getLimitLove() {
