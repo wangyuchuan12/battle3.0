@@ -17,9 +17,9 @@ public class BattleRankQuestionService {
 	@Autowired
 	private BattleRankQuestionDao battleRankQuestionDao;
 
-	public List<BattleRankQuestion> findAllByBattleSubjectIdIn(List<String> subjectIds, Pageable pageable) {
+	public List<BattleRankQuestion> findAllByBattleSubjectIdInAndIsDel(List<String> subjectIds,int isDel, Pageable pageable) {
 		
-		return battleRankQuestionDao.findAllByBattleSubjectIdIn(subjectIds,pageable);
+		return battleRankQuestionDao.findAllByBattleSubjectIdInAndIsDel(subjectIds,isDel,pageable);
 	}
 
 	public void add(BattleRankQuestion battleRankQuestion) {
@@ -27,6 +27,14 @@ public class BattleRankQuestionService {
 		battleRankQuestion.setId(UUID.randomUUID().toString());
 		battleRankQuestion.setUpdateAt(new DateTime());
 		battleRankQuestion.setCreateAt(new DateTime());
+		
+		battleRankQuestionDao.save(battleRankQuestion);
+		
+	}
+
+	public void update(BattleRankQuestion battleRankQuestion) {
+		
+		battleRankQuestion.setUpdateAt(new DateTime());
 		
 		battleRankQuestionDao.save(battleRankQuestion);
 		

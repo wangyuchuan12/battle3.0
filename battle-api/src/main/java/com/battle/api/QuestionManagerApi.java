@@ -1,4 +1,4 @@
-package com.battle.manager.api;
+package com.battle.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,29 +12,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.battle.domain.Battle;
+import com.battle.domain.BattleFactory;
 import com.battle.domain.BattlePeriod;
 import com.battle.domain.BattlePeriodStage;
 import com.battle.domain.BattleQuestion;
+import com.battle.domain.BattleSelectSubject;
 import com.battle.domain.BattleSubject;
 import com.battle.domain.Context;
 import com.battle.domain.Question;
 import com.battle.domain.QuestionOption;
+import com.battle.filter.element.LoginStatusFilter;
+import com.battle.service.BattleFactoryService;
 import com.battle.service.BattlePeriodService;
 import com.battle.service.BattlePeriodStageService;
 import com.battle.service.BattleQuestionService;
+import com.battle.service.BattleSelectSubjectService;
+import com.battle.service.BattleService;
 import com.battle.service.BattleSubjectService;
 import com.battle.service.ContextService;
 import com.battle.service.QuestionOptionService;
 import com.battle.service.QuestionService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.fabric.xmlrpc.base.Array;
+import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
+import com.wyc.common.session.SessionManager;
 import com.wyc.common.util.CommonUtil;
+import com.wyc.common.wx.domain.UserInfo;
 
 @Controller
-@RequestMapping("/api/battle/question")
-public class BattleQuestionApi {
+@RequestMapping("/api/battle/manager/question")
+public class QuestionManagerApi {
 
 	@Autowired
 	private BattlePeriodStageService battlePeriodStageService;
@@ -57,59 +66,105 @@ public class BattleQuestionApi {
 	@Autowired
 	private ContextService contextService;
 	
+	@Autowired
+	private BattleFactoryService battleFactoryService;
 	
-	@RequestMapping("/stages")
-	@ResponseBody
-	public Object stages(HttpServletRequest httpServletRequest){
-		
-		String periodId = httpServletRequest.getParameter("periodId");
-		List<BattlePeriodStage> battlePeriodStages = battlePeriodStageService.findAllByPeriodIdOrderByIndexAsc(periodId);
-		
-		
-		ResultVo resultVo = new ResultVo();
-		resultVo.setSuccess(true);
-		resultVo.setData(battlePeriodStages);
-		
-		return resultVo;
-	}
+	@Autowired
+	private BattleService battleService;
 	
+	@Autowired
+	private BattleSelectSubjectService battleSelectSubjectService;
 	
-	@RequestMapping(value="queryQuestionCount")
+	@RequestMapping("/battleFactory")
 	@ResponseBody
 	@Transactional
-	public ResultVo queryQuestionCount(HttpServletRequest httpServletRequest)throws Exception{
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public Object battleFactory(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		
+		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
 		
-		/*
-		String battleId = httpServletRequest.getParameter("battleId");
-		
-		List<String> subjectIds = battleSubjectService.getIdsByBattleId(battleId);
-		
-		List<Object[]> stageSubjectQuestionNums = new ArrayList<>();
-		
-		if(subjectIds!=null&&subjectIds.size()>0){
-			stageSubjectQuestionNums = battleQuestionService.getQuestionNumByStageIdsAndSubjectIds(stageIds,subjectIds);
-		}
-		
-		
-		List<Map<String, Object>> data = new ArrayList<>();
-		
-		for(Object[] list:stageSubjectQuestionNums){
-			Map<String, Object> map = new HashMap<>();
+		if(battleFactory==null){
+			battleFactory = new BattleFactory();
+			Battle battle = new Battle();
+			battle.setHeadImg("");
+			battle.setIndex(0);
+			battle.setName(userInfo.getNickname()+"创建的");
+			battle.setStatus(Battle.IN_STATUS);
+			battle.setIsDisplay(0);
+			battleService.add(battle);;
 			
-			map.put("num", list[0]);
-			map.put("stageId", list[1]);
-			map.put("subjectId", list[2]);
+			BattlePeriod battlePeriod = new BattlePeriod();
+			battlePeriod.setAuthorBattleUserId(userInfo.getId());
+			battlePeriod.setBattleId(battle.getId());
+			battlePeriod.setIndex(0);
+			battlePeriod.setIsDefault(1);
+			battlePeriod.setIsPublic(0);
+			battlePeriod.setMaxMembers(0);
+			battlePeriod.setMinMembers(0);
+			battlePeriod.setOwnerImg(userInfo.getHeadimgurl());
+			battlePeriod.setOwnerNickname(userInfo.getNickname());
+			battlePeriod.setRightCount(0);
+			battlePeriod.setStageCount(0);
+			battlePeriod.setStatus(BattlePeriod.IN_STATUS);
+			battlePeriod.setTakepartCount(0);
+			battlePeriod.setTotalDistance(0);
+			battlePeriod.setUnit(0);
+			battlePeriod.setWrongCount(0);
 			
-			data.add(map);
+			battlePeriodService.add(battlePeriod);
+			
+			battleFactory.setBattleId(battle.getId());
+			battleFactory.setPeriodId(battlePeriod.getId());
+			battleFactory.setUserId(userInfo.getId());
+			
+			battleFactoryService.add(battleFactory);
 		}
 		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
-		resultVo.setData(data);
+		resultVo.setData(battleFactory);
+		return resultVo;
+	}
+
+	@RequestMapping("/addSubject")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public Object addSubject(HttpServletRequest httpServletRequest)throws Exception{
 		
-		return resultVo;*/
-		return null;
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		
+		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String imgUrl = httpServletRequest.getParameter("imgUrl");
+		String name = httpServletRequest.getParameter("name");
+		
+		BattleSubject battleSubject = new BattleSubject();
+		battleSubject.setBattleId(battleFactory.getBattleId());
+		battleSubject.setImgUrl(imgUrl);
+		battleSubject.setIsDel(0);
+		battleSubject.setName(name);
+		battleSubject.setSeq(1);
+		
+		battleSubjectService.add(battleSubject);
+		
+		BattleSelectSubject battleSelectSubject = new BattleSelectSubject();
+		battleSelectSubject.setBattleId(battleFactory.getBattleId());
+		battleSelectSubject.setFactoryId(battleFactory.getId());
+		battleSelectSubject.setImgUrl(imgUrl);
+		battleSelectSubject.setIndex(1);
+		battleSelectSubject.setIsDel(0);
+		battleSelectSubject.setName(name);
+		battleSelectSubject.setNum(100);
+		battleSelectSubject.setPeriodId(battleFactory.getPeriodId());
+		battleSelectSubject.setSubjectId(battleSubject.getId());
+		battleSelectSubjectService.add(battleSelectSubject);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		return resultVo;
 	}
 	
 	@RequestMapping("/subjects")
@@ -132,11 +187,76 @@ public class BattleQuestionApi {
 		String battleId = httpServletRequest.getParameter("battleId");
 		List<BattlePeriod> battlePeriods = battlePeriodService.findAllByBattleIdOrderByIndexAsc(battleId);
 		
-		
-		System.out.println(".................battleId:"+battleId+",battlePeriods:"+battlePeriods);
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
 		resultVo.setData(battlePeriods);
+		return resultVo;
+	}
+	
+	@RequestMapping("/delSubject")
+	@ResponseBody
+	@Transactional
+	public Object delSubject(HttpServletRequest httpServletRequest){
+		String subjectId = httpServletRequest.getParameter("subjectId");
+		
+		List<String> subjectIds = new ArrayList<>();
+		subjectIds.add(subjectId);
+		
+		List<Object[]> questionNums = battleQuestionService.getQuestionNumBySubjectIds(subjectIds);
+		
+		if(questionNums!=null&&questionNums.size()>0){
+			Object[] questionNum = questionNums.get(0);
+			if(Integer.parseInt(questionNum[0].toString())>0){
+				ResultVo resultVo = new ResultVo();
+				resultVo.setSuccess(false);
+				resultVo.setErrorCode(0);
+				return resultVo;
+			}
+		}
+		
+		BattleSubject battleSubject = battleSubjectService.findOne(subjectId);
+		
+		BattleSelectSubject battleSelectSubject = battleSelectSubjectService.findOneBySubjectId(subjectId);
+		
+		battleSelectSubject.setIsDel(1);
+		battleSubject.setIsDel(1);
+		
+		battleSelectSubjectService.update(battleSelectSubject);
+		battleSubjectService.update(battleSubject);;
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		return resultVo;
+		
+		
+	}
+	
+	@RequestMapping("/delQuestion")
+	@ResponseBody
+	@Transactional
+	public Object delQuestion(HttpServletRequest httpServletRequest){
+		
+		String questionId = httpServletRequest.getParameter("questionId");
+		
+		BattleQuestion battleQuestion = battleQuestionService.findOne(questionId);
+		
+		Question question = questionService.findOne(battleQuestion.getQuestionId());
+		
+		if(question.getType().intValue()==Question.SELECT_TYPE){
+			List<QuestionOption> questionOptions = questionOptionService.findAllByQuestionId(question.getId());
+			for(QuestionOption questionOption:questionOptions){
+				questionOption.setIsDel(1);
+				questionOptionService.update(questionOption);
+			}
+			question.setIsDel(1);
+			questionService.update(question);
+		}
+		
+		battleQuestion.setIsDel(1);
+		battleQuestionService.update(battleQuestion);
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
 		return resultVo;
 	}
 	
@@ -147,7 +267,6 @@ public class BattleQuestionApi {
 		
 		String battleId = httpServletRequest.getParameter("battleId");
 		
-		String stageId = httpServletRequest.getParameter("stageId");
 		
 		String subjectId = httpServletRequest.getParameter("subjectId");
 		
@@ -157,7 +276,7 @@ public class BattleQuestionApi {
 		List<BattleQuestion> battleQuestions = new ArrayList<>();
 		
 		if(!CommonUtil.isEmpty(battleId)&&!CommonUtil.isEmpty(battleId)&&!CommonUtil.isEmpty(subjectId)){
-			//battleQuestions = battleQuestionService.findAllByBattleIdAndPeriodStageIdAndBattleSubjectIdInAndIsDel(battleId, stageId, subjectIds,0);
+			battleQuestions = battleQuestionService.findAllByBattleIdAndSubjectIdInAndIsDel(battleId, subjectIds,0);
 		}
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
@@ -183,10 +302,12 @@ public class BattleQuestionApi {
 		data.put("id", battleQuestion.getId());
 		data.put("answer", battleQuestion.getAnswer());
 		data.put("battleId", battleQuestion.getBattleId());
-		/*data.put("battlePeriodId", battleQuestion.getBattlePeriodId());
-		data.put("battleSubjectId", battleQuestion.getBattleSubjectId());*/
+		data.put("battlePeriodId", battleQuestion.getPeriodId());
+		data.put("battleSubjectId", battleQuestion.getSubjectId());
 		data.put("imgUrl", battleQuestion.getImgUrl());
 		data.put("name", battleQuestion.getName());
+		
+		data.put("periodStageId", battleQuestion.getPeriodId());
 		data.put("question", battleQuestion.getQuestion());
 		data.put("questionId", battleQuestion.getQuestionId());
 		data.put("seq", battleQuestion.getSeq());
@@ -205,11 +326,12 @@ public class BattleQuestionApi {
 	}
 	
 	
+	
+	
 	@RequestMapping(value="addQuestion")
 	@ResponseBody
 	@Transactional
 	public Object addQuestion(HttpServletRequest httpServletRequest)throws Exception{
-		String stageId = httpServletRequest.getParameter("stageId");
 		String subjectId = httpServletRequest.getParameter("subjectId");
 		
 		String questionType = httpServletRequest.getParameter("questionType");
@@ -222,12 +344,9 @@ public class BattleQuestionApi {
 		
 		String fillWords = httpServletRequest.getParameter("fillWords");
 		
-		BattlePeriodStage battlePeriodStage = battlePeriodStageService.findOne(stageId);
-
+		String battleId = httpServletRequest.getParameter("battleId");
 		
-		String periodId = battlePeriodStage.getPeriodId();
-		
-		String battleId = battlePeriodStage.getBattleId();
+		String periodId =httpServletRequest.getParameter("periodId");
 		
 		Context context = contextService.findOneByCodeBySync(Context.QUESTION_MAX_INDEX_CODE);
 		if(context==null){
@@ -262,8 +381,8 @@ public class BattleQuestionApi {
 		
 		BattleQuestion battleQuestion = new BattleQuestion();
 		battleQuestion.setBattleId(battleId);
-		/*battleQuestion.setBattlePeriodId(periodId);
-		battleQuestion.setBattleSubjectId(subjectId);*/
+		battleQuestion.setPeriodId(periodId);
+		battleQuestion.setSubjectId(subjectId);
 		battleQuestion.setImgUrl(imgUrl);
 		battleQuestion.setName("");
 		battleQuestion.setAnswer(answer);
@@ -329,14 +448,12 @@ public class BattleQuestionApi {
 		return resultVo;
 	}
 	
-	
 	@RequestMapping(value="updateQuestion")
 	@ResponseBody
 	@Transactional
 	public Object updateQuestion(HttpServletRequest httpServletRequest)throws Exception{
 		String battleQuestionId = httpServletRequest.getParameter("battleQuestionId");
 		
-		String stageId = httpServletRequest.getParameter("stageId");
 		String subjectId = httpServletRequest.getParameter("subjectId");
 		
 		String questionType = httpServletRequest.getParameter("questionType");
@@ -348,14 +465,8 @@ public class BattleQuestionApi {
 		String answer = httpServletRequest.getParameter("answer");
 		
 		String fillWords = httpServletRequest.getParameter("fillWords");
+	
 		
-		BattlePeriodStage battlePeriodStage = battlePeriodStageService.findOne(stageId);
-		
-		//BattlePeriod battlePeriod = battlePeriodService.findOne(battlePeriodStage.getPeriodId());
-		
-		String periodId = battlePeriodStage.getPeriodId();
-		
-		String battleId = battlePeriodStage.getBattleId();
 		
 		
 		BattleQuestion battleQuestion = battleQuestionService.findOne(battleQuestionId);
@@ -369,21 +480,13 @@ public class BattleQuestionApi {
 		questionTarget.setAnswer(answer);
 		questionTarget.setFillWords(fillWords);
 		
-		
-		battleQuestion.setBattleId(battleId);
-		/*battleQuestion.setBattlePeriodId(periodId);
-		battleQuestion.setBattleSubjectId(subjectId);*/
+		battleQuestion.setSubjectId(subjectId);
 		battleQuestion.setImgUrl(imgUrl);
 		battleQuestion.setName("");
 		battleQuestion.setAnswer(answer);
 		battleQuestion.setQuestion(question);
 		
 		battleQuestion.setQuestionId(questionTarget.getId());
-		
-		
-		
-		
-		
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		TypeReference<List<Map<String, String>>> typeReference = new TypeReference<List<Map<String,String>>>() {
@@ -415,6 +518,7 @@ public class BattleQuestionApi {
 				if(!CommonUtil.isEmpty(isRight)&&isRight.equals("1")){
 					questionTarget.setRightOptionId(questionOption.getId());
 					questionTarget.setAnswer(questionOption.getContent());
+				
 				}
 			}
 			

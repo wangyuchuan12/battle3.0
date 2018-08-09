@@ -16,8 +16,8 @@ public class BattleSelectSubject {
 	@Id
 	private String id;
 	
-	@Column(name="paper_id")
-	private String paperId;
+	@Column(name="factory_id")
+	private String factoryId;
 	
 	@Column
 	private String name;
@@ -36,6 +36,9 @@ public class BattleSelectSubject {
 	
 	@Column(name="period_id")
 	private String periodId;
+	
+	@Column(name="battle_id")
+	private String battleId;
 	
 	@Column
 	private Integer num;
@@ -57,13 +60,13 @@ public class BattleSelectSubject {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getPaperId() {
-		return paperId;
+	
+	public String getFactoryId() {
+		return factoryId;
 	}
 
-	public void setPaperId(String paperId) {
-		this.paperId = paperId;
+	public void setFactoryId(String factoryId) {
+		this.factoryId = factoryId;
 	}
 
 	public String getName() {
@@ -120,6 +123,15 @@ public class BattleSelectSubject {
 
 	public void setNum(Integer num) {
 		this.num = num;
+	}
+	
+
+	public String getBattleId() {
+		return battleId;
+	}
+
+	public void setBattleId(String battleId) {
+		this.battleId = battleId;
 	}
 
 	public DateTime getCreateAt() {

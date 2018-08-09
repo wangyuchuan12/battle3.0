@@ -107,7 +107,7 @@ public class RankQuestionManager implements BattleQuestionManager{
 		Pageable pageable = new PageRequest(0, battleStageVo.getQuestionCount());
 		
 		
-		List<BattleRankQuestion> battleRankQuestions = battleRankQuestionService.findAllByBattleSubjectIdIn(subjectIds,pageable);
+		List<BattleRankQuestion> battleRankQuestions = battleRankQuestionService.findAllByBattleSubjectIdInAndIsDel(subjectIds,0,pageable);
 
 		for(int i=0;i<battleRankQuestions.size();i++){
 			BattleRankQuestion battleRankQuestion = battleRankQuestions.get(i);

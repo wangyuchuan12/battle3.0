@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,9 @@ public class BattleRankSubjectService {
 		
 	}
 
-	public BattleRankSubject findOneByBattleSubjectId(String battleSubjectId) {
+	public BattleRankSubject findOneByBattleSubjectIdAndIsDel(String battleSubjectId,int isDel) {
 		
-		return battleRankSubjectDao.findOneByBattleSubjectId(battleSubjectId);
+		return battleRankSubjectDao.findOneByBattleSubjectIdAndIsDel(battleSubjectId,isDel);
 	}
 
 	public void add(BattleRankSubject battleRankSubject) {
@@ -35,5 +36,18 @@ public class BattleRankSubjectService {
 		battleRankSubject.setCreateAt(new DateTime());
 		
 		battleRankSubjectDao.save(battleRankSubject);
+	}
+
+	public Page<BattleRankSubject> findAllByRankIdAndIsDel(String rankId, int isDel, Pageable pageable) {
+		
+		return battleRankSubjectDao.findAllByRankIdAndIsDel(rankId,isDel,pageable);
+	}
+
+	public void update(BattleRankSubject battleRankSubject) {
+		
+		battleRankSubject.setUpdateAt(new DateTime());
+		
+		battleRankSubjectDao.save(battleRankSubject);
+		
 	}
 }

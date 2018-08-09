@@ -11,4 +11,8 @@ public interface BattleSelectSubjectDao extends CrudRepository<BattleSelectSubje
 
 	List<BattleSelectSubject> findAllByIsDel(int isDel, Pageable pageable);
 
+	BattleSelectSubject findOneBySubjectId(String subjectId);
+
+	List<BattleSelectSubject> findAllByFactoryIdAndIsDel(String factoryId, int isDel, Pageable pageable);
+
 }

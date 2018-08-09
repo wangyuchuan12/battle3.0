@@ -16,9 +16,6 @@ public class BattleQuestionService {
 	@Autowired
 	private BattleQuestionDao battleQuestionDao;
 
-	public List<BattleQuestion> findAllByBattleIdAndPeriodStageIdRandom(String battleId, String periodStageId,Pageable pageable) {
-		return battleQuestionDao.findAllByBattleIdAndPeriodStageIdRandom(battleId,periodStageId,pageable);
-	}
 	
 	public List<BattleQuestion> findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(String battleId, String periodId,String subjectId,Pageable pageable) {
 		return battleQuestionDao.findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(battleId,periodId,subjectId,pageable);
@@ -27,15 +24,6 @@ public class BattleQuestionService {
 	public List<BattleQuestion> findAllByIdIn(List<String> ids) {
 		
 		return battleQuestionDao.findAllByIdIn(ids);
-	}
-
-	public List<BattleQuestion> findAllByPeriodStageIdAndSubjectIdAndIsDelOrderBySeqAsc(String stageId,
-			String subjectId,Integer isDel) {
-		return battleQuestionDao.findAllByPeriodStageIdAndSubjectIdAndIsDelOrderBySeqAsc(stageId,subjectId,isDel);
-	}
-
-	public List<BattleQuestion> findAllByPeriodStageIdAndIsDelOrderBySeqAsc(String stageId,Integer isDel) {
-		return battleQuestionDao.findAllByPeriodStageIdAndIsDelOrderBySeqAsc(stageId,isDel);
 	}
 
 	public void add(BattleQuestion battleQuestion) {
@@ -57,21 +45,11 @@ public class BattleQuestionService {
 		return battleQuestionDao.findOne(id);
 	}
 
-	public List<BattleQuestion> findAllByBattleIdAndPeriodStageIdAndSubjectIdInAndIsDel(String battleId, String stageId,
-			String[] subjectIds,Integer isDel) {
-		return battleQuestionDao.findAllByBattleIdAndPeriodStageIdAndSubjectIdInAndIsDel(battleId,stageId,subjectIds,isDel);
-	}
 
 	public List<BattleQuestion> findAllByBattleIdAndPeriodIdAndIsDel(String battleId, String periodId, int isDel) {
 		return battleQuestionDao.findAllByBattleIdAndPeriodIdAndIsDel(battleId,periodId,isDel);
 	}
-
-	public List<Object[]> getQuestionNumByStageIdsAndSubjectIds(List<String> stageIds,
-			List<String> subjectIds) {
-		
-		return battleQuestionDao.getQuestionNumByStageIdsAndSubjectIds(stageIds,subjectIds);
-	}
-
+	
 	public List<BattleQuestion> findAllByBattleIdAndSubjectIdRandom(String battleId, String subjectId,
 			Pageable pageable) {
 		
@@ -82,5 +60,16 @@ public class BattleQuestionService {
 			Pageable pageable) {
 		
 		return battleQuestionDao.findAllByBattleIdAndPeriodIdRandom(battleId,periodId,pageable);
+	}
+
+	public List<BattleQuestion> findAllByBattleIdAndSubjectIdInAndIsDel(String battleId, String[] subjectIds, int isDel) {
+		
+		return battleQuestionDao.findAllByBattleIdAndSubjectIdInAndIsDel(battleId,subjectIds,isDel);
+	}
+
+	public List<Object[]> getQuestionNumBySubjectIds(List<String> subjectIds) {
+		
+		return battleQuestionDao.getQuestionNumBySubjectIds(subjectIds);
+		
 	}
 }

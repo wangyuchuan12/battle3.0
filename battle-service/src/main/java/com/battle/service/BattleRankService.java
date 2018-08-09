@@ -49,4 +49,9 @@ public class BattleRankService {
 		
 		return battleRankDao.findAllByOwnerUserId(ownerUserId);
 	}
+
+	public List<BattleRank> findAllByFactoryId(String factoryId) {
+		
+		return battleRankDao.findAllByFactoryId(factoryId);
+	}
 }

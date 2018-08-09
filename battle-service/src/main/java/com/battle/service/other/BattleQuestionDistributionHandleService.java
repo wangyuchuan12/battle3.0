@@ -112,7 +112,7 @@ public class BattleQuestionDistributionHandleService {
 					battleQuestionDistributionQuestion.setPeriodStageId(battleQuestionDistributionStage.getId());
 					battleQuestionDistributionQuestion.setQuestion(battleQuestion.getQuestion());
 					battleQuestionDistributionQuestion.setQuestionId(battleQuestion.getQuestionId());
-					battleQuestionDistributionQuestion.setRightAnswer(battleQuestion.getRightAnswer());
+					battleQuestionDistributionQuestion.setRightAnswer(battleQuestion.getAnswer());
 					battleQuestionDistributionQuestion.setSeq(battleQuestion.getSeq());
 					battleQuestionDistributionQuestion.setType(battleQuestion.getType());
 					

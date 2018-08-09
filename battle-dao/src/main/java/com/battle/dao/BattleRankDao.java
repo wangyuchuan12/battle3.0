@@ -12,4 +12,6 @@ public interface BattleRankDao extends CrudRepository<BattleRank, String>{
 
 	List<BattleRank> findAllByOwnerUserId(String ownerUserId);
 
+	List<BattleRank> findAllByFactoryId(String factoryId);
+
 }

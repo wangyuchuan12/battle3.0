@@ -68,11 +68,6 @@ public class BattleQuestion implements Serializable{
 	@Column(name="period_id")
 	private String periodId;
 	
-	//阶段id
-	@ParamAnnotation
-	@Column(name="period_stage_id")
-	private String periodStageId;
-	
 	
 	//0选择题 1填空题 2填词题
 	@Column
@@ -87,11 +82,6 @@ public class BattleQuestion implements Serializable{
 	@Column
 	@ParamAnnotation
 	private String answer;
-	
-	//正确答案
-	@Column(name="right_answer")
-	@ParamAnnotation
-	private String rightAnswer;
 	
 	//选项
 	@Column
@@ -162,14 +152,6 @@ public class BattleQuestion implements Serializable{
 		this.subjectId = subjectId;
 	}
 
-	public String getPeriodStageId() {
-		return periodStageId;
-	}
-
-	public void setPeriodStageId(String periodStageId) {
-		this.periodStageId = periodStageId;
-	}
-
 	public String getBattleId() {
 		return battleId;
 	}
@@ -200,14 +182,6 @@ public class BattleQuestion implements Serializable{
 
 	public void setAnswer(String answer) {
 		this.answer = answer;
-	}
-
-	public String getRightAnswer() {
-		return rightAnswer;
-	}
-
-	public void setRightAnswer(String rightAnswer) {
-		this.rightAnswer = rightAnswer;
 	}
 
 	public String getOptions() {

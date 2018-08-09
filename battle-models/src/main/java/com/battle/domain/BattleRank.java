@@ -55,6 +55,18 @@ public class BattleRank {
 	@Column(name="owner_user_id")
 	private String ownerUserId;
 	
+	@Column(name="factory_id")
+	private String factoryId;
+	
+	@Column(name="img_url")
+	private String imgUrl;
+	
+	@Column
+	private String name;
+	
+	@Column
+	private String detail;
+	
 	@Column(name="end_time")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime endTime;
@@ -197,6 +209,41 @@ public class BattleRank {
 
 	public void setOwnerUserId(String ownerUserId) {
 		this.ownerUserId = ownerUserId;
+	}
+	
+	
+
+	public String getFactoryId() {
+		return factoryId;
+	}
+
+	public void setFactoryId(String factoryId) {
+		this.factoryId = factoryId;
+	}
+	
+
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 
 	public DateTime getCreateAt() {

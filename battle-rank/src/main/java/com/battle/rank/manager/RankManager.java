@@ -1,5 +1,6 @@
 package com.battle.rank.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ public class RankManager {
 		}
 	}
 	
+	
+	
 	public void addBySubjectId(String rankId,String periosId,String battleSubjectId,int num){
 	
 		
@@ -59,8 +62,13 @@ public class RankManager {
 		if(battleRank==null){
 			throw new RuntimeException();
 		}
-		BattleRankSubject battleRankSubject = battleRankSubjectService.findOneByBattleSubjectId(battleSubjectId);
+		BattleRankSubject battleRankSubject = battleRankSubjectService.findOneByBattleSubjectIdAndIsDel(battleSubjectId,0);
 		BattleSubject battleSubject = battleSubjectService.findOne(battleSubjectId);
+		if(battleRankSubject!=null){
+			battleRankSubject.setIsDel(1);
+			battleRankSubjectService.update(battleRankSubject);
+		}
+		
 		if(battleRankSubject==null){
 			battleRankSubject = new BattleRankSubject();
 			battleRankSubject.setBattleSubjectId(battleSubject.getId());
@@ -71,8 +79,21 @@ public class RankManager {
 			battleRankSubjectService.add(battleRankSubject);
 		}
 		
-		Pageable pageable = new PageRequest(0, num);
+		List<String> subjectIds = new ArrayList<>();
+		subjectIds.add(battleSubject.getId());
+		
+		Pageable pageable = new PageRequest(0, 10000);
+		List<BattleRankQuestion> battleRankQuestions = battleRankQuestionService.findAllByBattleSubjectIdInAndIsDel(subjectIds, 0,pageable);
+		
+		for(BattleRankQuestion battleRankQuestion:battleRankQuestions){
+			battleRankQuestion.setIsDel(1);
+			battleRankQuestionService.update(battleRankQuestion);
+		}
+		
+		pageable = new PageRequest(0, num);
 		List<BattleQuestion> battleQuestions = battleQuestionService.findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(battleSubject.getBattleId(), periosId, battleSubjectId, pageable);
+		
+		
 		for(BattleQuestion battleQuestion:battleQuestions){
 			BattleRankQuestion battleRankQuestion = new BattleRankQuestion();
 			battleRankQuestion.setAnswer(battleQuestion.getAnswer());
@@ -83,10 +104,9 @@ public class RankManager {
 			battleRankQuestion.setIsDel(0);
 			battleRankQuestion.setName(battleQuestion.getName());
 			battleRankQuestion.setOptions(battleQuestion.getOptions());
-			battleRankQuestion.setPeriodStageId(battleQuestion.getPeriodStageId());
 			battleRankQuestion.setQuestion(battleQuestion.getQuestion());
 			battleRankQuestion.setQuestionId(battleQuestion.getQuestionId());
-			battleRankQuestion.setRightAnswer(battleQuestion.getRightAnswer());
+			battleRankQuestion.setRightAnswer(battleQuestion.getAnswer());
 			battleRankQuestion.setSeq(battleQuestion.getSeq());
 			battleRankQuestion.setType(battleQuestion.getType());
 			battleRankQuestion.setRankId(rankId);
