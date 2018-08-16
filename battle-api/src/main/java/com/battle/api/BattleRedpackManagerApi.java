@@ -188,16 +188,18 @@ public class BattleRedpackManagerApi {
 			return resultVo;
 		}
 		
-		if(amountBigDecimal.divide(new BigDecimal(countInt),RoundingMode.DOWN).floatValue()<0.01){
+		amountBigDecimal = amountBigDecimal.multiply(new BigDecimal(1000));
+		if(amountBigDecimal.divide(new BigDecimal(countInt),RoundingMode.DOWN).floatValue()<10){
 			ResultVo resultVo = new ResultVo();
 			resultVo.setSuccess(false);
 			return resultVo;
 		}
 		
+		
 		String name = httpServletRequest.getParameter("name");
 		
 		
-		amountBigDecimal = amountBigDecimal.multiply(new BigDecimal(1000));
+		
 		DistributionAmountUtil distributionAmountUtil = new DistributionAmountUtil();
 		
 		List<Integer> amountThousands = distributionAmountUtil.splitRedPackets(amountBigDecimal.intValue(), countInt, 1, amountBigDecimal.multiply(new BigDecimal(0.75)).intValue());
