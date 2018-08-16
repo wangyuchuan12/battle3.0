@@ -63,83 +63,87 @@ public class BattleRestEventListener  implements ApplicationListener<BattleRestE
 	@Transactional
 	public void onApplicationEvent(BattleRestEvent event) {
 		
-		BattleRoomVo battleRoomVo = event.getSource();
-		List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomVo.getMembers();
-		battleRoomMemberVos = new ArrayList<>(battleRoomMemberVos);
-		BattleRank battleRank = null;
-		if(CommonUtil.isNotEmpty(battleRoomVo.getRankId())){
-			battleRank = battleRankService.findOne(battleRoomVo.getRankId());
-		}
-		
-		List<BattleRedpackTask> battleRedpackTasks = battleRedpackTaskService.findAllByRankId(battleRank.getId());
-		if(battleRank!=null){
-			for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
-				
-				try{
-					BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(),battleRoomMemberVo.getUserId());
-					if(battleRankMember==null){
-						battleRankMember = new BattleRankMember();
-						battleRankMember.setCoverUrl(battleRoomMemberVo.getImgUrl());
-						battleRankMember.setHeadImg(battleRoomMemberVo.getImgUrl());
-						battleRankMember.setProcess(battleRoomMemberVo.getProcess());
-						battleRankMember.setRankId(battleRank.getId());
-						battleRankMember.setUserId(battleRoomMemberVo.getUserId());
-						battleRankMember.setNickname(battleRoomMemberVo.getNickname());
-						battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
-						
-						battleRankMemberService.add(battleRankMember);
-					}else{
-						battleRankMember.setCoverUrl(battleRoomMemberVo.getImgUrl());
-						battleRankMember.setHeadImg(battleRoomMemberVo.getImgUrl());
-						battleRankMember.setProcess(battleRoomMemberVo.getProcess());
-						battleRankMember.setNickname(battleRoomMemberVo.getNickname());
-						battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
-						battleRankMemberService.update(battleRankMember);
-					}
+		try{
+			BattleRoomVo battleRoomVo = event.getSource();
+			List<BattleRoomMemberVo> battleRoomMemberVos = battleRoomVo.getMembers();
+			battleRoomMemberVos = new ArrayList<>(battleRoomMemberVos);
+			BattleRank battleRank = null;
+			if(CommonUtil.isNotEmpty(battleRoomVo.getRankId())){
+				battleRank = battleRankService.findOne(battleRoomVo.getRankId());
+			}
+			
+			List<BattleRedpackTask> battleRedpackTasks = battleRedpackTaskService.findAllByRankId(battleRank.getId());
+			if(battleRank!=null){
+				for(BattleRoomMemberVo battleRoomMemberVo:battleRoomMemberVos){
 					
-					BattleRoomCoolMemberVo battleRoomCoolMember = battleRoomMemberVo.getBattleRoomCoolMemberVo();
-					battleRoomCoolMember.setLoveCount(battleRoomMemberVo.getRemainLove());
-					battleRoomCoolMember = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMember);
-					
-					for(BattleRedpackTask battleRedpackTask:battleRedpackTasks){
-						if(battleRankMember.getProcess()>=battleRedpackTask.getProcess()){
+					try{
+						BattleRankMember battleRankMember = battleRankMemberService.findOneByRankIdAndUserId(battleRank.getId(),battleRoomMemberVo.getUserId());
+						if(battleRankMember==null){
+							battleRankMember = new BattleRankMember();
+							battleRankMember.setCoverUrl(battleRoomMemberVo.getImgUrl());
+							battleRankMember.setHeadImg(battleRoomMemberVo.getImgUrl());
+							battleRankMember.setProcess(battleRoomMemberVo.getProcess());
+							battleRankMember.setRankId(battleRank.getId());
+							battleRankMember.setUserId(battleRoomMemberVo.getUserId());
+							battleRankMember.setNickname(battleRoomMemberVo.getNickname());
+							battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
 							
-							BattleRedpackTaskMember battleRedpackTaskMember = battleRedpackTaskMemberService.findOneByTaskIdAndUserId(battleRedpackTask.getId(), battleRankMember.getUserId());
-							if(battleRedpackTaskMember!=null){
-								battleRedpackTaskMember.setStatus(BattleRedpackTaskMember.COMPONENT_STATUS);
-								battleRedpackTaskMemberService.update(battleRedpackTaskMember);
-
-								Map<String, Object> data = new HashMap<>();
+							battleRankMemberService.add(battleRankMember);
+						}else{
+							battleRankMember.setCoverUrl(battleRoomMemberVo.getImgUrl());
+							battleRankMember.setHeadImg(battleRoomMemberVo.getImgUrl());
+							battleRankMember.setProcess(battleRoomMemberVo.getProcess());
+							battleRankMember.setNickname(battleRoomMemberVo.getNickname());
+							battleRankMember.setShareNum(battleRoomMemberVo.getShareNum());
+							battleRankMemberService.update(battleRankMember);
+						}
+						
+						BattleRoomCoolMemberVo battleRoomCoolMember = battleRoomMemberVo.getBattleRoomCoolMemberVo();
+						battleRoomCoolMember.setLoveCount(battleRoomMemberVo.getRemainLove());
+						battleRoomCoolMember = battleRoomCoolHandle.filterAndSaveCoolMember(battleRoomCoolMember);
+						
+						for(BattleRedpackTask battleRedpackTask:battleRedpackTasks){
+							if(battleRankMember.getProcess()>=battleRedpackTask.getProcess()){
 								
-								data.put("beanNum", battleRedpackTask.getBeanNum());
-								data.put("redpackId", battleRedpackTask.getRedpackId());
-								
-								MessageVo messageVo = new MessageVo();
-								messageVo.setCode(MessageVo.TASK_COMPLETE);
-								messageVo.setData(data);
-								List<String> userIds = new ArrayList<>();
-								userIds.add(battleRedpackTaskMember.getUserId());
-								messageVo.setUserIds(userIds);
-								messageVo.setType(MessageVo.USERS_TYPE);
-								messageHandler.sendMessage(messageVo);
-								
-								UserInfo userInfo = userInfoService.findOne(battleRedpackTaskMember.getUserId());
-								Account account = accountService.fineOneSync(userInfo.getAccountId());
-								
-								account.setWisdomCount(account.getWisdomCount()+battleRedpackTask.getBeanNum());
-								
-								accountService.update(account);
-								
+								BattleRedpackTaskMember battleRedpackTaskMember = battleRedpackTaskMemberService.findOneByTaskIdAndUserId(battleRedpackTask.getId(), battleRankMember.getUserId());
+								if(battleRedpackTaskMember!=null&&battleRedpackTaskMember.getStatus().intValue()==BattleRedpackTaskMember.IN_STATUS.intValue()){
+									battleRedpackTaskMember.setStatus(BattleRedpackTaskMember.COMPONENT_STATUS);
+									battleRedpackTaskMemberService.update(battleRedpackTaskMember);
+	
+									Map<String, Object> data = new HashMap<>();
+									
+									data.put("beanNum", battleRedpackTask.getBeanNum());
+									data.put("redpackId", battleRedpackTask.getRedpackId());
+									
+									MessageVo messageVo = new MessageVo();
+									messageVo.setCode(MessageVo.TASK_COMPLETE);
+									messageVo.setData(data);
+									List<String> userIds = new ArrayList<>();
+									userIds.add(battleRedpackTaskMember.getUserId());
+									messageVo.setUserIds(userIds);
+									messageVo.setType(MessageVo.USERS_TYPE);
+									messageHandler.sendMessage(messageVo);
+									
+									UserInfo userInfo = userInfoService.findOne(battleRedpackTaskMember.getUserId());
+									Account account = accountService.fineOneSync(userInfo.getAccountId());
+									
+									account.setWisdomCount(account.getWisdomCount()+battleRedpackTask.getBeanNum());
+									
+									accountService.update(account);
+									
+								}
 							}
 						}
+						
+					}catch(Exception e){
+						e.printStackTrace();
 					}
+	
 					
-				}catch(Exception e){
-					e.printStackTrace();
 				}
-
-				
 			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 

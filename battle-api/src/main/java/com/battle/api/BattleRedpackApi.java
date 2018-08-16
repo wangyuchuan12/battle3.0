@@ -30,6 +30,7 @@ import com.battle.service.BattleRedpackStorageService;
 import com.battle.service.BattleRedpackTaskMemberService;
 import com.battle.service.BattleRedpackTaskService;
 import com.wyc.annotation.HandlerAnnotation;
+import com.wyc.common.domain.Account;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.service.AccountService;
 import com.wyc.common.session.SessionManager;
@@ -62,6 +63,9 @@ public class BattleRedpackApi {
 	
 	@Autowired
 	private BattleRedpackStorageRecordService battleRedpackStorageRecordService;
+	
+	@Autowired
+	private AccountService accountService;
 	
 	
 	
@@ -123,6 +127,10 @@ public class BattleRedpackApi {
 			battleRedpackStorage.setStatus(BattleRedpackStorage.COMPLEATE_STATUS);
 			battleRedpackStorage.setRedPackId("");
 			battleRedpackStorageService.update(battleRedpackStorage);
+			
+			Account account = accountService.fineOneSync(userInfo.getAccountId());
+			account.setAmountBalance(account.getAmountBalance().add(battleRedpackDistribution.getAmount()));
+			accountService.update(account);
 			
 			Map<String, Object> data = new HashMap<>();
 			data.put("amount", battleRedpackDistribution.getAmount());
