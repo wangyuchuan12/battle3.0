@@ -10,36 +10,27 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wyc.annotation.ParamAnnotation;
-import com.wyc.annotation.ParamEntityAnnotation;
 
-@ParamEntityAnnotation
 @Entity
-@Table(name="battle_factory")
-public class BattleFactory {
+@Table(name="battle_redpack_member")
+public class BattleRedpackMember {
 	@Id
 	private String id;
 	
-	
-	@Column(name="battle_id")
-	private String battleId;
-	
-	@Column(name="period_id")
-	private String periodId;
-	
-	@Column(name="user_id")
+	@Column(name = "user_id")
 	private String userId;
+	
+	@Column
+	private String nickname;
 	
 	@Column(name="img_url")
 	private String imgUrl;
 	
-	@Column
-	private String name;
+	@Column(name="redpack_id")
+	private String redpackId;
 	
 	@Column
-	private String detail;
-	
-	@Column(name="is_public")
-	private Integer isPublic;
+	private Integer status;
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -61,28 +52,20 @@ public class BattleFactory {
 		this.id = id;
 	}
 
-	public String getBattleId() {
-		return battleId;
-	}
-
-	public void setBattleId(String battleId) {
-		this.battleId = battleId;
-	}
-
-	public String getPeriodId() {
-		return periodId;
-	}
-
-	public void setPeriodId(String periodId) {
-		this.periodId = periodId;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public String getImgUrl() {
@@ -92,31 +75,21 @@ public class BattleFactory {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
-	
-	public String getName() {
-		return name;
+
+	public String getRedpackId() {
+		return redpackId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	
-
-	public String getDetail() {
-		return detail;
+	public void setRedpackId(String redpackId) {
+		this.redpackId = redpackId;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public Integer getIsPublic() {
-		return isPublic;
-	}
-
-	public void setIsPublic(Integer isPublic) {
-		this.isPublic = isPublic;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	public DateTime getCreateAt() {

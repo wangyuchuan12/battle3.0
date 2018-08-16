@@ -10,36 +10,25 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wyc.annotation.ParamAnnotation;
-import com.wyc.annotation.ParamEntityAnnotation;
 
-@ParamEntityAnnotation
 @Entity
-@Table(name="battle_factory")
-public class BattleFactory {
+@Table(name="battle_redpack_storage")
+public class BattleRedpackStorage {
+	public static final Integer FREE_STATUS = 0;
+	public static final Integer IN_STATUS = 1;
+	public static final Integer COMPLEATE_STATUS = 2;
+	
 	@Id
 	private String id;
 	
-	
-	@Column(name="battle_id")
-	private String battleId;
-	
-	@Column(name="period_id")
-	private String periodId;
-	
-	@Column(name="user_id")
+	@Column(name = "user_id",unique=true)
 	private String userId;
 	
-	@Column(name="img_url")
-	private String imgUrl;
+	@Column(name = "red_pack_id")
+	private String redPackId;
 	
 	@Column
-	private String name;
-	
-	@Column
-	private String detail;
-	
-	@Column(name="is_public")
-	private Integer isPublic;
+	private Integer status;
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -61,22 +50,6 @@ public class BattleFactory {
 		this.id = id;
 	}
 
-	public String getBattleId() {
-		return battleId;
-	}
-
-	public void setBattleId(String battleId) {
-		this.battleId = battleId;
-	}
-
-	public String getPeriodId() {
-		return periodId;
-	}
-
-	public void setPeriodId(String periodId) {
-		this.periodId = periodId;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
@@ -85,38 +58,20 @@ public class BattleFactory {
 		this.userId = userId;
 	}
 
-	public String getImgUrl() {
-		return imgUrl;
+	public String getRedPackId() {
+		return redPackId;
 	}
 
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
-	}
-	
-	public String getName() {
-		return name;
+	public void setRedPackId(String redPackId) {
+		this.redPackId = redPackId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	
-
-	public String getDetail() {
-		return detail;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
-	}
-
-	public Integer getIsPublic() {
-		return isPublic;
-	}
-
-	public void setIsPublic(Integer isPublic) {
-		this.isPublic = isPublic;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	public DateTime getCreateAt() {

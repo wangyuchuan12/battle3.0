@@ -164,9 +164,24 @@ public class LoginApi{
 					wxUserInfoService.update(userInfo);
 				}
 			}
+			
+			Map<String, Object> data = new HashMap<>();
+			data.put("amountBalance", account.getAmountBalance());
+			data.put("canTakeOutCount", account.getCanTakeOutCount());
+			data.put("empiricalValue", account.getEmpiricalValue());
+			data.put("giftCount", account.getGiftCount());
+			data.put("integral", account.getIntegral());
+			data.put("loveLife", account.getLoveLife());
+			data.put("loveLifeLimit", account.getLoveLifeLimit());
+			data.put("masonry", account.getMasonry());
+			data.put("receiveGiftCount", account.getReceiveGiftCount());
+			data.put("wisdomCount", account.getWisdomCount());
+			data.put("wisdomLimit", account.getWisdomLimit());
+			data.put("imgUrl",userInfo.getHeadimgurl());
+			data.put("nickname",userInfo.getNickname());
 			ResultVo resultVo = new ResultVo();
 			resultVo.setSuccess(true);
-			resultVo.setData(account);
+			resultVo.setData(data);
 			return resultVo;
 		}
 	}

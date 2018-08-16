@@ -1,5 +1,6 @@
 package com.battle.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
@@ -15,9 +16,10 @@ public class BattleFactoryService {
 	@Autowired
 	private BattleFactoryDao battleFactoryDao;
 
-	public BattleFactory findOneByUserId(String userId) {
+	public List<BattleFactory> findAllByUserId(String userId) {
 		
-		return battleFactoryDao.findOneByUserId(userId);
+		
+		return battleFactoryDao.findAllByUserId(userId);
 	}
 
 	public void add(BattleFactory battleFactory) {
@@ -27,5 +29,10 @@ public class BattleFactoryService {
 		battleFactory.setId(UUID.randomUUID().toString());
 		battleFactoryDao.save(battleFactory);
 		
+	}
+
+	public BattleFactory findOne(String id) {
+		
+		return battleFactoryDao.findOne(id);
 	}
 }

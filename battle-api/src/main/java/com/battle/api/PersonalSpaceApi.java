@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.battle.domain.BattleFactory;
+import com.battle.domain.BattleRank;
 import com.battle.domain.BattleRankMember;
 import com.battle.domain.BattleRankSubject;
 import com.battle.domain.BattleSelectSubject;
@@ -25,12 +26,14 @@ import com.battle.domain.PersonalSpace;
 import com.battle.filter.element.LoginStatusFilter;
 import com.battle.service.BattleFactoryService;
 import com.battle.service.BattleRankMemberService;
+import com.battle.service.BattleRankService;
 import com.battle.service.BattleRankSubjectService;
 import com.battle.service.BattleSelectSubjectService;
 import com.battle.service.PersonalSpaceService;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.session.SessionManager;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
 
 @Controller
@@ -52,6 +55,9 @@ public class PersonalSpaceApi {
 	@Autowired
 	private BattleFactoryService battleFactoryService;
 	
+	@Autowired
+	private BattleRankService battleRankService;
+	
 	@RequestMapping(value="list")
 	@ResponseBody
 	@Transactional
@@ -66,10 +72,14 @@ public class PersonalSpaceApi {
 		Pageable pageable = new PageRequest(0, 100, sort);
 		List<PersonalSpace> personalSpaces = personalSpaceService.findAllByUserIdAndIsDel(userInfo.getId(),0,pageable);
 		
+		List<PersonalSpace> publicPersonalSpace = personalSpaceService.findAllByIsPublic(1);
+		
+		publicPersonalSpace.addAll(personalSpaces);
+		
 		
 		ResultVo resultVo = new ResultVo();
 		resultVo.setSuccess(true);
-		resultVo.setData(personalSpaces);
+		resultVo.setData(publicPersonalSpace);
 		return resultVo;
 		
 	}
@@ -82,7 +92,8 @@ public class PersonalSpaceApi {
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		
-		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String factoryId = httpServletRequest.getParameter("factoryId");
+		BattleFactory battleFactory = battleFactoryService.findOne(factoryId);
 		String page = httpServletRequest.getParameter("page");
 		String size = httpServletRequest.getParameter("size");
 		Order order = new Order(Direction.ASC, "index");
@@ -99,14 +110,18 @@ public class PersonalSpaceApi {
 	}
 	
 	
-	@RequestMapping(value="info")
+	@RequestMapping(value="infoByRankId")
 	@ResponseBody
 	@Transactional
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
-	public ResultVo info(HttpServletRequest httpServletRequest)throws Exception{
-		String id = httpServletRequest.getParameter("id");
+	public ResultVo infoByRankId(HttpServletRequest httpServletRequest)throws Exception{
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		String rankId = httpServletRequest.getParameter("rankId");
 		
-		PersonalSpace personalSpace = personalSpaceService.findOne(id);
+		
+		BattleRank battleRank = battleRankService.findOne(rankId);
+		PersonalSpace personalSpace = personalSpaceService.findOneByUserIdAndRankIdAndType(userInfo.getId(), rankId, PersonalSpace.RANK_TYPE);
 		
 		Map<String, Object> data = new HashMap<String, Object>();
 		
@@ -125,7 +140,60 @@ public class PersonalSpaceApi {
 		data.put("detail", personalSpace.getDetail());
 		data.put("type", personalSpace.getType());
 		data.put("rankId", personalSpace.getRankId());
+		data.put("isRoot", personalSpace.getIsRoot());
+		data.put("factoryId", battleRank.getFactoryId());
 		
+		if(personalSpace.getType().intValue()==PersonalSpace.RANK_TYPE){
+			Order order = new Order(Direction.DESC, "process");
+			Sort sort = new Sort(order);
+			Pageable pageable = new PageRequest(0, 10, sort);
+			Page<BattleRankMember> memberPage = battleRankMemberService.findAllByRankId(personalSpace.getRankId(), pageable);
+			data.put("rankMembers", memberPage.getContent());
+			
+		
+			pageable = new PageRequest(0, 10);
+			Page<BattleRankSubject> subjectPage = battleRankSubjectService.findAllByRankIdAndIsDel(personalSpace.getRankId(),0,pageable);
+			
+			data.put("subjects", subjectPage.getContent());
+		}
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(data);
+		
+		return resultVo;
+		
+	}
+	
+	@RequestMapping(value="info")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public ResultVo info(HttpServletRequest httpServletRequest)throws Exception{
+		String id = httpServletRequest.getParameter("id");
+		
+		PersonalSpace personalSpace = personalSpaceService.findOne(id);
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		BattleRank battleRank = battleRankService.findOne(personalSpace.getRankId());
+		data.put("id", personalSpace.getId());
+		data.put("name", personalSpace.getName());
+		data.put("imgNum", personalSpace.getImgNum());
+		data.put("img1", personalSpace.getImg1());
+		data.put("img2", personalSpace.getImg2());
+		data.put("img3", personalSpace.getImg3());
+		data.put("img4", personalSpace.getImg4());
+		data.put("img5", personalSpace.getImg5());
+		data.put("img6", personalSpace.getImg6());
+		data.put("img7", personalSpace.getImg7());
+		data.put("img8", personalSpace.getImg8());
+		data.put("img9", personalSpace.getImg9());
+		data.put("detail", personalSpace.getDetail());
+		data.put("type", personalSpace.getType());
+		data.put("rankId", personalSpace.getRankId());
+		data.put("isRoot", personalSpace.getIsRoot());
+		data.put("factoryId", battleRank.getFactoryId());
 		if(personalSpace.getType().intValue()==PersonalSpace.RANK_TYPE){
 			Order order = new Order(Direction.DESC, "process");
 			Sort sort = new Sort(order);

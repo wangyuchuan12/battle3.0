@@ -44,6 +44,9 @@ public class MessageVo {
 	
 	public final static String CHANGE_OWNER = "changeOwner";
 	
+	
+	public final static String TASK_COMPLETE = "taskComplete";
+	
 	//调用编号
 	private String code;
 	

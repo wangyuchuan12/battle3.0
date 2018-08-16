@@ -69,4 +69,9 @@ public class PersonalSpaceService {
 	
 		return personalSpaceDao.findAllByIsRootAndUserId(isRoot,userId);
 	}
+
+
+	public List<PersonalSpace> findAllByIsPublic(int isPublic) {
+		return personalSpaceDao.findAllByIsPublic(isPublic);
+	}
 }

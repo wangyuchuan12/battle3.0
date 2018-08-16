@@ -69,15 +69,14 @@ public class RankManager {
 			battleRankSubjectService.update(battleRankSubject);
 		}
 		
-		if(battleRankSubject==null){
-			battleRankSubject = new BattleRankSubject();
-			battleRankSubject.setBattleSubjectId(battleSubject.getId());
-			battleRankSubject.setImgUrl(battleSubject.getImgUrl());
-			battleRankSubject.setIsDel(0);
-			battleRankSubject.setName(battleSubject.getName());
-			battleRankSubject.setRankId(rankId);
-			battleRankSubjectService.add(battleRankSubject);
-		}
+		
+		battleRankSubject = new BattleRankSubject();
+		battleRankSubject.setBattleSubjectId(battleSubject.getId());
+		battleRankSubject.setImgUrl(battleSubject.getImgUrl());
+		battleRankSubject.setIsDel(0);
+		battleRankSubject.setName(battleSubject.getName());
+		battleRankSubject.setRankId(rankId);
+		battleRankSubjectService.add(battleRankSubject);
 		
 		List<String> subjectIds = new ArrayList<>();
 		subjectIds.add(battleSubject.getId());
@@ -91,15 +90,15 @@ public class RankManager {
 		}
 		
 		pageable = new PageRequest(0, num);
-		List<BattleQuestion> battleQuestions = battleQuestionService.findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(battleSubject.getBattleId(), periosId, battleSubjectId, pageable);
+		List<BattleQuestion> battleQuestions = battleQuestionService.findAllByBattleIdAndPeriodIdAndSubjectIdAndIsDelRandom(battleSubject.getBattleId(), periosId, battleSubjectId, 0,pageable);
 		
-		
+		System.out.println("******************:"+battleQuestions);
 		for(BattleQuestion battleQuestion:battleQuestions){
 			BattleRankQuestion battleRankQuestion = new BattleRankQuestion();
 			battleRankQuestion.setAnswer(battleQuestion.getAnswer());
 			battleRankQuestion.setBattleId(battleQuestion.getBattleId());
 			battleRankQuestion.setBattlePeriodId(periosId);
-			battleRankQuestion.setBattleSubjectId(battleSubject.getId());
+			battleRankQuestion.setBattleSubjectId(battleQuestion.getSubjectId());
 			battleRankQuestion.setImgUrl(battleQuestion.getImgUrl());
 			battleRankQuestion.setIsDel(0);
 			battleRankQuestion.setName(battleQuestion.getName());

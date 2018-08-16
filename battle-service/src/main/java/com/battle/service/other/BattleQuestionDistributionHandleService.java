@@ -94,7 +94,7 @@ public class BattleQuestionDistributionHandleService {
 				battleQuestionDistributionSubject.setBattleSubjectId(battleSubject.getId());
 				battleQuestionDistributionSubjectService.add(battleQuestionDistributionSubject);
 				List<BattleQuestion> battleQuestions = battleQuestionService.
-						findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(battleQuestionDistribution.getBattleId(),battleQuestionDistribution.getPeriodId(),battleSubject.getId(),pageable2);
+						findAllByBattleIdAndPeriodIdAndSubjectIdAndIsDelRandom(battleQuestionDistribution.getBattleId(),battleQuestionDistribution.getPeriodId(),battleSubject.getId(),0,pageable2);
 			
 				for(BattleQuestion battleQuestion:battleQuestions){
 					BattleQuestionDistributionQuestion battleQuestionDistributionQuestion = new BattleQuestionDistributionQuestion();

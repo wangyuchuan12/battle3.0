@@ -61,10 +61,13 @@
             <param-name>contextClass</param-name>
             <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
         </init-param>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>com.wyc.common.config.WebConfig2</param-value>
-        </init-param>
+        
+        <!-- 
+	        <init-param>
+	            <param-name>contextConfigLocation</param-name>
+	            <param-value>com.wyc.common.config.WebConfig2</param-value>
+	        </init-param>
+         -->
         <load-on-startup>1</load-on-startup>
     </servlet>
     

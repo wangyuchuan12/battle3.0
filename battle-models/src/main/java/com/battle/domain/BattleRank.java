@@ -14,6 +14,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="battle_rank")
 public class BattleRank {
 
+	public static final Integer FREE_STATUS = 0;
+	public static final Integer IN_STATUS = 1;
+	public static final Integer END_STATUS = 2;
+	
 	@Id
 	private String id;
 	
@@ -66,6 +70,12 @@ public class BattleRank {
 	
 	@Column
 	private String detail;
+	
+	@Column(name="is_public")
+	private Integer isPublic;
+	
+	@Column
+	private Integer status;
 	
 	@Column(name="end_time")
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -244,6 +254,24 @@ public class BattleRank {
 
 	public void setDetail(String detail) {
 		this.detail = detail;
+	}
+	
+	public Integer getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(Integer isPublic) {
+		this.isPublic = isPublic;
+	}
+	
+	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	public DateTime getCreateAt() {

@@ -12,9 +12,9 @@ import com.battle.domain.BattleRankSubject;
 
 public interface BattleRankSubjectDao extends CrudRepository<BattleRankSubject, String>{
 
-	@Query(value="from com.battle.domain.BattleRankSubject brs where "
+	@Query(value="from com.battle.domain.BattleRankSubject brs where brs.rankId=:rankId and "
 			+ "brs.isDel=:isDel order by rand() ")
-	List<BattleRankSubject> findByRandom(@Param("isDel")Integer isDel,Pageable pageable);
+	List<BattleRankSubject> findByRankIdAndIsDelRandom(@Param("rankId")String rankId,@Param("isDel")Integer isDel,Pageable pageable);
 
 	BattleRankSubject findOneByBattleSubjectIdAndIsDel(String battleSubjectId,int isDel);
 

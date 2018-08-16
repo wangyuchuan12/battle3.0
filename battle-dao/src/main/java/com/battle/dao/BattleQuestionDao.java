@@ -35,9 +35,9 @@ public interface BattleQuestionDao extends CrudRepository<BattleQuestion, String
 	@Query("from com.battle.domain.BattleQuestion bq where bq.battleId=:battleId and bq.periodId=:periodId order by rand()")
 	List<BattleQuestion> findAllByBattleIdAndPeriodIdRandom(@Param("battleId")String battleId, @Param("periodId")String periodId, Pageable pageable);
 
-	@Query("from com.battle.domain.BattleQuestion bq where bq.battleId=:battleId and bq.periodId=:periodId and bq.subjectId=:subjectId order by rand()")
-	List<BattleQuestion> findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(@Param("battleId")String battleId,
-			@Param("periodId")String periodId,@Param("subjectId")String subjectId,
+	@Query("from com.battle.domain.BattleQuestion bq where bq.battleId=:battleId and bq.periodId=:periodId and bq.subjectId=:subjectId and isDel=:isDel order by rand()")
+	List<BattleQuestion> findAllByBattleIdAndPeriodIdAndSubjectIdAndIsDelRandom(@Param("battleId")String battleId,
+			@Param("periodId")String periodId,@Param("subjectId")String subjectId,@Param("isDel")Integer isDel,
 			Pageable pageable);
 
 	List<BattleQuestion> findAllByBattleIdAndSubjectIdInAndIsDel(String battleId, String[] subjectIds, int isDel);

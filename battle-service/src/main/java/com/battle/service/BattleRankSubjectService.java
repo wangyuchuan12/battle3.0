@@ -18,9 +18,9 @@ public class BattleRankSubjectService {
 	@Autowired
 	private BattleRankSubjectDao battleRankSubjectDao;
 
-	public List<BattleRankSubject> findByRandom(Pageable pageable) {
+	public List<BattleRankSubject> findByRankIdAndIsDelRandom(String rankId,Integer isDel,Pageable pageable) {
 		
-		return battleRankSubjectDao.findByRandom(0,pageable);
+		return battleRankSubjectDao.findByRankIdAndIsDelRandom(rankId,isDel,pageable);
 		
 	}
 

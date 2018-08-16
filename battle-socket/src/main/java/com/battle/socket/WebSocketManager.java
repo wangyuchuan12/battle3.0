@@ -67,6 +67,8 @@ public class WebSocketManager {
 	
 	public WebSocketSession get(String token){
 		WebSocketSession webSocketSession = userStatusManager.getWebSocketSession(token);
+		
+		System.out.println("..............token:"+token+",webSocketSession:"+webSocketSession);
 		return webSocketSession;
 	}
 	

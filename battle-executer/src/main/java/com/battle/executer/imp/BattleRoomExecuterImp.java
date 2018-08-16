@@ -1,4 +1,5 @@
 package com.battle.executer.imp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -291,6 +292,9 @@ public class BattleRoomExecuterImp implements BattleRoomExecuter{
 		
 		List<BattleRoomMemberVo> battleRoomMembers = battleDataManager.getBattleMembers();
 		
+		if(battleRoomMembers==null){
+			battleRoomMembers = new ArrayList<>();
+		}
 		for(BattleRoomMemberVo battleRoomMember:battleRoomMembers){
 			EventManager eventManager = battleDataManager.getEventManager();
 			Map<String, Object> data = new HashMap<>();

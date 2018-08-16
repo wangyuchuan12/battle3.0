@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -23,6 +24,7 @@ import com.wyc.common.wx.domain.UserInfo;
 import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 @Service
+@Scope("singleton")
 public class UserStatusManager implements ApplicationEventPublisherAware{
 	
 	class UserStatusData{
@@ -49,7 +51,7 @@ public class UserStatusManager implements ApplicationEventPublisherAware{
 		}
 	}
 
-	private final Map<String,UserStatusData> sessionMap = new ConcurrentHashMap<String, UserStatusData>();
+	private  Map<String,UserStatusData> sessionMap = new ConcurrentHashMap<String, UserStatusData>();
 	
 	@Autowired
 	private UserStatusService userStatusService;
@@ -177,6 +179,8 @@ public class UserStatusManager implements ApplicationEventPublisherAware{
 	
 	public WebSocketSession getWebSocketSession(String token){
 		UserStatusData userStatusData = sessionMap.get(token);
+		
+		System.out.println(".........token:"+token+",userStatusData:"+userStatusData+",sessionMap:"+sessionMap+",this:"+this);
 		if(userStatusData==null){
 			return null;
 		}

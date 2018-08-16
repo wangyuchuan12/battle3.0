@@ -1,5 +1,6 @@
 package com.battle.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import com.battle.service.UserFrendService;
 import com.wyc.annotation.HandlerAnnotation;
 import com.wyc.common.domain.vo.ResultVo;
 import com.wyc.common.session.SessionManager;
+import com.wyc.common.util.CommonUtil;
 import com.wyc.common.wx.domain.UserInfo;
 
 @Controller
@@ -75,7 +77,8 @@ public class BattleManagerApi {
 	public ResultVo ranks(HttpServletRequest httpServletRequest)throws Exception{
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String factoryId = httpServletRequest.getParameter("factoryId");
+		BattleFactory battleFactory = battleFactoryService.findOne(factoryId);
 		
 		List<BattleRank> battleRanks = battleRankService.findAllByFactoryId(battleFactory.getId());
 		
@@ -94,12 +97,16 @@ public class BattleManagerApi {
 		
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String factoryId = httpServletRequest.getParameter("factoryId");
+		BattleFactory battleFactory = battleFactoryService.findOne(factoryId);
 		
 		String subjectIds = httpServletRequest.getParameter("subjectIds");
 		
+		List<String> factoryIds = new ArrayList<>();
+		factoryIds.add(factoryId);
 		BattleRank battleRank  = null;
-		List<BattleRank> battleRanks = battleRankService.findAllByOwnerUserId(userInfo.getId());
+		List<BattleRank> battleRanks = battleRankService.findAllByFactoryIdIn(factoryIds);
+		
 		
 		if(battleRanks!=null&&battleRanks.size()>0){
 			battleRank = battleRanks.get(0);
@@ -120,9 +127,11 @@ public class BattleManagerApi {
 			battleRank.setTimeLong(10);
 			battleRank.setOwnerUserId(userInfo.getId());
 			battleRank.setFactoryId(battleFactory.getId());
-			battleRank.setImgUrl(userInfo.getHeadimgurl());
-			battleRank.setName(userInfo.getNickname()+"创建的空间");
-			battleRank.setDetail(userInfo.getNickname()+"创建的空间");
+			battleRank.setImgUrl(battleFactory.getImgUrl());
+			battleRank.setName(battleFactory.getName());
+			battleRank.setDetail(battleFactory.getName());
+			battleRank.setIsPublic(0);
+			battleRank.setStatus(BattleRank.IN_STATUS);
 			battleRankService.add(battleRank);
 			
 			battleRankHandleService.takepart(battleRank.getId(), userInfo.getId());
@@ -137,12 +146,12 @@ public class BattleManagerApi {
 			PersonalSpace personalSpace = new PersonalSpace();
 			personalSpace.setActivityTime(new DateTime());
 			personalSpace.setCreateAt(new DateTime());
-			personalSpace.setDetail(userInfo.getNickname()+"创建的空间");
-			personalSpace.setImg1(userInfo.getHeadimgurl());
+			personalSpace.setDetail(battleFactory.getDetail());
+			personalSpace.setImg1(battleFactory.getImgUrl());
 			personalSpace.setImgNum(1);
 			personalSpace.setIsDel(0);
 			personalSpace.setIsPublic(0);
-			personalSpace.setName(userInfo.getNickname()+"创建的空间");
+			personalSpace.setName(battleFactory.getName());
 			personalSpace.setRankId(battleRank.getId());
 			personalSpace.setType(PersonalSpace.RANK_TYPE);
 			personalSpace.setUserId(userInfo.getId());
@@ -156,12 +165,12 @@ public class BattleManagerApi {
 				PersonalSpace personalSpace2 = new PersonalSpace();
 				personalSpace2.setActivityTime(new DateTime());
 				personalSpace2.setCreateAt(new DateTime());
-				personalSpace2.setDetail(userInfo.getNickname()+"创建的空间");
-				personalSpace2.setImg1(userInfo.getHeadimgurl());
+				personalSpace2.setDetail(battleFactory.getDetail());
+				personalSpace2.setImg1(battleFactory.getImgUrl());
 				personalSpace2.setImgNum(1);
 				personalSpace2.setIsDel(0);
 				personalSpace2.setIsPublic(0);
-				personalSpace2.setName(userInfo.getNickname()+"创建的空间");
+				personalSpace2.setName(battleFactory.getName());
 				personalSpace2.setRankId(battleRank.getId());
 				personalSpace2.setType(PersonalSpace.RANK_TYPE);
 				personalSpace2.setUserId(userFriend.getUserId());

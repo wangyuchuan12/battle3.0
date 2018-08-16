@@ -17,8 +17,8 @@ public class BattleQuestionService {
 	private BattleQuestionDao battleQuestionDao;
 
 	
-	public List<BattleQuestion> findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(String battleId, String periodId,String subjectId,Pageable pageable) {
-		return battleQuestionDao.findAllByBattleIdAndPeriodIdAndSubjectIdIsDelRandom(battleId,periodId,subjectId,pageable);
+	public List<BattleQuestion> findAllByBattleIdAndPeriodIdAndSubjectIdAndIsDelRandom(String battleId, String periodId,String subjectId,int isDel,Pageable pageable) {
+		return battleQuestionDao.findAllByBattleIdAndPeriodIdAndSubjectIdAndIsDelRandom(battleId,periodId,subjectId,isDel,pageable);
 	}
 
 	public List<BattleQuestion> findAllByIdIn(List<String> ids) {

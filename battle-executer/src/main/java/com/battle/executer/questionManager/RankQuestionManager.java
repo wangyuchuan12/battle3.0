@@ -109,6 +109,8 @@ public class RankQuestionManager implements BattleQuestionManager{
 		
 		List<BattleRankQuestion> battleRankQuestions = battleRankQuestionService.findAllByBattleSubjectIdInAndIsDel(subjectIds,0,pageable);
 
+		
+		System.out.println(".................battleRankQuestions:"+battleRankQuestions+",subjectIds:"+subjectIds+",battleStageVo.getQuestionCount:"+battleStageVo.getQuestionCount());
 		for(int i=0;i<battleRankQuestions.size();i++){
 			BattleRankQuestion battleRankQuestion = battleRankQuestions.get(i);
 			BattlePaperQuestionVo battlePaperQuestionVo = new BattlePaperQuestionVo();
@@ -188,7 +190,7 @@ public class RankQuestionManager implements BattleQuestionManager{
 			
 			
 			Pageable pageable = new PageRequest(0, 9);
-			List<BattleRankSubject> battleRankSubjects = battleRankSubjectService.findByRandom(pageable);
+			List<BattleRankSubject> battleRankSubjects = battleRankSubjectService.findByRankIdAndIsDelRandom(rankId,0,pageable);
 			BattleStageVo battleStageVo = currentStage();
 			battlePaper.getBattleStages().remove(battleStageVo);
 			int stageIndex = 0;

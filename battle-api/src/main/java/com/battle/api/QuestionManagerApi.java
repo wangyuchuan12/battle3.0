@@ -75,6 +75,24 @@ public class QuestionManagerApi {
 	@Autowired
 	private BattleSelectSubjectService battleSelectSubjectService;
 	
+	
+	@RequestMapping("/battleFactorys")
+	@ResponseBody
+	@Transactional
+	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
+	public Object battleFactorys(HttpServletRequest httpServletRequest)throws Exception{
+		
+		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
+		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
+		List<BattleFactory> battleFactories = battleFactoryService.findAllByUserId(userInfo.getId());
+		
+		ResultVo resultVo = new ResultVo();
+		resultVo.setSuccess(true);
+		resultVo.setData(battleFactories);
+		
+		return resultVo;
+	}
+	
 	@RequestMapping("/battleFactory")
 	@ResponseBody
 	@Transactional
@@ -83,9 +101,21 @@ public class QuestionManagerApi {
 		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
 		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
 		
-		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String factoryId = httpServletRequest.getParameter("factoryId");
+		
+		BattleFactory battleFactory = null;
+		if(CommonUtil.isNotEmpty(factoryId)){
+			battleFactory = battleFactoryService.findOne(factoryId);
+		}else{
+			List<BattleFactory> battleFactories = battleFactoryService.findAllByUserId(userInfo.getId());
+			
+			if(battleFactories.size()>0){
+				battleFactory = battleFactories.get(0);
+			}
+		}
 		
 		if(battleFactory==null){
+			/*
 			battleFactory = new BattleFactory();
 			Battle battle = new Battle();
 			battle.setHeadImg("");
@@ -118,8 +148,11 @@ public class QuestionManagerApi {
 			battleFactory.setBattleId(battle.getId());
 			battleFactory.setPeriodId(battlePeriod.getId());
 			battleFactory.setUserId(userInfo.getId());
-			
-			battleFactoryService.add(battleFactory);
+			battleFactory.setImgUrl(userInfo.getHeadimgurl());
+			battleFactoryService.add(battleFactory);*/
+			ResultVo resultVo = new ResultVo();
+			resultVo.setSuccess(false);
+			return resultVo;
 		}
 		
 		ResultVo resultVo = new ResultVo();
@@ -134,10 +167,9 @@ public class QuestionManagerApi {
 	@HandlerAnnotation(hanlerFilter=LoginStatusFilter.class)
 	public Object addSubject(HttpServletRequest httpServletRequest)throws Exception{
 		
-		SessionManager sessionManager = SessionManager.getFilterManager(httpServletRequest);
-		UserInfo userInfo = sessionManager.getObject(UserInfo.class);
-		
-		BattleFactory battleFactory = battleFactoryService.findOneByUserId(userInfo.getId());
+		String factoryId = httpServletRequest.getParameter("factoryId");
+		BattleFactory battleFactory = battleFactoryService.findOne(factoryId);
+	
 		String imgUrl = httpServletRequest.getParameter("imgUrl");
 		String name = httpServletRequest.getParameter("name");
 		
@@ -422,6 +454,8 @@ public class QuestionManagerApi {
 				if(!CommonUtil.isEmpty(isRight)&&isRight.equals("1")){
 					questionTarget.setRightOptionId(questionOption.getId());
 					questionTarget.setAnswer(questionOption.getContent());
+					
+					battleQuestion.setAnswer(questionOption.getContent());
 				}
 			}
 			
@@ -518,7 +552,7 @@ public class QuestionManagerApi {
 				if(!CommonUtil.isEmpty(isRight)&&isRight.equals("1")){
 					questionTarget.setRightOptionId(questionOption.getId());
 					questionTarget.setAnswer(questionOption.getContent());
-				
+					battleQuestion.setAnswer(questionOption.getContent());
 				}
 			}
 			

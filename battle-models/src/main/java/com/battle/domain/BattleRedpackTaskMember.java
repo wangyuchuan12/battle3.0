@@ -10,36 +10,40 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wyc.annotation.ParamAnnotation;
-import com.wyc.annotation.ParamEntityAnnotation;
 
-@ParamEntityAnnotation
 @Entity
-@Table(name="battle_factory")
-public class BattleFactory {
+@Table(name="battle_redpack_task_member")
+public class BattleRedpackTaskMember {
+	public static final Integer FREE_STATUS = 0;
+	public static final Integer IN_STATUS = 1;
+	public static final Integer COMPONENT_STATUS = 2;
+	
 	@Id
 	private String id;
 	
-	
-	@Column(name="battle_id")
-	private String battleId;
-	
-	@Column(name="period_id")
-	private String periodId;
-	
 	@Column(name="user_id")
 	private String userId;
+	
+	@Column
+	private String nickname;
 	
 	@Column(name="img_url")
 	private String imgUrl;
 	
 	@Column
-	private String name;
+	private Integer status;
+	
+	@Column(name="task_id")
+	private String taskId;
 	
 	@Column
-	private String detail;
+	private String name;
 	
-	@Column(name="is_public")
-	private Integer isPublic;
+	@Column(name="bean_num")
+	private Integer beanNum;
+	
+	@Column(name="rank_id")
+	private String rankId;
 	
 	@ParamAnnotation
 	@Column(name = "create_at")
@@ -61,28 +65,20 @@ public class BattleFactory {
 		this.id = id;
 	}
 
-	public String getBattleId() {
-		return battleId;
-	}
-
-	public void setBattleId(String battleId) {
-		this.battleId = battleId;
-	}
-
-	public String getPeriodId() {
-		return periodId;
-	}
-
-	public void setPeriodId(String periodId) {
-		this.periodId = periodId;
-	}
-
 	public String getUserId() {
 		return userId;
 	}
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	public String getImgUrl() {
@@ -92,7 +88,23 @@ public class BattleFactory {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
-	
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -100,23 +112,21 @@ public class BattleFactory {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Integer getBeanNum() {
+		return beanNum;
+	}
+
+	public void setBeanNum(Integer beanNum) {
+		this.beanNum = beanNum;
+	}
 	
-	
-
-	public String getDetail() {
-		return detail;
+	public String getRankId() {
+		return rankId;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
-	}
-
-	public Integer getIsPublic() {
-		return isPublic;
-	}
-
-	public void setIsPublic(Integer isPublic) {
-		this.isPublic = isPublic;
+	public void setRankId(String rankId) {
+		this.rankId = rankId;
 	}
 
 	public DateTime getCreateAt() {

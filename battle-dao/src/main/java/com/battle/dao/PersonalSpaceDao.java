@@ -20,5 +20,7 @@ public interface PersonalSpaceDao extends CrudRepository<PersonalSpace, String>{
 
 	List<PersonalSpace> findAllByIsRootAndUserId(int isRoot, String userId);
 
+	List<PersonalSpace> findAllByIsPublic(int isPublic);
+
 
 }
